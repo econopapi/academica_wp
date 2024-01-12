@@ -1,0 +1,78 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h2 {
+    text-align: center;
+}
+
+#info_general {
+    order: 1
+}
+
+#asignacion_docente {
+    order: 2;
+}
+
+
+#seguimiento_global_grupo_form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#seguimiento_global_grupo_table,
+#head {
+    margin: 0 auto;
+    width: 70%;
+}
+
+
+#asignacion_docente th,
+#asignacion_docente td,
+#info_general td{
+    font-size: 20px;
+
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 0px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+
+}
+
+
+
+/* Cool style for the table */
+#seguimiento_global_grupo_table table {
+    margin: 16px 16px;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#seguimiento_global_grupo_table th,
+#seguimiento_global_grupo_table td {
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 6px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#seguimiento_global_grupo_table th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+#seguimiento_global_grupo_table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#seguimiento_global_grupo_table tr:hover {
+    background-color: #f5f5f5;
+}
+
+#head {
+    display: flex;
+    justify-content: space-between;
+}

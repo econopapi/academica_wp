@@ -11,6 +11,8 @@
  * @package    Academica
  * @subpackage Academica/admin/partials
  */
+
+echo "<h1>Academica Admin Display</h1>";
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->

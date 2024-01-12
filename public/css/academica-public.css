@@ -1,4 +1,86 @@
-/**
- * All of the CSS for your public-facing functionality should be
- * included in this file.
- */
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h2 {
+    text-align: center;
+}
+
+.asignacion-docente-head {
+    margin: 0 auto;
+    width: 70%;
+    
+}
+
+.search-form-1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.search-form-1 input[type=text],
+.search-form-1 select {
+    width: 10%;
+    padding: 12px 20px;
+    margin: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.search-form-1 input[type=submit] {
+    width: 10%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    margin: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+
+/* table-1 specific style for #info docente id*/
+#info_docente {
+    margin: 0 auto;
+}
+
+.table-1 th,
+.table-1 td{
+    font-size: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 0px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+
+.table-2 table {
+    margin: 16px 16px;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-2 th,
+.table-2 td {
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 6px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.table-2 th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.table-2 tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table-2 tr:hover {
+    background-color: #f5f5f5;
+}

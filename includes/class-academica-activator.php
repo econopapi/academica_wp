@@ -50,15 +50,15 @@ class Academica_Activator {
 					'post_status'   => 'publish',
 					'post_author'   => $user_id,
 					'post_type'     => 'page',
-					'slug'          => 'academica-page-1-test',
+					'post_name'          => 'academica/historial-academico/evaluacion-global-grupo',
 				),
 				array(
-					'post_title'    => 'Academica Page 2',
-					'post_content'  => 'This is Academica page 2.',
+					'post_title'    => 'Asignación Docente Global',
+					'post_content'  => '[asignacion_docente]',
 					'post_status'   => 'publish',
 					'post_author'   => $user_id,
 					'post_type'     => 'page',
-					'slug'          => 'academica-page-2-test',
+					'post_name'          => 'academica/docentes/asignacion-global',
 				),
 				// Add more pages as needed
 			);

@@ -144,4 +144,8 @@ class Academica_Public {
 		include 'partials/academica-public-seguimiento-global-grupo.php';
 	}
 
+	public function asignacion_docente() {
+		include 'partials/academica-public-asignacion-docente.php';
+	}
+
 }
