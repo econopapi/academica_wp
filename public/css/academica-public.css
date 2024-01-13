@@ -56,6 +56,10 @@ h2 {
     border-bottom: 1px solid #ddd;
 }
 
+.table-1 caption {
+    font-weight: bold;
+}
+
 
 .table-2 table {
     margin: 16px 16px;
