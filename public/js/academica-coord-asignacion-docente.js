@@ -35,9 +35,11 @@ function createTable(data) {
     var thead = document.createElement('thead');
     var headerRow = document.createElement('tr');
 
-    Object.keys(data[0]).forEach(key => {
+    var headerValues = ['Grupo', 'Módulo', 'UEA', 'Componente', 'Estatus'];
+
+    Object.keys(headerValues).forEach(key => {
         var th = document.createElement('th');
-        th.textContent = key;
+        th.textContent = headerValues[key];
         headerRow.appendChild(th);
     });
     thead.appendChild(headerRow);
@@ -49,8 +51,17 @@ function createTable(data) {
         var row = document.createElement('tr');
         Object.keys(item).forEach(key => {
             var td = document.createElement('td');
-            td.textContent = item[key];
+            if (key === 'grupo') {
+                td.textContent = item[key].toString().toUpperCase();
+            } else if (key === 'componente') {
+                td.textContent = item[key].toString().charAt(0).toUpperCase() + item[key].slice(1);
+            } else if (key === 'evaluacion_completada') {
+                td.textContent = item[key] ? 'Completada' : 'Pendiente';
+            } else {
+                td.textContent = item[key];
+            }
             row.appendChild(td);
+
         });
         tbody.appendChild(row);
     });
@@ -62,8 +73,6 @@ function createTable(data) {
 function createInfoDocenteTable(informacion_general) {
     var infoDocenteTable = document.createElement('table');
     var caption = infoDocenteTable.createCaption();
-    caption.textContent = 'Docente';
-    caption.style.fontWeight = 'bold';
 
     // For each property in "informacion_general"
     for (var key in informacion_general) {
@@ -74,7 +83,7 @@ function createInfoDocenteTable(informacion_general) {
 
         // Create a table header cell for the property
         var infoTableHeaderCell = document.createElement('th');
-        infoTableHeaderCell.textContent = key;
+        infoTableHeaderCell.textContent = key.toString().charAt(0).toUpperCase() + key.slice(1);;
 
         // Add the header cell to the row
         infoTableRow.appendChild(infoTableHeaderCell);
