@@ -1,3 +1,27 @@
+var selectTrimestre = document.getElementById('trimestre');
+var selectGrupo = document.getElementById('grupo');
+
+// Deshabilita el select "grupo" al cargar la página
+selectGrupo.disabled = true;
+
+// Agrega un evento de cambio al select "trimestre"
+selectTrimestre.addEventListener('change', function() {
+    // Toma el valor seleccionado en "trimestre"
+    var trimestreSeleccionado = this.value;
+
+    // Haz una solicitud GET a la API con el valor seleccionado
+    fetch('http://localhost:5000/historial_academico/grupos_por_trimestre?trimestre=' + trimestreSeleccionado)
+        .then(response => response.json())
+        .then(data => {
+            // Habilita el select "grupo" y llena sus opciones con la respuesta de la API
+            selectGrupo.disabled = false;
+            selectGrupo.innerHTML = data['payload'].map(function(grupo) {
+                return '<option value="' + grupo.grupo + '">' + grupo.grupo.toUpperCase() + '</option>';
+            }).join('');
+        });
+});
+
+
 document.getElementById('seguimiento_global_grupo_form').addEventListener('submit', function(event) {
     event.preventDefault();
 

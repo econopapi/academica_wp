@@ -81,6 +81,7 @@ function run_academica() {
 	$academica_public = new Academica_Public('academica', '0.1');
 	add_shortcode( 'seguimiento_global_grupo', array( $academica_public, 'seguimiento_global_grupo' ) );
 	add_shortcode( 'asignacion_docente', array( $academica_public, 'asignacion_docente' ) );
+	add_shortcode( 'evaluacion_componente_global', array( $academica_public, 'evaluacion_componente_global' ) );
 
 }
 run_academica();

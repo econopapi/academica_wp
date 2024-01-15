@@ -88,13 +88,13 @@ if ($current_user->ID != 0) {
     if (!empty($docente_response_json['payload']['numero_economico'])) {
         $numero_economico = $docente_response_json['payload']['numero_economico'];
     } else {
-        echo 'No se pudo obtener el número económico de la API.';
+        echo 'No se pudo obtener el número económico en la API.';
     }
 
     if (!empty($trimestre_response_json['payload']['trimestre'])) {
         $trimestre = $trimestre_response_json['payload']['trimestre'];
     } else {
-        echo 'No se pudo obtener el trimestre de la API.';
+        echo 'No se pudo obtener el trimestre en la API.';
     }
     
     $asignacion_request = 'http://localhost:5000/historial_academico/asignacion_por_docente?numero_economico='.$numero_economico.'&trimestre='.$trimestre;
@@ -162,8 +162,25 @@ if ($current_user->ID != 0) {
                         <td><?php echo $asignacion['asignacion'][$i]['modulo']; ?></td>
                         <td><?php echo $asignacion['asignacion'][$i]['uea']; ?></td>
                         <td><?php echo ucfirst($asignacion['asignacion'][$i]['componente']); ?></td>
-                        <td><?php if ($asignacion['asignacion'][$i]['estatus'] == true) { echo 'Evaluación completada'; } else { echo 'Evaluación pendiente'; } ?></td>
+                        <td><?php 
+                            if ($asignacion['asignacion'][$i]['evaluacion_completada'] == True) {
+                                echo 'Completada ';
+                                echo '<a href="/academica-docentes-evaluacion-componente-global?grupo='
+                                    . urlencode($asignacion['asignacion'][$i]['grupo'])
+                                    . '&componente=' . urlencode($asignacion['asignacion'][$i]['componente'])
+                                    . '&trimestre=' . urlencode($trimestre_response_json['payload']['trimestre'])
+                                    . '&docente=' . urlencode($docente_response_json['payload']['numero_economico']) . '">[Editar]</a>';
+                            } else {
+                                echo 'Pendiente ';
+                                echo '<a href="/academica-docentes-evaluacion-componente-global?grupo='
+                                    . urlencode($asignacion['asignacion'][$i]['grupo'])
+                                    . '&componente=' . urlencode($asignacion['asignacion'][$i]['componente'])
+                                    . '&trimestre=' . urlencode($trimestre_response_json['payload']['trimestre'])
+                                    . '&docente=' . urlencode($docente_response_json['payload']['numero_economico']) . '">[Evaluar]</a>';
+                            } 
+                            ?></td>
                     </tr>
+                    
                 <?php } ?>
                 </tbody>
             </table>

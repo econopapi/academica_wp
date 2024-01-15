@@ -60,7 +60,15 @@ class Academica_Activator {
 					'post_type'     => 'page',
 					'post_name'          => 'academica/docentes/asignacion-global',
 				),
-				// Add more pages as needed
+				array(
+					'post_title'    => 'Evaluación Compoente Global',
+					'post_content'  => '[evaluacion_componente_global]',
+					'post_status'   => 'publish',
+					'post_author'   => $user_id,
+					'post_type'     => 'page',
+					'post_name'          => 'academica/docentes/evaluacion-componente-global',
+				),
+				
 			);
 
 			// Loop through the page data and insert each page
