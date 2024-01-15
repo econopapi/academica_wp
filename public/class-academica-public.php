@@ -148,4 +148,8 @@ class Academica_Public {
 		include 'partials/academica-public-asignacion-docente.php';
 	}
 
+	public function evaluacion_componente_global() {
+		include 'partials/academica-public-evaluacion-componente-global.php';
+	}
+
 }
