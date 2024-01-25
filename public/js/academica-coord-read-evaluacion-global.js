@@ -1,7 +1,5 @@
 var selectTrimestre = document.getElementById('trimestre');
 var selectGrupo = document.getElementById('grupo');
-// get the value of the hidden input
-var hiddenDocente = document.getElementById('docente');
 
 // Deshabilita el select "grupo" al cargar la página
 selectGrupo.disabled = true;
@@ -10,11 +8,9 @@ selectGrupo.disabled = true;
 selectTrimestre.addEventListener('change', function() {
     // Toma el valor seleccionado en "trimestre"
     var trimestreSeleccionado = this.value;
-    var docente = hiddenDocente.value;
-
 
     // Haz una solicitud GET a la API con el valor seleccionado
-    fetch(`http://localhost:5000/historial_academico/grupos_por_trimestre?trimestre=${trimestreSeleccionado}&docente=${docente}`)
+    fetch('http://localhost:5000/historial_academico/grupos_por_trimestre?trimestre=' + trimestreSeleccionado)
         .then(response => response.json())
         .then(data => {
             // Habilita el select "grupo" y llena sus opciones con la respuesta de la API
