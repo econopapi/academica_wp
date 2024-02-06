@@ -28,7 +28,7 @@ if ($current_user->ID != 0) {
     $user_roles = $current_user->roles;
     $user_role = !empty($user_roles) ? $user_roles[0] : 'Sin Rol';
 
-    echo "Usuario logueado: $user_login (ID: $user_id, Email: $user_email, Rol: $user_role)";
+    echo "Usuario logueado: $user_email";
 } else {
     // redirect to homepage
     wp_redirect(home_url());
@@ -83,7 +83,6 @@ if ($current_user->ID != 0) {
     $trimestre_response_body = wp_remote_retrieve_body($trimestre_response);
     $trimestre_response_json = json_decode($trimestre_response_body, true);
 
-    echo $trimestre_response_json['payload']['trimestre'];
 
     if (!empty($docente_response_json['payload']['numero_economico'])) {
         $numero_economico = $docente_response_json['payload']['numero_economico'];
@@ -108,12 +107,11 @@ if ($current_user->ID != 0) {
     // decode body
     $asignacion_json = json_decode($asignacion_body, true);
 
-    echo $asignacion_response;
 
     // check if data is empty
     if (!empty($asignacion_json['payload'])) {
         $asignacion = $asignacion_json['payload'];
-        echo $asignacion;
+        
     } else {
         echo 'No se pudo obtener la asignación de la API.';
     }
