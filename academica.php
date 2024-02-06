@@ -78,6 +78,10 @@ function run_academica() {
 	$plugin = new Academica();
 	$plugin->run();
 
+	add_action('wp_login', array($plugin, 'after_login_redirect'), 10, 2);
+	add_action('init', array($plugin, 'hide_admin_bar'));
+	add_filter('wp_nav_menu_items', array($plugin, 'academica_login_menu'), 10, 2);
+
 	$academica_public = new Academica_Public('academica', '0.1');
 	add_shortcode( 'seguimiento_global_grupo', array( $academica_public, 'seguimiento_global_grupo' ) );
 	add_shortcode( 'asignacion_docente', array( $academica_public, 'asignacion_docente' ) );

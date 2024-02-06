@@ -22,19 +22,25 @@ if ($current_user->ID != 0) {
     // El usuario está logueado
     $user_id = $current_user->ID;
     $user_login = $current_user->user_login;
-    //$user_email = $current_user->user_email;
-    $user_email = 'fvela@correo.xoc.uam.mx';
+    $user_email = $current_user->user_email;
+    //$user_email = 'rchavez@correo.xoc.uam.mx';
     $user_roles = $current_user->roles;
-    //$user_role = !empty($user_roles) ? $user_roles[0] : 'Sin Rol';
-    $user_role = 'editor';
+    $user_role = !empty($user_roles) ? $user_roles[0] : 'Sin Rol';
+    //$user_role = 'editor';
 
-    echo "Usuario logueado: $user_login (ID: $user_id, Email: $user_email, Rol: $user_role)";
+    echo "Usuario logueado: $user_email";
+
 } else {
-    // redirect to homepage
+    // Usuario no logueado. Redirección a homepage
     wp_redirect(home_url());
+
 }
 
 ?>
+
+
+
+
 <link rel="stylesheet" href="<?php echo plugins_url('/css/academica-public-seguimiento-global-grupo.css', dirname(__FILE__)); ?>">
 <link rel="stylesheet" href="<?php echo plugins_url('/css/academica-public.css', dirname(__FILE__)); ?>">
 <h2>Evaluaciones globales</h2>
@@ -61,7 +67,11 @@ if ($current_user->ID != 0) {
     <div id="asignacion_docente"></div>
 </div>
 
+<div id="estatus_firma"></div>
+
 <div id="seguimiento_global_grupo_table"></div>
+
+
 
 <?php if ($user_role == 'administrator') { ?>
     <script src="<?php echo plugins_url('/js/academica-coord-read-evaluacion-global.js', dirname(__FILE__)); ?>"></script>

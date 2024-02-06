@@ -8,6 +8,11 @@ function submitForm(event) {
         'calificaciones': []
     };
 
+    var url_params = {
+        'trimestre': document.getElementById('trimestre').value,
+        'grupo': document.getElementById('grupo').value
+    };
+
     var matriculas = document.querySelectorAll('input[name^="matriculas"]');
     var calificaciones = document.querySelectorAll('input[name^="calificacion"]');
 
@@ -24,14 +29,18 @@ function submitForm(event) {
     var xhr = new XMLHttpRequest();
     xhr.open('POST', 'http://localhost:5000/evaluacion_academica/global/componente', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify(data));
     xhr.onload = function () {
         if (xhr.status === 200) {
             alert('Evaluación enviada con éxito');
+            console.log('Evaluación enviada con éxito');
+            window.location.href = '/academica-historial-academico-evaluacion-global-grupo?trimestre=' + url_params.trimestre + '&grupo=' + url_params.grupo;
         } else {
             alert('Error al enviar la evaluación');
         }
     };
-    xhr.send(JSON.stringify(data));
+    
 }
+
 
 document.getElementById('lista_componente').addEventListener('submit', submitForm);

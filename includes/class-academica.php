@@ -213,4 +213,33 @@ class Academica {
 		return $this->version;
 	}
 
+	public function after_login_redirect($user_login, $user) {
+
+		if (strpos($user->user_email, '@correo.xoc.uam.mx') !== false){
+			wp_redirect( '/academica-docentes-asignacion-global' );
+		} else {
+			wp_redirect(home_url());
+		}
+
+		exit();
+	}
+
+	public function hide_admin_bar() {
+		if (!current_user_can('administrator') && !is_admin()) {
+			add_filter('show_admin_bar', '__return_false');
+		}
+	}
+
+	public function academica_login_menu($items, $args) {
+		
+		if (is_user_logged_in()) {
+			// Si está logueado, añade un enlace de logout
+			$items .= '<li><a href="' . wp_logout_url(home_url()) . '">Logout</a></li>';
+		} else {
+			// Si no está logueado, añade un enlace de login
+			$items .= '<li><a href="' . wp_login_url() . '">Login</a></li>';
+		}
+		return $items;
+	}
+
 }

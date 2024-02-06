@@ -171,8 +171,55 @@ function createDocentesTable(docentes) {
     return docentesTable;
 }
 
+
 function clearTables() {
     document.getElementById('seguimiento_global_grupo_table').innerHTML = '';
     document.getElementById('asignacion_docente').innerHTML = '';
     document.getElementById('info_general').innerHTML = '';
+}
+
+
+function loadDataFromUrlParams() {
+
+    console.log('loadDataFromUrlParams');
+
+    // current url
+    var url = new URL(window.location.href);
+
+    // get url params
+    var trimestre = url.searchParams.get('trimestre');
+    var grupo = url.searchParams.get('grupo');
+
+    // verify if the url has the params
+    if (trimestre && grupo) {
+
+        fetch(`http://localhost:5000/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
+            .then(response => response.json())
+            .then(data => {
+                // Hacer algo con los datos devueltos
+                console.log(data);
+
+                // Limpiar tablas existentes
+                clearTables();
+
+                // Crear tabla de calificaciones
+                var table = createTable(data.payload.calificaciones_alumnos);
+                document.getElementById('seguimiento_global_grupo_table').appendChild(table);
+
+                // Crear tabla de información general
+                var infoTable = createInfoTable(data.payload.informacion_general);
+                document.getElementById('info_general').appendChild(infoTable);
+
+                // Crear tabla de asignación docente
+                var docentesTable = createDocentesTable(data.payload.informacion_general.docentes);
+                document.getElementById('asignacion_docente').appendChild(docentesTable);
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+}
+
+window.onload = function(){
+    console.log('window.onload');
+    loadDataFromUrlParams();
 }

@@ -71,7 +71,7 @@ if (!empty($trimestre_response_json['payload']['trimestre'])) {
 
 if ($docente != $docente_response_json['payload']['numero_economico']
     || $trimestre != $trimestre_response_json['payload']['trimestre']) {
-    echo 'No tienes permiso para ver esta página.';
+    echo 'No tienes permiso para ver estos datos ;).';
     return false;
 }
 
@@ -144,6 +144,8 @@ $lista_json = json_decode($lista_body, true);
         <input type="hidden" id="id_seguimiento_global" value="<?php echo $lista_json['payload']['id_seguimiento']; ?>">
         <input type="hidden" id="docente_id" value="<?php echo $docente; ?>">
         <input type="hidden" id="componente_id" value="<?php echo $componente; ?>">
+        <input type="hidden" id="trimestre" value="<?php echo $trimestre; ?>">
+        <input type="hidden" id="grupo" value="<?php echo $grupo; ?>">
         
         <input type="submit" value="Enviar evaluación">
     </form>
