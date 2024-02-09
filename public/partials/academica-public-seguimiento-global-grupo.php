@@ -38,9 +38,6 @@ if ($current_user->ID != 0) {
 
 ?>
 
-
-
-
 <link rel="stylesheet" href="<?php echo plugins_url('/css/academica-public-seguimiento-global-grupo.css', dirname(__FILE__)); ?>">
 <link rel="stylesheet" href="<?php echo plugins_url('/css/academica-public.css', dirname(__FILE__)); ?>">
 <h2>Evaluaciones globales</h2>
@@ -59,17 +56,23 @@ if ($current_user->ID != 0) {
     <?php if ($user_role != 'administrator') { ?>
         <input type="hidden" id="docente" name="docente" value="<?php echo $user_email; ?>">
     <?php } ?>
-    <input type="submit" value="Buscar">
 </form>
 
 <div id="head">
     <div id="info_general"></div>
     <div id="asignacion_docente"></div>
+
 </div>
 
-<div id="estatus_firma"></div>
+<div class="notification-area">
+    <div id="estatus_firma"></div>
+    <div id="notification"></div>
+</div>
 
-<div id="seguimiento_global_grupo_table"></div>
+
+<div id="seguimiento_global_grupo_table">
+
+</div>
 
 
 
