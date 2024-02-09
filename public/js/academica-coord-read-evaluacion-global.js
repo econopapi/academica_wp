@@ -15,14 +15,20 @@ selectTrimestre.addEventListener('change', function() {
         .then(data => {
             // Habilita el select "grupo" y llena sus opciones con la respuesta de la API
             selectGrupo.disabled = false;
-            selectGrupo.innerHTML = data['payload'].map(function(grupo) {
-                return '<option value="' + grupo.grupo + '">' + grupo.grupo.toUpperCase() + '</option>';
-            }).join('');
+            var seen = {};
+            var options = data['payload'].reduce(function(acc, grupo) {
+                if (!seen[grupo.grupo]) {
+                    acc.push('<option value="'+ grupo.grupo +'">' + grupo.grupo.toUpperCase() + '</option>');
+                    seen[grupo.grupo] = true;
+                }
+                return acc;
+            }, []);
+            selectGrupo.innerHTML = '<option value="">Grupo</option>' + options.join('');
         });
 });
 
 
-document.getElementById('seguimiento_global_grupo_form').addEventListener('submit', function(event) {
+document.getElementById('grupo').addEventListener('change', function(event) {
     event.preventDefault();
 
     var trimestre = document.getElementById('trimestre').value;

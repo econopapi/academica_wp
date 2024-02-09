@@ -19,14 +19,20 @@ selectTrimestre.addEventListener('change', function() {
         .then(data => {
             // Habilita el select "grupo" y llena sus opciones con la respuesta de la API
             selectGrupo.disabled = false;
-            selectGrupo.innerHTML = data['payload'].map(function(grupo) {
-                return '<option value="'+ grupo.grupo +'">' + grupo.grupo.toUpperCase() + '</option>';
-            }).join('');
+            var seen = {};
+            var options = data['payload'].reduce(function(acc, grupo) {
+                if (!seen[grupo.grupo]) {
+                    acc.push('<option value="'+ grupo.grupo +'">' + grupo.grupo.toUpperCase() + '</option>');
+                    seen[grupo.grupo] = true;
+                }
+                return acc;
+            }, []);
+            selectGrupo.innerHTML = '<option value="">Grupo</option>' + options.join('');
         });
 });
 
 
-document.getElementById('seguimiento_global_grupo_form').addEventListener('submit', function(event) {
+document.getElementById('grupo').addEventListener('change', function(event) {
     event.preventDefault();
 
     var trimestre = document.getElementById('trimestre').value;
@@ -99,12 +105,23 @@ document.getElementById('seguimiento_global_grupo_form').addEventListener('submi
                             if (data.code === 200) {
                                 var div = document.createElement('div');
                                 div.className = 'notification-green';
-                                div.textContent = "Acta firmada";
+                                div.textContent = "Evaluación finalizada.";
+
+                                var reminderDiv = document.createElement('div');
+                                reminderDiv.textContent = "Recuerde que estas calificaciones también deben ser enviadas y firmadas en el Sistema Integral de Información Académica de la UAM.";
+                                
+                                // crear boton para volver a la pagina de asignacion docente con el estilo de boton
+                                var button = document.createElement('button');
+                                button.className = 'firmar-button';
+                                button.textContent = 'Volver a asignación docente';
                                 document.getElementById('estatus_firma').appendChild(div);
+                                document.getElementById('notification').appendChild(reminderDiv);
+                                document.getElementById('notification').appendChild(button);
+                                
                             } else if (data.code === 422) {
                                 var div = document.createElement('div');
                                 div.className = 'notification-neutral';
-                                div.textContent = "Evaluación completa. Pendiente de firma.";
+                                div.textContent = "Evaluación completa. Pendiente de confirmación.";
 
                                 var form = document.createElement('form');
                                 form.id = 'firma_form';
@@ -306,6 +323,8 @@ function clearTables() {
     document.getElementById('seguimiento_global_grupo_table').innerHTML = '';
     document.getElementById('asignacion_docente').innerHTML = '';
     document.getElementById('info_general').innerHTML = '';
+    document.getElementById('estatus_firma').innerHTML = '';
+    document.getElementById('notification').innerHTML = '';
 }
 
 function loadDataFromUrlParams() {
@@ -367,12 +386,24 @@ function loadDataFromUrlParams() {
                             if (data.code === 200) {
                                 var div = document.createElement('div');
                                 div.className = 'notification-green';
-                                div.textContent = "Acta firmada";
+                                div.textContent = "Evaluación finalizada.";
+
+                                var reminderDiv = document.createElement('div');
+                                reminderDiv.textContent = "Recuerde que estas calificaciones también deben ser enviadas y firmadas en el Sistema Integral de Información Académica de la UAM.";
+                                
+                                // crear boton para volver a la pagina de asignacion docente con el estilo de boton
+                                var button = document.createElement('button');
+                                button.className = 'firmar-button';
+                                button.textContent = 'Volver a asignación docente';
                                 document.getElementById('estatus_firma').appendChild(div);
+                                document.getElementById('notification').appendChild(reminderDiv);
+                                document.getElementById('notification').appendChild(button);
                             } else if (data.code === 422) {
                                 var div = document.createElement('div');
-                                div.className = 'notification-neutral';
-                                div.textContent = "Evaluación completa. Pendiente de firma.";
+                                div.className = 'notification-orange';
+                                div.textContent = "Evaluación completa. Pendiente de confirmación.";
+
+
 
                                 var form = document.createElement('form');
                                 form.id = 'firma_form';
@@ -390,7 +421,7 @@ function loadDataFromUrlParams() {
                                 var submitButton = document.createElement('input');
                                 submitButton.type = 'submit';
                                 submitButton.className = 'firmar-button';
-                                submitButton.value = 'Firmar evaluación';
+                                submitButton.value = 'Finalizar evaluación';
 
                                 form.appendChild(hiddenSeguimientoGlobal);
                                 form.appendChild(hiddenDocenteId);
@@ -398,7 +429,7 @@ function loadDataFromUrlParams() {
 
                                 
                                 document.getElementById('estatus_firma').appendChild(div);
-                                document.getElementById('estatus_firma').appendChild(form);
+                                document.getElementById('notification').appendChild(form);
 
 
                                 form.addEventListener('submit', function(event) {
@@ -423,8 +454,8 @@ function loadDataFromUrlParams() {
                                     .then(data => {
                                         console.log(data);
                                         if (data.code === 200) {
-                                            alert('Acta firmada con éxito');
-                                            window.location.href = '/academica-historial-academico-evaluacion-global-grupo?trimestre=' + selectTrimestre.value + '&grupo=' + selectGrupo.value;
+                                            alert('Evaluación completada con éxito.');
+                                            window.location.href = '/academica-historial-academico-evaluacion-global-grupo?trimestre=' + trimestre + '&grupo=' + grupo;
                                         } else {
                                             alert('Error al firmar el acta');
                                         }
