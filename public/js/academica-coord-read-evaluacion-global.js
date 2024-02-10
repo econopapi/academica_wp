@@ -10,7 +10,7 @@ selectTrimestre.addEventListener('change', function() {
     var trimestreSeleccionado = this.value;
 
     // Haz una solicitud GET a la API con el valor seleccionado
-    fetch('http://localhost:5000/historial_academico/grupos_por_trimestre?trimestre=' + trimestreSeleccionado)
+    fetch('https://academica.dlimon.net/historial_academico/grupos_por_trimestre?trimestre=' + trimestreSeleccionado)
         .then(response => response.json())
         .then(data => {
             // Habilita el select "grupo" y llena sus opciones con la respuesta de la API
@@ -34,7 +34,7 @@ document.getElementById('grupo').addEventListener('change', function(event) {
     var trimestre = document.getElementById('trimestre').value;
     var grupo = document.getElementById('grupo').value;
 
-    fetch(`http://localhost:5000/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
+    fetch(`https://academica.dlimon.net/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
         .then(response => response.json())
         .then(data => {
             // Hacer algo con los datos devueltos
@@ -199,7 +199,7 @@ function loadDataFromUrlParams() {
     // verify if the url has the params
     if (trimestre && grupo) {
 
-        fetch(`http://localhost:5000/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
+        fetch(`https://academica.dlimon.net/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
             .then(response => response.json())
             .then(data => {
                 // Hacer algo con los datos devueltos

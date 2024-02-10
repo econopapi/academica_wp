@@ -7,7 +7,7 @@
  *
  * This file is used to markup the public-facing aspects of the plugin.
  *
- * @link       http://dlimon.net/
+ * @link       https://dlimon.net/
  * @since      0.1
  *
  * @package    Academica
@@ -65,10 +65,10 @@ if ($current_user->ID != 0) {
 
     <!-- get trimestre actual y detalles de docente -->
     <?php
-    $docente_request = 'http://localhost:5000/historial_academico/docentes?email=' . $user_email;
+    $docente_request = 'https://academica.dlimon.net/historial_academico/docentes?email=' . $user_email;
     $docente_response = wp_remote_get($docente_request);
 
-    $trimestre_request = 'http://localhost:5000/historial_academico/trimestre_actual';
+    $trimestre_request = 'https://academica.dlimon.net/historial_academico/trimestre_actual';
     $trimestre_response = wp_remote_get($trimestre_request);
 
     
@@ -96,7 +96,7 @@ if ($current_user->ID != 0) {
         echo 'No se pudo obtener el trimestre en la API.';
     }
     
-    $asignacion_request = 'http://localhost:5000/historial_academico/asignacion_por_docente?numero_economico='.$numero_economico.'&trimestre='.$trimestre;
+    $asignacion_request = 'https://academica.dlimon.net/historial_academico/asignacion_por_docente?numero_economico='.$numero_economico.'&trimestre='.$trimestre;
     $asignacion_response = wp_remote_get($asignacion_request);
     // check for error
     if (is_wp_error($asignacion_response)) {

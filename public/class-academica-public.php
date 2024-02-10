@@ -110,7 +110,7 @@ class Academica_Public {
 		
 		$query = http_build_query($params);
 
-		$url = 'http://localhost:5000/historial_academico/seguimiento_global_grupo' . $query;
+		$url = 'http://academica.dlimon.net/historial_academico/seguimiento_global_grupo' . $query;
 
 		$response = wp_remote_get($url);
 	
