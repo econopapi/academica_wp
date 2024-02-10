@@ -254,7 +254,7 @@ document.getElementById('grupo').addEventListener('change', function(event) {
 
 function evaluacionPendienteDeFirma(id_seguimiento_global, docente_id) {
     var div = document.createElement('div');
-    div.className = 'notification-neutral';
+    div.className = 'notification-orange';
     div.textContent = "Evaluación completa. Pendiente de confirmación.";
 
     var form = document.createElement('form');
@@ -285,7 +285,7 @@ function evaluacionPendienteDeFirma(id_seguimiento_global, docente_id) {
     button.textContent = 'Volver a asignación docente';
 
     document.getElementById('estatus_firma').appendChild(div);
-    document.getElementById('estatus_firma').appendChild(form);
+    document.getElementById('notification').appendChild(form);
     document.getElementById('notification').appendChild(button);
 
     form.addEventListener('submit', function(event) {
