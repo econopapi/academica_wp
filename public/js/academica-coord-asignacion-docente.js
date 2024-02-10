@@ -4,7 +4,7 @@ document.getElementById('asignacion_docente_form').addEventListener('submit', fu
     var trimestre = document.getElementById('trimestre').value;
     var numero_economico = document.getElementById('numero_economico').value;
 
-    fetch(`http://academica.dlimon.net/historial_academico/asignacion_por_docente?trimestre=${trimestre}&numero_economico=${numero_economico}&detalle=true`)
+    fetch(`https://academica.dlimon.net/historial_academico/asignacion_por_docente?trimestre=${trimestre}&numero_economico=${numero_economico}&detalle=true`)
         .then(response => response.json())
         .then(data => {
             // Hacer algo con los datos devueltos
