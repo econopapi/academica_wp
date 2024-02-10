@@ -19,6 +19,13 @@ input[type="number"]::-webkit-outer-spin-button {
     
 }
 
+#seguimiento_global_grupo_table,
+#head {
+    margin: 0 auto;
+    width: 85%;
+}
+
+
 .evaluacion-componente-head {
     margin: 0 auto;
     width: 50%;

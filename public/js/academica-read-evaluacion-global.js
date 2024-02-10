@@ -283,7 +283,9 @@ function evaluacionPendienteDeFirma(id_seguimiento_global, docente_id) {
     var button = document.createElement('button');
     button.className = 'firmar-button';
     button.textContent = 'Volver a asignación docente';
-
+    button.addEventListener('click', function(event) {  
+        window.open('/academica-docentes-asignacion-global/', '_self'); 
+    });
     document.getElementById('estatus_firma').appendChild(div);
     document.getElementById('notification').appendChild(form);
     document.getElementById('notification').appendChild(button);
