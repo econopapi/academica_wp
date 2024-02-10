@@ -5,7 +5,7 @@
  *
  * This file is used to markup the public-facing aspects of the plugin.
  *
- * @link       http://dlimon.net/
+ * @link       https://dlimon.net/
  * @since      0.1
  *
  * @package    Academica
