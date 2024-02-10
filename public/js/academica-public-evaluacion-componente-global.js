@@ -10,40 +10,6 @@ var url_params = {
     'grupo': document.getElementById('grupo').value
 };
 
-function showModalWithUrl() {
-    // Crear una ventana modal
-    var modal = document.createElement("div");
-    modal.style.width = "300px";
-    modal.style.height = "200px";
-    modal.style.background = "#fff";
-    modal.style.position = "fixed";
-    modal.style.top = "50%";
-    modal.style.left = "50%";
-    modal.style.transform = "translate(-50%, -50%)";
-    modal.style.padding = "20px";
-    modal.style.boxShadow = "0px 0px 10px rgba(0,0,0,0.2)";
-    modal.style.textAlign = "center";
-
-    // Crear un mensaje
-    var message = document.createElement("p");
-    message.textContent = "Evaluación enviada con éxito";
-    modal.appendChild(message);
-
-    // Crear un botón
-    var button = document.createElement("button");
-    button.textContent = "OK";
-    button.onclick = function() {
-        // Abrir la URL cuando se hace click en el botón
-        window.open('/academica-historial-academico-evaluacion-global-grupo?trimestre=' + url_params.trimestre + '&grupo=' + url_params.grupo, '_self');
-        // Cerrar la ventana modal
-        document.body.removeChild(modal);
-    };
-    modal.appendChild(button);
-
-    // Mostrar la ventana modal
-    document.body.appendChild(modal);
-}
-
 function submitForm(event) {
     event.preventDefault();
 
@@ -70,7 +36,7 @@ function submitForm(event) {
     xhr.onload = function () {
         if (xhr.status === 200) {
             alert('Evaluación enviada con éxito');
-            showModalWithUrl();
+            window.open('/academica-historial-academico-evaluacion-global-grupo?trimestre=' + url_params.trimestre + '&grupo=' + url_params.grupo, '_self');
         } else {
             alert('Error al enviar la evaluación');
         }
