@@ -27,7 +27,7 @@ function submitForm(event) {
     console.log(data)
 
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'http://localhost:5000/evaluacion_academica/global/componente', true);
+    xhr.open('POST', 'http://academica.dlimon.net/evaluacion_academica/global/componente', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(JSON.stringify(data));
     xhr.onload = function () {

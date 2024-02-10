@@ -39,10 +39,10 @@ $componente = $_GET['componente'];
 $trimestre = $_GET['trimestre'];
 $docente = $_GET['docente'];
 
-$docente_request = 'http://localhost:5000/historial_academico/docentes?email=' . $user_email;
+$docente_request = 'http://academica.dlimon.net/historial_academico/docentes?email=' . $user_email;
 $docente_response = wp_remote_get($docente_request);
 
-$trimestre_request = 'http://localhost:5000/historial_academico/trimestre_actual';
+$trimestre_request = 'http://academica.dlimon.net/historial_academico/trimestre_actual';
 $trimestre_response = wp_remote_get($trimestre_request);
 
 if (is_wp_error($docente_response) || is_wp_error($trimestre_response)) {
@@ -75,7 +75,7 @@ if ($docente != $docente_response_json['payload']['numero_economico']
     return false;
 }
 
-$lista_request = 'http://localhost:5000/historial_academico/lista_alumnos_componente_global?trimestre='.$trimestre.'&grupo='.$grupo.'&componente='.$componente;
+$lista_request = 'http://academica.dlimon.net/historial_academico/lista_alumnos_componente_global?trimestre='.$trimestre.'&grupo='.$grupo.'&componente='.$componente;
 $lista_response = wp_remote_get($lista_request);
 // check for error
 if (is_wp_error($lista_response)) {
