@@ -70,7 +70,7 @@ if ($current_user->ID != 0) {
 
 
 <div id="seguimiento_global_grupo_table">
-
+<img class="center" src="https://uam.dlimon.net/wp-content/uploads/2024/02/AXOLOTL-1.png" alt="axolotl">
 </div>
 
 
