@@ -231,15 +231,14 @@ class Academica {
 	}
 
 	public function academica_login_menu($items, $args) {
-		
+    
 		if (is_user_logged_in()) {
 			// Si está logueado, añade un enlace de logout
-			$items .= '<li><a href="' . wp_logout_url(home_url()) . '">Logout</a></li>';
+			$items .= '<li class="login-logout-container"><a style="color: white;" href="' . wp_logout_url(home_url()) . '" class="firmar-button">Salir</a></li>';
 		} else {
 			// Si no está logueado, añade un enlace de login
-			$items .= '<li><a href="' . wp_login_url() . '">Login</a></li>';
+			$items .= '<li class="login-logout-container"><a style="color:white;" href="' . wp_login_url() . '" class="firmar-button">Acceder</a></li>';
 		}
 		return $items;
 	}
-
 }
