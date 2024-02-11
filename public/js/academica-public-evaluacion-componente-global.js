@@ -12,13 +12,16 @@ var url_params = {
 
 function submitForm(event) {
     event.preventDefault();
-
-
-
     var matriculas = document.querySelectorAll('input[name^="matriculas"]');
     var calificaciones = document.querySelectorAll('input[name^="calificacion"]');
 
     for (var i = 0; i < matriculas.length; i++) {
+        var calificacionValue = parseFloat(calificaciones[i].value);
+        if (isNaN(calificacionValue) || calificacionValue < 0.0 || calificacionValue > 10.0) {
+            alert('La calificación debe ser un número entre 0.0 y 10.0');
+            console.log('Error en calificación');
+            return;
+        }
         var calificacion = {
             'matricula_alumno': matriculas[i].value,
             'calificacion_numero': parseFloat(calificaciones[i].value)

@@ -15,9 +15,11 @@ function createTable(data) {
     var thead = document.createElement('thead');
     var headerRow = document.createElement('tr');
 
-    Object.keys(data[0]).forEach(key => {
+    var titles = ['Lista', 'Nombre', 'Matrícula', 'Teoría', 'Matemáticas', 'Taller', 'Investigación', 'Calificación número', 'Calificación letra'];
+
+    titles.forEach(title => {
         var th = document.createElement('th');
-        th.textContent = key;
+        th.textContent = title;
         headerRow.appendChild(th);
     });
     thead.appendChild(headerRow);
@@ -45,6 +47,15 @@ function createInfoTable(informacion_general) {
     caption.textContent = 'Información general';
     caption.style.fontWeight = 'bold';
 
+    // Mapping of current keys to desired names
+    var keyMapping = {
+        'grupo': 'Grupo',
+        'trimestre': 'Trimestre',
+        'modulo': 'Módulo',
+        'uea': 'UEA',
+        'clave_uea': 'Clave UEA'
+    };
+
     // For each property in "informacion_general"
     for (var key in informacion_general) {
         if (key === 'docentes') continue;
@@ -54,7 +65,7 @@ function createInfoTable(informacion_general) {
 
         // Create a table header cell for the property
         var infoTableHeaderCell = document.createElement('th');
-        infoTableHeaderCell.textContent = key;
+        infoTableHeaderCell.textContent = keyMapping[key] || key;  // Use the mapped key name if it exists, otherwise use the original key
 
         // Add the header cell to the row
         infoTableRow.appendChild(infoTableHeaderCell);
@@ -91,7 +102,9 @@ function createDocentesTable(docentes) {
     docenteKeys.forEach(function(key) {
         // Crear una celda para cada clave
         var headerCell = document.createElement('th');
-        headerCell.textContent = key;
+        // Capitalizar la primera letra de la clave
+        var capitalizedKey = key.charAt(0).toUpperCase() + key.slice(1);
+        headerCell.textContent = capitalizedKey;
 
         // Agregar la celda al encabezado
         headerRow.appendChild(headerCell);
@@ -110,9 +123,12 @@ function createDocentesTable(docentes) {
             if (docenteKey.includes('coordinacion') || docenteKey.includes('numero_economico')) continue;
             // Crear una celda para cada propiedad en el objeto
             var docenteCell = document.createElement('td');
-            docenteCell.textContent = docente[docenteKey];
 
-            // Agregar la celda a la fila
+            if (docenteKey === 'componente') {
+                docenteCell.textContent = docente[docenteKey].charAt(0).toUpperCase() + docente[docenteKey].slice(1);
+            } else {
+                docenteCell.textContent = docente[docenteKey];
+            }
             docenteRow.appendChild(docenteCell);
         }
 
@@ -163,12 +179,57 @@ document.getElementById('grupo').addEventListener('change', function(event) {
     var trimestre = document.getElementById('trimestre').value;
     var grupo = document.getElementById('grupo').value;
 
+
+    fetch(`https://academica.dlimon.net/evaluacion_academica/global/get_seguimiento_id?trimestre=${trimestre}&grupo=${grupo}&docente_email=${hiddenDocente.value}`)
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        // fill the div with id "estatus_firma" with the data obtained
+        var id_seguimiento_global = data.metadata.id_seguimiento_global; // Store the id_seguimiento_global
+        var docente_id = data.metadata.docente_id; // Store the docente_id
+
+        
+        if (data.code === 200) {
+            fetch(`https://academica.dlimon.net/evaluacion_academica/global/verificar_estado_evaluacion?id_seguimiento_global=${data.metadata.id_seguimiento_global}&docente_id=${data.metadata.docente_id}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+
+                if (data.code === 200) {
+                // verificar si la evaluacion ya fue firmada
+                    fetch(`https://academica.dlimon.net/evaluacion_academica/global/verificar_firma_acta?id_seguimiento_global=${id_seguimiento_global}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        if (data.code === 200) {
+                        // evaluacion completa y firmada
+                            evaluacionFirmada(id_seguimiento_global, docente_id);
+                            
+                        } else if (data.code === 422) {
+                        // evaluacion completa. pendiente de confirmacion
+                            evaluacionPendienteDeFirma(id_seguimiento_global, docente_id);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+
+                } else if (data.code === 422) {
+                // evaluacion incompleta. falta evaluar componentes
+                    evaluacionIncompleta();
+                }
+
+                document.getElementById('estatus_firma').textContent = data.payload.estado_evaluacion;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        
+    })
+    .catch(error => console.error('Error:', error));
+
     fetch(`https://academica.dlimon.net/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
         .then(response => response.json())
         .then(data => {
-            
-
-            // Limpiar tablas existentes
+            //console.log(data);
             clearTables();
 
             // Crear tabla de calificaciones
@@ -182,72 +243,6 @@ document.getElementById('grupo').addEventListener('change', function(event) {
             // Crear tabla de asignación docente
             var docentesTable = createDocentesTable(data.payload.informacion_general.docentes);
             document.getElementById('asignacion_docente').appendChild(docentesTable);
-        })
-        .catch(error => console.error('Error:', error));
-
-        fetch(`https://academica.dlimon.net/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
-            .then(response => response.json())
-            .then(data => {
-                //console.log(data);
-                clearTables();
-
-                // Crear tabla de calificaciones
-                var table = createTable(data.payload.calificaciones_alumnos);
-                document.getElementById('seguimiento_global_grupo_table').appendChild(table);
-
-                // Crear tabla de información general
-                var infoTable = createInfoTable(data.payload.informacion_general);
-                document.getElementById('info_general').appendChild(infoTable);
-
-                // Crear tabla de asignación docente
-                var docentesTable = createDocentesTable(data.payload.informacion_general.docentes);
-                document.getElementById('asignacion_docente').appendChild(docentesTable);
-            })
-            .catch(error => console.error('Error:', error));
-
-        fetch(`https://academica.dlimon.net/evaluacion_academica/global/get_seguimiento_id?trimestre=${trimestre}&grupo=${grupo}&docente_email=${hiddenDocente.value}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            // fill the div with id "estatus_firma" with the data obtained
-            var id_seguimiento_global = data.metadata.id_seguimiento_global; // Store the id_seguimiento_global
-            var docente_id = data.metadata.docente_id; // Store the docente_id
-
-            
-            if (data.code === 200) {
-                fetch(`https://academica.dlimon.net/evaluacion_academica/global/verificar_estado_evaluacion?id_seguimiento_global=${data.metadata.id_seguimiento_global}&docente_id=${data.metadata.docente_id}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-
-                    if (data.code === 200) {
-                    // verificar si la evaluacion ya fue firmada
-                        fetch(`https://academica.dlimon.net/evaluacion_academica/global/verificar_firma_acta?id_seguimiento_global=${id_seguimiento_global}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log(data);
-                            if (data.code === 200) {
-                            // evaluacion completa y firmada
-                                evaluacionFirmada(id_seguimiento_global, docente_id);
-                                
-                            } else if (data.code === 422) {
-                            // evaluacion completa. pendiente de confirmacion
-                                evaluacionPendienteDeFirma(id_seguimiento_global, docente_id);
-                            }
-                        })
-                        .catch(error => console.error('Error:', error));
-
-                    } else if (data.code === 422) {
-                    // evaluacion incompleta. falta evaluar componentes
-                        evaluacionIncompleta();
-                    }
-
-                    document.getElementById('estatus_firma').textContent = data.payload.estado_evaluacion;
-                })
-                .catch(error => console.error('Error:', error));
-            }
-
-            
         })
         .catch(error => console.error('Error:', error));
 });
@@ -273,7 +268,7 @@ function evaluacionPendienteDeFirma(id_seguimiento_global, docente_id) {
     var submitButton = document.createElement('input');
     submitButton.type = 'submit';
     submitButton.className = 'firmar-button';
-    submitButton.value = 'Firmar evaluación';
+    submitButton.value = 'Ponderar y confirmar';
 
     form.appendChild(hiddenSeguimientoGlobal);
     form.appendChild(hiddenDocenteId);
@@ -286,6 +281,7 @@ function evaluacionPendienteDeFirma(id_seguimiento_global, docente_id) {
     button.addEventListener('click', function(event) {  
         window.open('/academica-docentes-asignacion-global/', '_self'); 
     });
+
     document.getElementById('estatus_firma').appendChild(div);
     document.getElementById('notification').appendChild(form);
     document.getElementById('notification').appendChild(button);
@@ -327,12 +323,15 @@ function evaluacionFirmada(id_seguimiento_global, docente_id) {
     div.textContent = "Evaluación finalizada.";
 
     var reminderDiv = document.createElement('div');
-    reminderDiv.textContent = "Recuerde que estas calificaciones también deben ser enviadas y firmadas en el Sistema Integral de Información Académica de la UAM.";
-    
+    //reminderDiv.textContent = "Recuerde que ésto es sólo un seguimiento interno de la Coordinación. Las califiaciones oficiales deben ser cargadas y firmadas en el Sistema Integral de Información Académica de la UAM, como siempre se ha hecho.";
+    reminderDiv.innerHTML = 'Recuerde que ésto es sólo un seguimiento interno de la Coordinación de Economía.<br />Las califiaciones oficiales deben ser cargadas y firmadas en el <a href="#" onclick=\'window.open("https://sae.uam.mx/siae/acceso_siia.html");return false;\'>Sistema Integral de Información Académica de la UAM</a>, como siempre se ha hecho.';
     // crear boton para volver a la pagina de asignacion docente con el estilo de boton
     var button = document.createElement('button');
     button.className = 'firmar-button';
     button.textContent = 'Volver a asignación docente';
+    button.addEventListener('click', function(event) {
+        window.open('/academica-docentes-asignacion-global/', '_self');
+    });
 
     document.getElementById('estatus_firma').appendChild(div);
     document.getElementById('notification').appendChild(reminderDiv);
@@ -348,6 +347,9 @@ function evaluacionIncompleta() {
     var button = document.createElement('button');
     button.className = 'firmar-button';
     button.textContent = 'Volver a asignación docente';
+    button.addEventListener('click', function(event) {
+        window.open('/academica-docentes-asignacion-global/', '_self');
+    });
 
     document.getElementById('estatus_firma').appendChild(div);
     document.getElementById('notification').appendChild(button);
@@ -368,26 +370,6 @@ function loadDataFromUrlParams() {
 
     // verify if the url has the params
     if (trimestre && grupo) {
-
-        fetch(`https://academica.dlimon.net/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
-            .then(response => response.json())
-            .then(data => {
-                //console.log(data);
-                clearTables();
-
-                // Crear tabla de calificaciones
-                var table = createTable(data.payload.calificaciones_alumnos);
-                document.getElementById('seguimiento_global_grupo_table').appendChild(table);
-
-                // Crear tabla de información general
-                var infoTable = createInfoTable(data.payload.informacion_general);
-                document.getElementById('info_general').appendChild(infoTable);
-
-                // Crear tabla de asignación docente
-                var docentesTable = createDocentesTable(data.payload.informacion_general.docentes);
-                document.getElementById('asignacion_docente').appendChild(docentesTable);
-            })
-            .catch(error => console.error('Error:', error));
 
         fetch(`https://academica.dlimon.net/evaluacion_academica/global/get_seguimiento_id?trimestre=${trimestre}&grupo=${grupo}&docente_email=${hiddenDocente.value}`)
         .then(response => response.json())
@@ -431,6 +413,26 @@ function loadDataFromUrlParams() {
             
         })
         .catch(error => console.error('Error:', error));
+
+        fetch(`https://academica.dlimon.net/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
+            .then(response => response.json())
+            .then(data => {
+                //console.log(data);
+                clearTables();
+
+                // Crear tabla de calificaciones
+                var table = createTable(data.payload.calificaciones_alumnos);
+                document.getElementById('seguimiento_global_grupo_table').appendChild(table);
+
+                // Crear tabla de información general
+                var infoTable = createInfoTable(data.payload.informacion_general);
+                document.getElementById('info_general').appendChild(infoTable);
+
+                // Crear tabla de asignación docente
+                var docentesTable = createDocentesTable(data.payload.informacion_general.docentes);
+                document.getElementById('asignacion_docente').appendChild(docentesTable);
+            })
+            .catch(error => console.error('Error:', error));
     }
 
 }
