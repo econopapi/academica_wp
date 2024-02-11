@@ -46,7 +46,6 @@ if ($current_user->ID != 0) {
     <select id="trimestre" name="trimestre">
         <option value="">Trimestre</option>
         <option value="23o">23 Otoño</option>
-        <option value="23p">23 Primavera</option>
     </select>
 
     <label for="grupo">Grupo:</label>
