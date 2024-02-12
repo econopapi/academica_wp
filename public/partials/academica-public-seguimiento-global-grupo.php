@@ -37,6 +37,9 @@ if ($current_user->ID != 0) {
 }
 
 ?>
+<div class="overlay">
+    <div class="loadingScreen"></div>
+</div>
 
 <link rel="stylesheet" href="<?php echo plugins_url('/css/academica-public-seguimiento-global-grupo.css', dirname(__FILE__)); ?>">
 <link rel="stylesheet" href="<?php echo plugins_url('/css/academica-public.css', dirname(__FILE__)); ?>">
