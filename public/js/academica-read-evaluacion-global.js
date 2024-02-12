@@ -238,7 +238,8 @@ document.getElementById('grupo').addEventListener('change', function(event) {
                             
                         } else if (data.code === 422) {
                         // evaluacion completa. pendiente de confirmacion
-                            evaluacionPendienteDeFirma(id_seguimiento_global, docente_id);
+
+                            evaluacionPendienteDeFirma(id_seguimiento_global, docente_id, grupo, trimestre);
                         }
                     })
                     .catch(error => console.error('Error:', error));
@@ -278,7 +279,7 @@ document.getElementById('grupo').addEventListener('change', function(event) {
         .catch(error => console.error('Error:', error));
 });
 
-function evaluacionPendienteDeFirma(id_seguimiento_global, docente_id) {
+function evaluacionPendienteDeFirma(id_seguimiento_global, docente_id, trimestre, grupo) {
     var div = document.createElement('div');
     div.className = 'notification-orange';
     div.textContent = "Evaluación completa. Pendiente de confirmación.";
@@ -339,8 +340,10 @@ function evaluacionPendienteDeFirma(id_seguimiento_global, docente_id) {
         .then(data => {
             console.log(data);
             if (data.code === 200) {
-                alert('Acta firmada con éxito');
-                window.location.href = '/academica-historial-academico-evaluacion-global-grupo?trimestre=' + selectTrimestre.value + '&grupo=' + selectGrupo.value;
+                alert('Evaluación ponderada y confirmada con éxito!');
+                //window.location.href = '/academica-historial-academico-evaluacion-global-grupo?trimestre=' + trimestre.value + '&grupo=' + grupo.value;
+                // reload de current page
+                window.location.reload();
             } else {
                 alert('Error al firmar el acta');
             }
@@ -425,8 +428,8 @@ function loadDataFromUrlParams() {
                             // evaluacion completa y firmada
                                 evaluacionFirmada(id_seguimiento_global, docente_id);
                             } else if (data.code === 422) {
-                            // evaluacion completa. pendiente de confirmacion
-                                evaluacionPendienteDeFirma(id_seguimiento_global, docente_id);
+                                console.log(trimestre, grupo);
+                                evaluacionPendienteDeFirma(id_seguimiento_global, docente_id, trimestre, grupo);
                             }
                         })
                         .catch(error => console.error('Error:', error));

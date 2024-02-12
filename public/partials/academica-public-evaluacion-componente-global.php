@@ -28,7 +28,7 @@ if ($current_user->ID != 0) {
     $user_roles = $current_user->roles;
     $user_role = !empty($user_roles) ? $user_roles[0] : 'Sin Rol';
 
-    echo "Usuario logueado: $user_email";
+    echo "<p style='margin: 25px;'><strong>Usuario activo: $user_email</strong></p>";
 } else {
     // redirect to homepage
     wp_redirect(home_url());
@@ -55,7 +55,7 @@ $docente_response_json = json_decode($docente_response_body, true);
 $trimestre_response_body = wp_remote_retrieve_body($trimestre_response);
 $trimestre_response_json = json_decode($trimestre_response_body, true);
 
-echo $trimestre_response_json['payload']['trimestre'];
+
 
 if (!empty($docente_response_json['payload']['numero_economico'])) {
     $numero_economico = $docente_response_json['payload']['numero_economico'];
@@ -94,19 +94,18 @@ $lista_json = json_decode($lista_body, true);
     <div class="table-1">
                 
         <table>
-            <caption>Evaluación de componente</caption>
             <tbody>
                 <tr>
                     <td><strong>Grupo:</strong></td>
-                    <td><?php echo $grupo; ?></td>
+                    <td><?php echo strtoupper($grupo); ?></td>
                 </tr>
                 <tr>
                     <td><strong>Componente:</strong></td>
-                    <td><?php echo $componente; ?></td>
+                    <td><?php echo ucfirst($componente); ?></td>
                 </tr>
                 <tr>
                     <td><strong>Trimestre:</strong></td>
-                    <td><?php echo $trimestre; ?></td>
+                    <td><?php echo strtoupper($trimestre); ?></td>
                 </tr>
                 <tr>
                     <td><strong>Docente:</strong></td>
