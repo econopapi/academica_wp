@@ -171,10 +171,9 @@ if ($current_user->ID != 0) {
                             } else {
                                 if ($asignacion['asignacion'][$i]['evaluacion_firmada'] == True) {
                                     echo 'Finalizada ';
-                                    echo '<a href="/academica-docentes-asignacion-global?grupo='
+                                    echo '<a href="/academica-historial-academico-evaluacion-global-grupo?grupo='
                                         . urlencode($asignacion['asignacion'][$i]['grupo'])
-                                        . '&trimestre=' . urlencode($trimestre_response_json['payload']['trimestre'])
-                                        . '&grupo=' . urlencode($asignacion['asignacion'][$i]['grupo']) . '">[Ver evaluación]</a>';
+                                        . '&trimestre=' . urlencode($trimestre_response_json['payload']['trimestre']) . '">[Ver evaluación]</a>';
 
                                     
                                 } else {
@@ -187,7 +186,7 @@ if ($current_user->ID != 0) {
                                             . '&docente=' . urlencode($docente_response_json['payload']['numero_economico']) . '">[Editar]</a>';
                                     } else {
                                         echo 'Pendiente ';
-                                        echo '<a href="/academica-historial-academico-evaluacion-global-grupo?grupo='
+                                        echo '<a href="/academica-docentes-evaluacion-componente-global?grupo='
                                             . urlencode($asignacion['asignacion'][$i]['grupo'])
                                             . '&componente=' . urlencode($asignacion['asignacion'][$i]['componente'])
                                             . '&trimestre=' . urlencode($trimestre_response_json['payload']['trimestre'])

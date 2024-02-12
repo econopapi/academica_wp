@@ -28,7 +28,7 @@ if ($current_user->ID != 0) {
     $user_role = !empty($user_roles) ? $user_roles[0] : 'Sin Rol';
     //$user_role = 'editor';
 
-    echo "Usuario logueado: $user_email";
+    echo "<p style='margin: 25px;'><strong>Usuario activo: $user_email</strong></p>";
 
 } else {
     // Usuario no logueado. Redirección a homepage
