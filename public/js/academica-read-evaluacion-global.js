@@ -1,3 +1,34 @@
+// // Crear el overlay y la pantalla de carga
+// var overlay = document.createElement('div');
+// overlay.id = 'overlay';
+// overlay.style.display = 'none';
+// document.body.appendChild(overlay);
+
+// var loadingScreen = document.createElement('div');
+// loadingScreen.id = 'loadingScreen';
+// loadingScreen.style.display = 'none';
+// document.body.appendChild(loadingScreen);
+
+// // Mostrar el overlay y la pantalla de carga
+// overlay.style.display = 'block';
+// loadingScreen.style.display = 'block';
+
+// // Ejecutar tus funciones
+// asyncFunction1().then(() => {
+// return asyncFunction2();
+// }).then(() => {
+// return asyncFunction3();
+// }).then(() => {
+// // Ocultar el overlay y la pantalla de carga
+// overlay.style.display = 'none';
+// loadingScreen.style.display = 'none';
+// }).catch((error) => {
+// console.error(error);
+// // Asegúrate de ocultar el overlay y la pantalla de carga incluso si hay un error
+// overlay.style.display = 'none';
+// loadingScreen.style.display = 'none';
+// });
+
 var selectTrimestre = document.getElementById('trimestre');
 var selectGrupo = document.getElementById('grupo');
 var hiddenDocente = document.getElementById('docente');
@@ -440,4 +471,5 @@ function loadDataFromUrlParams() {
 window.onload = function(){
     console.log('window.onload');
     loadDataFromUrlParams();
+
 }
