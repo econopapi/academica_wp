@@ -351,6 +351,7 @@ function evaluacionPendienteDeFirma(id_seguimiento_global, docente_id, trimestre
     });
 }
 
+
 function evaluacionFirmada(id_seguimiento_global, docente_id) {
     var div = document.createElement('div');
     div.className = 'notification-green';
