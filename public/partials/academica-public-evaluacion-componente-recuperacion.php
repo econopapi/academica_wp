@@ -130,18 +130,17 @@ $lista_json = json_decode($lista_body, true);
                     <th>Calificación</th>
                 </tr>
             </thead>
-            <p class="bold">Nota: Si en la lista hay renglones resaltados en verde, eso quiere decir que la alumna/o aprobó en evaluación global el componente en cuestión, pero sí se encuentra en las listas de recuperación.</p>
+            <p class="bold">Nota: Las calificaciones preasignadas corresponden a las notas que la alumna/o obtuvo en la evaluación global. Favor de asignar la calificación sólo en las casillas vacías. </p>
             <tbody>
 
             <?php for ($i = 0; $i < count($lista_json['payload']['lista_alumnos']); $i++) { ?>
-                <?php $value = $lista_json['payload']['lista_alumnos'][$i][$componente]; ?>
-                <tr class="<?php echo empty($value) ? '' : 'highlight-row'; ?>">
+                <tr>
                     <td><?php echo $lista_json['payload']['lista_alumnos'][$i]['numero_lista']; ?></td>
                     <td><?php echo $lista_json['payload']['lista_alumnos'][$i]['matricula']; ?>
                     <input type="hidden" name="matriculas[<?php echo $i; ?>]" value="<?php echo $lista_json['payload']['lista_alumnos'][$i]['matricula']; ?>">
                     <td><?php echo $lista_json['payload']['lista_alumnos'][$i]['nombre_alumno']; ?></td>
                     <td>
-                        <input type="number" step="0.01" name="calificacion[<?php echo $i; ?>]" value="<?php echo $value; ?>" <?php echo empty($value) ? '' : 'disabled'; ?>>
+                        <input type="number" step="0.01" name="calificacion[<?php echo $i; ?>]" value="<?php echo $lista_json['payload']['lista_alumnos'][$i][$componente]; ?>">
                     </td>
                 </tr>
             <?php } ?>
