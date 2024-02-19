@@ -36,7 +36,7 @@ if ($current_user->ID != 0) {
 }
 ?>
 
-<h2>Asignación docente - Evaluación global</h2>
+<h2>Asignación docente - Evaluación de recuperación</h2>
 
 <!-- Render para Coordinación (usuarios administradores) -->
 <?php if ($user_role == 'administrator') { ?>
@@ -58,7 +58,7 @@ if ($current_user->ID != 0) {
     <div id="asignacion_docente" class="table-2"></div>
 </div>
 
-<script src="<?php echo plugins_url('/js/academica-coord-asignacion-docente.js', dirname(__FILE__)); ?>"></script>
+<script src="<?php echo plugins_url('/js/academica-coord-asignacion-docente-recuperacion.js', dirname(__FILE__)); ?>"></script>
 
 <!-- Render para usuarios UAM. Se valida con sistema académico si el correo institucional del usuario está en la lista docente activa -->
 <?php } else if (strpos($user_email, 'xoc.uam.mx') !== false) { ?>
@@ -96,7 +96,7 @@ if ($current_user->ID != 0) {
         echo 'No se pudo obtener el trimestre en la API.';
     }
     
-    $asignacion_request = 'https://academica.dlimon.net/historial_academico/asignacion_por_docente?numero_economico='.$numero_economico.'&trimestre='.$trimestre;
+    $asignacion_request = 'https://academica.dlimon.net/historial_academico/asignacion_por_docente?recuperacion=true&numero_economico='.$numero_economico.'&trimestre='.$trimestre;
     $asignacion_response = wp_remote_get($asignacion_request);
     // check for error
     if (is_wp_error($asignacion_response)) {
@@ -170,24 +170,27 @@ if ($current_user->ID != 0) {
                             } else {
                                 if ($asignacion['asignacion'][$i]['evaluacion_firmada'] == True) {
                                     echo 'Finalizada ';
-                                    echo '<a href="/academica-historial-academico-evaluacion-global-grupo?grupo='
+                                    echo '<a href="/academica-historial-academico-evaluacion-recuperacion-grupo?grupo='
                                         . urlencode($asignacion['asignacion'][$i]['grupo'])
+                                        . '&modulo=' . urlencode($asignacion['asignacion'][$i]['modulo'])
                                         . '&trimestre=' . urlencode($trimestre_response_json['payload']['trimestre']) . '">[Ver evaluación]</a>';
 
                                     
                                 } else {
                                     if ($asignacion['asignacion'][$i]['evaluacion_completada'] == True) {
                                         echo 'Completada ';
-                                        echo '<a href="/academica-docentes-evaluacion-componente-global?grupo='
+                                        echo '<a href="/academica-docentes-evaluacion-componente-recuperacion?grupo='
                                             . urlencode($asignacion['asignacion'][$i]['grupo'])
                                             . '&componente=' . urlencode($asignacion['asignacion'][$i]['componente'])
+                                            . '&modulo=' . urlencode($asignacion['asignacion'][$i]['modulo'])
                                             . '&trimestre=' . urlencode($trimestre_response_json['payload']['trimestre'])
                                             . '&docente=' . urlencode($docente_response_json['payload']['numero_economico']) . '">[Editar]</a>';
                                     } else {
                                         echo 'Pendiente ';
-                                        echo '<a href="/academica-docentes-evaluacion-componente-global?grupo='
+                                        echo '<a href="/academica-docentes-evaluacion-componente-recuperacion?grupo='
                                             . urlencode($asignacion['asignacion'][$i]['grupo'])
                                             . '&componente=' . urlencode($asignacion['asignacion'][$i]['componente'])
+                                            . '&modulo=' . urlencode($asignacion['asignacion'][$i]['modulo'])
                                             . '&trimestre=' . urlencode($trimestre_response_json['payload']['trimestre'])
                                             . '&docente=' . urlencode($docente_response_json['payload']['numero_economico']) . '">[Evaluar]</a>';
                                     }

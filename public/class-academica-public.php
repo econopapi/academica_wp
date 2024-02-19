@@ -144,12 +144,24 @@ class Academica_Public {
 		include 'partials/academica-public-seguimiento-global-grupo.php';
 	}
 
+	public function seguimiento_recuperacion_grupo() {
+		include 'partials/academica-public-seguimiento-recuperacion-grupo.php';
+	}
+
 	public function asignacion_docente() {
 		include 'partials/academica-public-asignacion-docente.php';
 	}
 
+	public function asignacion_docente_recuperacion() {
+		include 'partials/academica-public-asignacion-docente-recuperacion.php';
+	}
+
 	public function evaluacion_componente_global() {
 		include 'partials/academica-public-evaluacion-componente-global.php';
+	}
+
+	public function evaluacion_componente_recuperacion() {
+		include 'partials/academica-public-evaluacion-componente-recuperacion.php';
 	}
 
 }

@@ -31,10 +31,12 @@
 
 var selectTrimestre = document.getElementById('trimestre');
 var selectGrupo = document.getElementById('grupo');
+var selectModulo = document.getElementById('modulo');
 var hiddenDocente = document.getElementById('docente');
 
 // disable the select "grupo" by default
 selectGrupo.disabled = true;
+selectModulo.disabled = true;
 
 function createTable(data) {
     var table = document.createElement('table');
@@ -171,12 +173,23 @@ function createDocentesTable(docentes) {
 }
 
 function clearTables() {
-    document.getElementById('seguimiento_global_grupo_table').innerHTML = '';
+    document.getElementById('seguimiento_recuperacion_grupo_table').innerHTML = '';
     document.getElementById('asignacion_docente').innerHTML = '';
     document.getElementById('info_general').innerHTML = '';
     document.getElementById('estatus_firma').innerHTML = '';
     document.getElementById('notification').innerHTML = '';
 }
+
+/*
+
+ PENDIENTE en selectTrimestre.addEventListener('change', function() {}
+ 
+    1. Adaptar flujo de formulario para obtener modulos asignados por
+    docente en evaluación de recuperación
+
+De momento el formulario hace queries a las tablas de evaluación global 
+
+*/
 
 // event listener for "trimestre" select element
 selectTrimestre.addEventListener('change', function() {
@@ -279,7 +292,7 @@ document.getElementById('grupo').addEventListener('change', function(event) {
         .catch(error => console.error('Error:', error));
 });
 
-function evaluacionPendienteDeFirma(id_seguimiento_global, docente_id, trimestre, grupo) {
+function evaluacionPendienteDeFirma(id_seguimiento_recuperacion, docente_id, trimestre, grupo) {
     var div = document.createElement('div');
     div.className = 'notification-orange';
     div.textContent = "Evaluación completa. Pendiente de confirmación.";
@@ -287,10 +300,10 @@ function evaluacionPendienteDeFirma(id_seguimiento_global, docente_id, trimestre
     var form = document.createElement('form');
     form.id = 'firma_form';
 
-    var hiddenSeguimientoGlobal = document.createElement('input');
-    hiddenSeguimientoGlobal.type = 'hidden';
-    hiddenSeguimientoGlobal.name = 'id_seguimiento_global';
-    hiddenSeguimientoGlobal.value = id_seguimiento_global;
+    var hiddenSeguimientoRecuperacion = document.createElement('input');
+    hiddenSeguimientoRecuperacion.type = 'hidden';
+    hiddenSeguimientoRecuperacion.name = 'id_seguimiento_recuperacion';
+    hiddenSeguimientoRecuperacion.value = id_seguimiento_recuperacion;
 
     var hiddenDocenteId = document.createElement('input');
     hiddenDocenteId.type = 'hidden';
@@ -311,7 +324,7 @@ function evaluacionPendienteDeFirma(id_seguimiento_global, docente_id, trimestre
     button.className = 'firmar-button';
     button.textContent = 'Volver a asignación docente';
     button.addEventListener('click', function(event) {  
-        window.open('/academica-docentes-asignacion-global/', '_self'); 
+        window.open('/academica-docentes-asignacion-recuperacion/', '_self'); 
     });
 
     document.getElementById('estatus_firma').appendChild(div);
@@ -320,13 +333,14 @@ function evaluacionPendienteDeFirma(id_seguimiento_global, docente_id, trimestre
 
     form.addEventListener('submit', function(event) {
         event.preventDefault();
-        var id_seguimiento_global = hiddenSeguimientoGlobal.value;
+        var id_seguimiento_recuperacion = hiddenSeguimientoGlobal.value;
         var docente_id = hiddenDocente.value;
 
         let url = 'https://academica.dlimon.net/evaluacion_academica/firma_evaluacion';
         let params = {
-            id_seguimiento: id_seguimiento_global,
-            docente_email: docente_id
+            id_seguimiento: id_seguimiento_recuperacion,
+            docente_email: docente_id,
+            recuperacion: true
         };   
 
         fetch(url, {
@@ -352,7 +366,7 @@ function evaluacionPendienteDeFirma(id_seguimiento_global, docente_id, trimestre
 }
 
 
-function evaluacionFirmada(id_seguimiento_global, docente_id) {
+function evaluacionFirmada(id_seguimiento_recuperacion, docente_id) {
     var div = document.createElement('div');
     div.className = 'notification-green';
     div.textContent = "Evaluación finalizada.";
@@ -365,7 +379,7 @@ function evaluacionFirmada(id_seguimiento_global, docente_id) {
     button.className = 'firmar-button';
     button.textContent = 'Volver a asignación docente';
     button.addEventListener('click', function(event) {
-        window.open('/academica-docentes-asignacion-global/', '_self');
+        window.open('/academica-docentes-asignacion-recuperacion/', '_self');
     });
 
     document.getElementById('estatus_firma').appendChild(div);
@@ -383,7 +397,7 @@ function evaluacionIncompleta() {
     button.className = 'firmar-button';
     button.textContent = 'Volver a asignación docente';
     button.addEventListener('click', function(event) {
-        window.open('/academica-docentes-asignacion-global/', '_self');
+        window.open('/academica-docentes-asignacion-recuperacion/', '_self');
     });
 
     document.getElementById('estatus_firma').appendChild(div);
@@ -402,11 +416,12 @@ function loadDataFromUrlParams() {
     // get url params
     var trimestre = url.searchParams.get('trimestre');
     var grupo = url.searchParams.get('grupo');
+    var modulo = url.searchParams.get('modulo');
 
     // verify if the url has the params
-    if (trimestre && grupo) {
+    if (trimestre && grupo && modulo) {
 
-        fetch(`https://academica.dlimon.net/evaluacion_academica/get_seguimiento_id?trimestre=${trimestre}&grupo=${grupo}&docente_email=${hiddenDocente.value}`)
+        fetch(`https://academica.dlimon.net/evaluacion_academica/get_seguimiento_id?recuperacion=true&trimestre=${trimestre}&grupo=${grupo}&docente_email=${hiddenDocente.value}&modulo=${modulo}`)
         .then(response => response.json())
         .then(data => {
             console.log(data);
@@ -414,23 +429,23 @@ function loadDataFromUrlParams() {
             var id_seguimiento_global = data.metadata.id_seguimiento_global; // Store the id_seguimiento_global
             var docente_id = data.metadata.docente_id;
             if (data.code === 200) {
-                fetch(`https://academica.dlimon.net/evaluacion_academica/verificar_estado_evaluacion?id_seguimiento=${data.metadata.id_seguimiento_global}&docente_id=${data.metadata.docente_id}`)
+                fetch(`https://academica.dlimon.net/evaluacion_academica/verificar_estado_evaluacion?recuperacion=true&id_seguimiento=${data.metadata.id_seguimiento_recuperacion}&docente_id=${data.metadata.docente_id}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
 
                     if (data.code === 200) {
 
-                        fetch(`https://academica.dlimon.net/evaluacion_academica/verificar_firma_acta?id_seguimiento=${id_seguimiento_global}`)
+                        fetch(`https://academica.dlimon.net/evaluacion_academica/verificar_firma_acta?recuperacion=true&id_seguimiento=${id_seguimiento_global}`)
                         .then(response => response.json())
                         .then(data => {
                             console.log(data);
                             if (data.code === 200) {
                             // evaluacion completa y firmada
-                                evaluacionFirmada(id_seguimiento_global, docente_id);
+                                evaluacionFirmada(id_seguimiento_recuperacion, docente_id);
                             } else if (data.code === 422) {
                                 console.log(trimestre, grupo);
-                                evaluacionPendienteDeFirma(id_seguimiento_global, docente_id, trimestre, grupo);
+                                evaluacionPendienteDeFirma(id_seguimiento_recuperacion, docente_id, trimestre, grupo);
                             }
                         })
                         .catch(error => console.error('Error:', error));
@@ -449,7 +464,7 @@ function loadDataFromUrlParams() {
         })
         .catch(error => console.error('Error:', error));
 
-        fetch(`https://academica.dlimon.net/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
+        fetch(`https://academica.dlimon.net/historial_academico/seguimiento_recuperacion?&modulo=${modulo}&trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
             .then(response => response.json())
             .then(data => {
                 //console.log(data);
@@ -457,7 +472,7 @@ function loadDataFromUrlParams() {
 
                 // Crear tabla de calificaciones
                 var table = createTable(data.payload.calificaciones_alumnos);
-                document.getElementById('seguimiento_global_grupo_table').appendChild(table);
+                document.getElementById('seguimiento_recuperacion_grupo_table').appendChild(table);
 
                 // Crear tabla de información general
                 var infoTable = createInfoTable(data.payload.informacion_general);

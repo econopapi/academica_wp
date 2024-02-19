@@ -216,7 +216,7 @@ class Academica {
 	public function after_login_redirect($user_login, $user) {
 
 		if (strpos($user->user_email, '@correo.xoc.uam.mx') !== false){
-			wp_redirect( '/academica-docentes-asignacion-global' );
+			wp_redirect( '/academica-docentes-asignacion-recuperacion' );
 		} else {
 			wp_redirect(home_url());
 		}

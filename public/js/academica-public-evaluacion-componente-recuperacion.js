@@ -1,13 +1,15 @@
 var data = {
-    'id_seguimiento': document.getElementById('id_seguimiento_global').value,
+    'id_seguimiento': document.getElementById('id_seguimiento_recuperacion').value,
     'numero_economico': document.getElementById('docente_id').value,
     'componente': document.getElementById('componente_id').value,
+    'recuperacion': 'true', // This is the only difference between this file and academica-public-evaluacion-componente-global.js
     'calificaciones': []
 };
 
 var url_params = {
     'trimestre': document.getElementById('trimestre').value,
-    'grupo': document.getElementById('grupo').value
+    'grupo': document.getElementById('grupo').value,
+    'modulo': document.getElementById('modulo').value
 };
 
 function submitForm(event) {
@@ -39,7 +41,7 @@ function submitForm(event) {
     xhr.onload = function () {
         if (xhr.status === 200) {
             alert('Evaluación enviada con éxito');
-            window.open('/academica-historial-academico-evaluacion-global-grupo?trimestre=' + url_params.trimestre + '&grupo=' + url_params.grupo, '_self');
+            window.open('/academica-historial-academico-evaluacion-recuperacion-grupo?trimestre=' + url_params.trimestre + '&grupo=' + url_params.grupo + '&modulo=' + url_params.modulo, '_self');
         } else {
             alert('Error al enviar la evaluación');
         }
