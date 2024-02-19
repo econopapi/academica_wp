@@ -1,5 +1,5 @@
 var data = {
-    'id_seguimiento_global': document.getElementById('id_seguimiento_global').value,
+    'id_seguimiento': document.getElementById('id_seguimiento_global').value,
     'numero_economico': document.getElementById('docente_id').value,
     'componente': document.getElementById('componente_id').value,
     'calificaciones': []
@@ -33,7 +33,7 @@ function submitForm(event) {
 
     var xhr = new XMLHttpRequest();
     var requestSuccessful = false; // Variable para almacenar el estado de la solicitud
-    xhr.open('POST', 'https://academica.dlimon.net/evaluacion_academica/global/componente', true);
+    xhr.open('POST', 'https://academica.dlimon.net/evaluacion_academica/componente', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(JSON.stringify(data));
     xhr.onload = function () {

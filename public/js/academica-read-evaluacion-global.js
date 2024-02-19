@@ -211,7 +211,7 @@ document.getElementById('grupo').addEventListener('change', function(event) {
     var grupo = document.getElementById('grupo').value;
 
 
-    fetch(`https://academica.dlimon.net/evaluacion_academica/global/get_seguimiento_id?trimestre=${trimestre}&grupo=${grupo}&docente_email=${hiddenDocente.value}`)
+    fetch(`https://academica.dlimon.net/evaluacion_academica/get_seguimiento_id?trimestre=${trimestre}&grupo=${grupo}&docente_email=${hiddenDocente.value}`)
     .then(response => response.json())
     .then(data => {
         console.log(data);
@@ -221,14 +221,14 @@ document.getElementById('grupo').addEventListener('change', function(event) {
 
         
         if (data.code === 200) {
-            fetch(`https://academica.dlimon.net/evaluacion_academica/global/verificar_estado_evaluacion?id_seguimiento_global=${data.metadata.id_seguimiento_global}&docente_id=${data.metadata.docente_id}`)
+            fetch(`https://academica.dlimon.net/evaluacion_academica/verificar_estado_evaluacion?id_seguimiento=${data.metadata.id_seguimiento_global}&docente_id=${data.metadata.docente_id}`)
             .then(response => response.json())
             .then(data => {
                 console.log(data);
 
                 if (data.code === 200) {
                 // verificar si la evaluacion ya fue firmada
-                    fetch(`https://academica.dlimon.net/evaluacion_academica/global/verificar_firma_acta?id_seguimiento_global=${id_seguimiento_global}`)
+                    fetch(`https://academica.dlimon.net/evaluacion_academica/verificar_firma_seguimiento?id_seguimiento=${id_seguimiento_global}`)
                     .then(response => response.json())
                     .then(data => {
                         console.log(data);
@@ -322,9 +322,9 @@ function evaluacionPendienteDeFirma(id_seguimiento_global, docente_id) {
         var id_seguimiento_global = hiddenSeguimientoGlobal.value;
         var docente_id = hiddenDocente.value;
 
-        let url = 'https://academica.dlimon.net/evaluacion_academica/global/firma_evaluacion';
+        let url = 'https://academica.dlimon.net/evaluacion_academica/firma_evaluacion';
         let params = {
-            id_seguimiento_global: id_seguimiento_global,
+            id_seguimiento: id_seguimiento_global,
             docente_email: docente_id
         };   
 
@@ -402,7 +402,7 @@ function loadDataFromUrlParams() {
     // verify if the url has the params
     if (trimestre && grupo) {
 
-        fetch(`https://academica.dlimon.net/evaluacion_academica/global/get_seguimiento_id?trimestre=${trimestre}&grupo=${grupo}&docente_email=${hiddenDocente.value}`)
+        fetch(`https://academica.dlimon.net/evaluacion_academica/get_seguimiento_id?trimestre=${trimestre}&grupo=${grupo}&docente_email=${hiddenDocente.value}`)
         .then(response => response.json())
         .then(data => {
             console.log(data);
@@ -410,14 +410,14 @@ function loadDataFromUrlParams() {
             var id_seguimiento_global = data.metadata.id_seguimiento_global; // Store the id_seguimiento_global
             var docente_id = data.metadata.docente_id;
             if (data.code === 200) {
-                fetch(`https://academica.dlimon.net/evaluacion_academica/global/verificar_estado_evaluacion?id_seguimiento_global=${data.metadata.id_seguimiento_global}&docente_id=${data.metadata.docente_id}`)
+                fetch(`https://academica.dlimon.net/evaluacion_academica/verificar_estado_evaluacion?id_seguimiento=${data.metadata.id_seguimiento_global}&docente_id=${data.metadata.docente_id}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
 
                     if (data.code === 200) {
 
-                        fetch(`https://academica.dlimon.net/evaluacion_academica/global/verificar_firma_acta?id_seguimiento_global=${id_seguimiento_global}`)
+                        fetch(`https://academica.dlimon.net/evaluacion_academica/verificar_firma_acta?id_seguimiento=${id_seguimiento_global}`)
                         .then(response => response.json())
                         .then(data => {
                             console.log(data);
