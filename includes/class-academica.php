@@ -241,4 +241,19 @@ class Academica {
 		}
 		return $items;
 	}
+
+	public function after_logout_cookies() {
+		// Obtener todos los cookies del sitio
+		$cookies = $_COOKIE;
+	
+		// Borrar cada cookie
+		foreach ($cookies as $cookie_name => $cookie_value) {
+			// Setear el tiempo de expiración de la cookie a un tiempo pasado para eliminarla
+			setcookie($cookie_name, '', time() - 3600, '/');
+		}
+
+		// Redirigir al usuario a la página de inicio
+		wp_redirect(home_url());
+		exit();
+	}
 }
