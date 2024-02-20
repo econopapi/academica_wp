@@ -315,7 +315,7 @@ function evaluacionPendienteDeFirma(id_seguimiento_recuperacion, docente_id, tri
     submitButton.className = 'firmar-button';
     submitButton.value = 'Ponderar y confirmar';
 
-    form.appendChild(hiddenSeguimientoGlobal);
+    form.appendChild(hiddenSeguimientoRecuperacion);
     form.appendChild(hiddenDocenteId);
     form.appendChild(submitButton);
 
@@ -333,7 +333,7 @@ function evaluacionPendienteDeFirma(id_seguimiento_recuperacion, docente_id, tri
 
     form.addEventListener('submit', function(event) {
         event.preventDefault();
-        var id_seguimiento_recuperacion = hiddenSeguimientoGlobal.value;
+        var id_seguimiento_recuperacion = hiddenSeguimientoRecuperacion.value;
         var docente_id = hiddenDocente.value;
 
         let url = 'https://academica.dlimon.net/evaluacion_academica/firma_evaluacion';
@@ -426,7 +426,7 @@ function loadDataFromUrlParams() {
         .then(data => {
             console.log(data);
             // fill the div with id "estatus_firma" with the data obtained
-            var id_seguimiento_global = data.metadata.id_seguimiento_global; // Store the id_seguimiento_global
+            var id_seguimiento_recuperacion = data.metadata.id_seguimiento_recuperacion; // Store the id_seguimiento_global
             var docente_id = data.metadata.docente_id;
             if (data.code === 200) {
                 fetch(`https://academica.dlimon.net/evaluacion_academica/verificar_estado_evaluacion?recuperacion=true&id_seguimiento=${data.metadata.id_seguimiento_recuperacion}&docente_id=${data.metadata.docente_id}`)
@@ -436,7 +436,7 @@ function loadDataFromUrlParams() {
 
                     if (data.code === 200) {
 
-                        fetch(`https://academica.dlimon.net/evaluacion_academica/verificar_firma_acta?recuperacion=true&id_seguimiento=${id_seguimiento_global}`)
+                        fetch(`https://academica.dlimon.net/evaluacion_academica/verificar_firma_acta?recuperacion=true&id_seguimiento=${id_seguimiento_recuperacion}`)
                         .then(response => response.json())
                         .then(data => {
                             console.log(data);
