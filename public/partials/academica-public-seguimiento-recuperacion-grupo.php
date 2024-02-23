@@ -46,7 +46,7 @@ if ($current_user->ID != 0) {
 <h2>Evaluaciones de recuperación</h2>
 <form id="seguimiento_global_grupo_form" class="search-form-1">
     <label for="trimestre">Trimestre:</label>
-    <select id="trimestre" name="trimestre">
+    <select id="trimestre" name="trimestre" disabled>
         <option value="">Trimestre</option>
         <option value="23o">23 Otoño</option>
     </select>
