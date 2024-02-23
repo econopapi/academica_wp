@@ -26,6 +26,7 @@ if ($current_user->ID != 0) {
     $user_login = $current_user->user_login;
 
     $user_email = $current_user->user_email;
+    //$user_email = 'rchavez@correo.xoc.uam.mx';
     $user_roles = $current_user->roles;
     $user_role = !empty($user_roles) ? $user_roles[0] : 'Sin Rol';
 
@@ -155,8 +156,8 @@ if ($current_user->ID != 0) {
                 </thead>
                 <tbody>
                 
-                <?php for ($i = 0; $i < count($asignacion)+1; $i++) { ?>
-                    <?php if (empty($asignacion['asignacion'][$i]['grupo'])) {
+                <?php for ($i = 0; $i < count($asignacion["asignacion"]); $i++) { ?>
+                    <?php if (empty($asignacion['asignacion'][$i])) {
                         continue;
                     } ?>
                     <tr>
