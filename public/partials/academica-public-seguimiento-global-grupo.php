@@ -48,6 +48,7 @@ if ($current_user->ID != 0) {
     <label for="trimestre">Trimestre:</label>
     <select id="trimestre" name="trimestre">
         <option value="">Trimestre</option>
+        <option value="24i">24 Invierno</option>
         <option value="23o">23 Otoño</option>
     </select>
 
