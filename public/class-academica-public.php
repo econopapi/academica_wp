@@ -164,4 +164,8 @@ class Academica_Public {
 		include 'partials/academica-public-evaluacion-componente-recuperacion.php';
 	}
 
+	public function coord_alta_grupos_global() {
+		include 'partials/academica-public-coord-alta-grupos-global.php';
+	}
+
 }

@@ -92,6 +92,14 @@ class Academica_Activator {
 					'post_type'     => 'page',
 					'post_name'          => 'academica/docentes/evaluacion-componente-recuperacion',
 				),
+				array(
+					'post_title'    => 'Alta Grupos Global',
+					'post_content'  => '[coord_alta_grupos_global]',
+					'post_status'   => 'publish',
+					'post_author'   => $user_id,
+					'post_type'     => 'page',
+					'post_name'          => 'academica/coordinacion/alta-grupos-global',
+				),
 
 				
 			);

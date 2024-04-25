@@ -13,9 +13,9 @@
  * @package           Academica
  *
  * @wordpress-plugin
- * Plugin Name:       Académica 2
+ * Plugin Name:       Académica
  * Plugin URI:        http://dlimon.net
- * Description:       Integración de Académica con WordPress
+ * Description:       Integración de de Académica (gestor académico) con WordPress
  * Version:           0.1
  * Author:            Daniel Limón
  * Author URI:        http://dlimon.net/
@@ -90,6 +90,7 @@ function run_academica() {
 	add_shortcode( 'asignacion_docente_recuperacion', array( $academica_public, 'asignacion_docente_recuperacion' ) );
 	add_shortcode( 'evaluacion_componente_global', array( $academica_public, 'evaluacion_componente_global' ) );
 	add_shortcode( 'evaluacion_componente_recuperacion', array( $academica_public, 'evaluacion_componente_recuperacion' ) );
+	add_shortcode( 'coord_alta_grupos_global', array( $academica_public, 'coord_alta_grupos_global' ));
 
 }
 run_academica();
