@@ -36,7 +36,7 @@ if ($current_user->ID != 0 && $current_user->roles[0] == 'administrator') {
 
 <div class="evaluacion-componente-head">
 <div class="table-2">
-    <form class="search-form-2" id="lista_componente">       
+    <form class="search-form-2" id="asignacion-form">       
         <table class="table-1">     
             
             <thead>
@@ -50,7 +50,7 @@ if ($current_user->ID != 0 && $current_user->roles[0] == 'administrator') {
                 <tr>
                     <td>
                         <select id="trimestre" name="trimestre" disabled>
-                            <option value="23o">24 Invierno</option>
+                            <option value="24i">24 Invierno</option>
                         </select>
                     </td>
                     <td>
@@ -83,6 +83,7 @@ if ($current_user->ID != 0 && $current_user->roles[0] == 'administrator') {
                 <tr>
                     <th>Componente</th>
                     <th>Docente</th>
+                    <th>Coordinación</th>
                 </tr>
             </thead>
             <tbody>
@@ -90,21 +91,25 @@ if ($current_user->ID != 0 && $current_user->roles[0] == 'administrator') {
             <tr>
                 <td>Teoría</td>
                 <td><input type="text" name="teoria" placeholder="Número económico" style="width: 100%!important; padding: 2px!important;"></td>
+                <td><input type="radio" name ="coordinacion" value="teoria"></td>
             </tr>
 
             <tr>
-                <td>Teoría</td>
+                <td>Matemáticas</td>
                 <td><input type="text" name="matematicas" placeholder="Número económico" style="width: 100%!important; padding: 2px!important;"></td>
+                <td><input type="radio" name ="coordinacion" value="matematicas"></td>
             </tr>
 
             <tr>
                 <td>Taller</td>
                 <td><input type="text" name="taller" placeholder="Número económico" style="width: 100%!important; padding: 2px!important;"></td>
+                <td><input type="radio" name ="coordinacion" value="taller"></td>
             </tr>   
             
             <tr>
                 <td>Investigación</td>
                 <td><input type="text" name="investigacion" placeholder="Número económico" style="width: 100%!important; padding: 2px!important;"></td>
+                <td><input type="radio" name ="coordinacion" value="investigacion"></td>
             </tr> 
             </tbody>
         </table>
