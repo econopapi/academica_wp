@@ -36,7 +36,7 @@ if ($current_user->ID != 0 && $current_user->roles[0] == 'administrator') {
 
 <div class="evaluacion-componente-head">
 <div class="table-2">
-    <form class="search-form-2" id="asignacion-form">       
+    <form class="search-form-2" id="asignacion-form" enctype="multipart/form-data">       
         <table class="table-1">     
             
             <thead>
@@ -113,6 +113,29 @@ if ($current_user->ID != 0 && $current_user->roles[0] == 'administrator') {
             </tr> 
             </tbody>
         </table>
+
+        <table class="table-1">
+            <thead>
+                <tr>
+                    <th>
+                        Lista de alumnado
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="center-content">
+                        <label>El archivo CSV debe contener únicamente tres columnas: número de lista, matrícula y nombre</label>                
+                    </td>
+                </tr>
+                <tr>
+                    <td class="center-content">
+                        <input type="file" id="csv_file" name="csv_file" accept=".csv">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
 
         
         <input type="submit" value="Siguiente">

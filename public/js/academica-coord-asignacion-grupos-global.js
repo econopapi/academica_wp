@@ -84,4 +84,7 @@ asignacionForm.addEventListener('submit', function(event) {
         body: JSON.stringify(data)
     }).then(response => response.json())
       .then(data => console.log(data));
+
+    // Another code
+    
 });
