@@ -296,3 +296,30 @@ z-index: 3; /* Higher than overlay's z-index */
     font-size: 20px!important;
     text-align: center!important;
 }
+
+input[type="file"] {
+    font-family: Helvetica, sans-serif;
+    padding: 12px 20px;
+    margin: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+input[type="file"]::file-selector-button {
+    background-color: #0072CE;
+    color: white;
+    padding: 10px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
+
+.center-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
