@@ -125,12 +125,12 @@ if ($current_user->ID != 0 && $current_user->roles[0] == 'administrator') {
             <tbody>
                 <tr>
                     <td class="center-content">
-                        <label>El archivo CSV debe contener únicamente tres columnas: número de lista, matrícula y nombre</label>                
+                        <label>El archivo XLSX debe contener únicamente tres columnas: número de lista, matrícula y nombre</label>                
                     </td>
                 </tr>
                 <tr>
                     <td class="center-content">
-                        <input type="file" id="csv_file" name="csv_file" accept=".csv">
+                        <input type="file" id="excel_file" name="excel_file" accept=".xlsx">
                     </td>
                 </tr>
             </tbody>
@@ -142,4 +142,5 @@ if ($current_user->ID != 0 && $current_user->roles[0] == 'administrator') {
     </form>
 </div>
 
+<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
 <script src="<?php echo plugins_url('/js/academica-coord-asignacion-grupos-global.js', dirname(__FILE__)); ?>"></script>
