@@ -54,17 +54,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 coordinacion: coordinacion === 'teoria'
             },
             {
-                docente: parseInt(this.teoria.value),
+                docente: parseInt(this.matematicas.value),
                 componente: 'matematicas',
                 coordinacion: coordinacion === 'matematicas'
             },
             {
-                docente: parseInt(this.teoria.value),
+                docente: parseInt(this.taller.value),
                 componente: 'taller',
                 coordinacion: coordinacion === 'taller'
             },
             {
-                docente: parseInt(this.teoria.value),
+                docente: parseInt(this.investigacion.value),
                 componente: 'investigacion',
                 coordinacion: coordinacion === 'investigacion'
             },       
@@ -83,7 +83,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
             var result = [];
             workbook.SheetNames.forEach(sheetName => {
                 var rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-                if (rows.length) result = result.concat(rows);
+                if (rows.length) {
+                    rows = rows.map(row => {
+                        let keys = Object.keys(row);
+                        return {
+                            numero_lista: row['numero_lista'],
+                            matricula: row['matricula'],
+                            nombre: row['nombre_alumno'],
+                        }
+                    });
+                    result = result.concat(rows);
+                }
             });
     
             var data = {
@@ -95,19 +105,21 @@ document.addEventListener('DOMContentLoaded', (event) => {
             };
     
             console.log(JSON.stringify(data, 2, 2));
+
+            fetch('https://conversely-pretty-shad.ngrok-free.app/coordinacion/global/grupos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then(response => response.json())
+              .then(data => console.log(data));
         }
         reader.readAsArrayBuffer(excelFile.files[0]);
 
 
     
-        // fetch('https://conversely-pretty-shad.ngrok-free.app/coordinacion/global/grupos', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify(data)
-        // }).then(response => response.json())
-        //   .then(data => console.log(data));
+
     
         // // Another code
         
