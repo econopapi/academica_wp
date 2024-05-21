@@ -155,7 +155,7 @@ if ($current_user->ID != 0) {
                 </thead>
                 <tbody>
                 
-                <?php for ($i = 0; $i < count($asignacion)+1; $i++) { ?>
+                <?php for ($i = 0; $i < count($asignacion['asignacion']); $i++) { ?>
                     <?php if (empty($asignacion['asignacion'][$i]['grupo'])) {
                         continue;
                     } ?>

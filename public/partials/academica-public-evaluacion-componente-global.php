@@ -24,6 +24,7 @@ if ($current_user->ID != 0) {
     // El usuario está logueado
     $user_id = $current_user->ID;
     $user_login = $current_user->user_login;
+    //$user_email = 'rchavez@correo.xoc.uam.mx';
     $user_email = $current_user->user_email;
     $user_roles = $current_user->roles;
     $user_role = !empty($user_roles) ? $user_roles[0] : 'Sin Rol';
