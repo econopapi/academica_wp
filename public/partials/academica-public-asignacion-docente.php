@@ -23,7 +23,7 @@ $current_user = wp_get_current_user();
 if ($current_user->ID != 0) {
     // El usuario está logueado
     $user_id = $current_user->ID;
-    //$user_login = $current_user->user_login;
+    $user_login = $current_user->user_login;
     $user_email = $current_user->user_email;
     //$user_email = 'macr@azc.uam.mx';
     $user_roles = $current_user->roles;
