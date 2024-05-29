@@ -98,6 +98,69 @@ class Academica_Admin {
 
 		wp_enqueue_script( $this->academica, plugin_dir_url( __FILE__ ) . 'js/academica-admin.js', array( 'jquery' ), $this->version, false );
 
+
+
+	}
+
+	public function admin_menu() {
+		add_menu_page('Académica',
+						'Académica UAM',
+						'manage_options',
+						'academica',
+						array($this, 'academica_admin_page'),
+						'dashicons-welcome-learn-more',
+						1);
+
+		add_submenu_page('academica',
+						'Academica UAM - Administración de Trimestre',
+						'Administración de Trimestre',
+						'manage_options',
+						'academica_trimestre',
+						array($this, 'academica_admin_trimestre_page'));
+
+		add_submenu_page('academica',
+						'Academica UAM - Alta de Grupos (Evaluación Global)',
+						'Alta de Grupos (Evaluación Global)',
+						'manage_options',
+						'academica_grupos_global',
+						array($this, 'academica_admin_alta_grupos_global_page'));
+
+		add_submenu_page('academica',
+						'Academica UAM - Alta de Grupos (Evaluación de Recuperación)',
+						'Alta de Grupos (Evaluación de Recuperación)',
+						'manage_options',
+						'academica_grupos_recuperacion',
+						array($this, 'academica_admin_alta_grupos_recuperacion_page'));
+
+		add_submenu_page('academica',
+						'Academica UAM - Administración de Docentes',
+						'Administración de Docentes',
+						'manage_options',
+						'academica_docentes',
+						array($this, 'academica_admin_docentes_page'));
+
+
+		//add_submenu_page('academica', 'Academica Settings', 'Settings', 'manage_options', 'academica_settings', array($this, 'academica_settings_page'));
+	}
+
+	public function academica_admin_page() {
+		include 'partials/academica-admin-display.php';
+	}
+
+	public function academica_admin_docentes_page() {
+		include 'partials/academica-admin-docentes.php';
+	}
+
+	public function academica_admin_trimestre_page() {
+		include 'partials/academica-admin-trimestre.php';
+	}
+
+	public function academica_admin_alta_grupos_global_page() {
+		include 'partials/academica-admin-alta-grupos-global.php';
+	}
+
+	public function academica_admin_alta_grupos_recuperacion_page() {
+		include 'partials/academica-admin-alta-grupos-recuperacion.php';
 	}
 
 }

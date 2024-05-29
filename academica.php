@@ -92,5 +92,8 @@ function run_academica() {
 	add_shortcode( 'evaluacion_componente_recuperacion', array( $academica_public, 'evaluacion_componente_recuperacion' ) );
 	add_shortcode( 'coord_alta_grupos_global', array( $academica_public, 'coord_alta_grupos_global' ));
 
+
+	$academica_admin = new Academica_Admin('academica', '0.1');
+	add_action('admin_menu', array($academica_admin, 'admin_menu'));
 }
 run_academica();
