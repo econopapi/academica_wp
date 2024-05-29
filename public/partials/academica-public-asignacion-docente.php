@@ -25,7 +25,7 @@ if ($current_user->ID != 0) {
     $user_id = $current_user->ID;
     $user_login = $current_user->user_login;
     $user_email = $current_user->user_email;
-    //$user_email = 'rchavez@correo.xoc.uam.mx';
+    //$user_email = 'macr@azc.uam.mx';
     $user_roles = $current_user->roles;
     $user_role = !empty($user_roles) ? $user_roles[0] : 'Sin Rol';
 
@@ -61,7 +61,7 @@ if ($current_user->ID != 0) {
 <script src="<?php echo plugins_url('/js/academica-coord-asignacion-docente.js', dirname(__FILE__)); ?>"></script>
 
 <!-- Render para usuarios UAM. Se valida con sistema académico si el correo institucional del usuario está en la lista docente activa -->
-<?php } else if (strpos($user_email, 'xoc.uam.mx') !== false) { ?>
+<?php } else if (strpos($user_email, 'xoc.uam.mx') !== false || strpos($user_email, 'azc.uam.mx') !== false) { ?>
 
     <!-- get trimestre actual y detalles de docente -->
     <?php
