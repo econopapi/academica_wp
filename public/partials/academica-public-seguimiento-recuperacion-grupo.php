@@ -23,7 +23,7 @@ if ($current_user->ID != 0) {
     $user_id = $current_user->ID;
     $user_login = $current_user->user_login;
     $user_email = $current_user->user_email;
-    //$user_email = 'rjimenezb@correo.xoc.uam.mx';
+    //$user_email = 'rchavez@correo.xoc.uam.mx';
     $user_roles = $current_user->roles;
     $user_role = !empty($user_roles) ? $user_roles[0] : 'Sin Rol';
     //$user_role = 'editor';
@@ -47,13 +47,22 @@ if ($current_user->ID != 0) {
 <form id="seguimiento_global_grupo_form" class="search-form-1">
     <label for="trimestre">Trimestre:</label>
     <select id="trimestre" name="trimestre" disabled>
-        <option value="">Trimestre</option>
-        <option value="23o">23 Otoño</option>
+        <option value="24i">24 Invierno</option>
     </select>
 
     <label for="modulo">Módulo:</label>
     <select id="modulo" name="modulo">
         <option value="">Módulo</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+
     </select>
 
     <label for="grupo">Grupo:</label>
