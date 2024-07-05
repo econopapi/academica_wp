@@ -1,5 +1,6 @@
 var selectTrimestre = document.getElementById('trimestre');
 var selectGrupo = document.getElementById('grupo');
+var selectModulo = document.getElementById('modulo');
 
 // Deshabilita el select "grupo" al cargar la página
 selectGrupo.disabled = true;
@@ -27,6 +28,28 @@ selectTrimestre.addEventListener('change', function() {
         });
 });
 
+selectModulo.addEventListener('change', function() {
+
+    var moduloSeleccionado = this.value;
+
+    fetch('https://academica.dlimon.net/historial_academico/grupos_por_trimestre?trimestre=' + selectTrimestre.value + '&modulo=' + moduloSeleccionado + '&recuperacion=true')
+        .then(response => response.json())
+        .then(data => {
+            // Habilitar selector de grupo y llenar opciones
+            selectGrupo.disabled = false;
+            var seen = {};
+            var options = data['payload'].reduce(function(acc, item) {
+                var grupo = item.grupo.grupo; // Ajuste aquí para acceder correctamente al valor de grupo
+                if (!seen[grupo]) {
+                    acc.push('<option value="'+ grupo +'">' + grupo.toUpperCase() + '</option>');
+                    seen[grupo] = true;
+                }
+                return acc;
+            }, []);
+            selectGrupo.innerHTML = '<option value="">Grupo</option>' + options.join('');
+        });
+});
+
 
 document.getElementById('grupo').addEventListener('change', function(event) {
     event.preventDefault();
@@ -34,7 +57,7 @@ document.getElementById('grupo').addEventListener('change', function(event) {
     var trimestre = document.getElementById('trimestre').value;
     var grupo = document.getElementById('grupo').value;
 
-    fetch(`https://academica.dlimon.net/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
+    fetch(`https://academica.dlimon.net/historial_academico/seguimiento_recuperacion?trimestre=${trimestre}&grupo=${grupo}&modulo=${selectModulo.value}&detalle=true`)
         .then(response => response.json())
         .then(data => {
             // Hacer algo con los datos devueltos
@@ -45,7 +68,7 @@ document.getElementById('grupo').addEventListener('change', function(event) {
 
             // Crear tabla de calificaciones
             var table = createTable(data.payload.calificaciones_alumnos);
-            document.getElementById('seguimiento_global_grupo_table').appendChild(table);
+            document.getElementById('seguimiento_recuperacion_grupo_table').appendChild(table);
 
             // Crear tabla de información general
             var infoTable = createInfoTable(data.payload.informacion_general);
@@ -179,7 +202,7 @@ function createDocentesTable(docentes) {
 
 
 function clearTables() {
-    document.getElementById('seguimiento_global_grupo_table').innerHTML = '';
+    document.getElementById('seguimiento_recuperacion_grupo_table').innerHTML = '';
     document.getElementById('asignacion_docente').innerHTML = '';
     document.getElementById('info_general').innerHTML = '';
 }

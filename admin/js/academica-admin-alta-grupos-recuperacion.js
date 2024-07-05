@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     
             console.log(JSON.stringify(data, 2, 2));
 
-            fetch(`https://academica.dlimon.net/coordinacion/recuperacion/grupos`, {
+            fetch(`https://conversely-pretty-shad.ngrok-free.app/coordinacion/recuperacion/grupos`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

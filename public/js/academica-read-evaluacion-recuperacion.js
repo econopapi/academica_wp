@@ -436,7 +436,7 @@ function loadDataFromUrlParams() {
 
                     if (data.code === 200) {
 
-                        fetch(`https://academica.dlimon.net/evaluacion_academica/verificar_firma_acta?recuperacion=true&id_seguimiento=${id_seguimiento_recuperacion}`)
+                        fetch(`https://academica.dlimon.net/evaluacion_academica/verificar_firma_seguimiento?recuperacion=true&id_seguimiento=${id_seguimiento_recuperacion}`)
                         .then(response => response.json())
                         .then(data => {
                             console.log(data);
