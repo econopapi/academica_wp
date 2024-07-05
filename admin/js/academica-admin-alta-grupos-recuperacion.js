@@ -133,9 +133,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             };
     
             console.log(JSON.stringify(data, 2, 2));
-            debugger;
 
-            fetch('https://academica.dlimon.net/coordinacion/recuperacion/grupos', {
+            fetch(`https://academica.dlimon.net/coordinacion/recuperacion/grupos`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
