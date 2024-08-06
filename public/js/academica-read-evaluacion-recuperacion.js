@@ -442,7 +442,7 @@ function loadDataFromUrlParams() {
                             console.log(data);
                             if (data.code === 200) {
                             // evaluacion completa y firmada
-                                evaluacionFirmada(id_seguimiento_recuperacion, docente_id);
+                                evaluacionFirmada (id_seguimiento_recuperacion, docente_id);
                             } else if (data.code === 422) {
                                 console.log(trimestre, grupo);
                                 evaluacionPendienteDeFirma(id_seguimiento_recuperacion, docente_id, trimestre, grupo);
