@@ -242,6 +242,20 @@ class Academica {
 		return $items;
 	}
 
+	public function academica_topbar_btn($wp_admin_bar) {
+		$args = array(
+			'id' => 'academica-topbar-btn',
+			'title' => 'UAM - Sistema Académico',
+			'href' => admin_url('admin.php?page=academica'),
+			'meta' => array(
+				'class' => 'academica-topbar-btn',
+				'target' => '_blank',
+				'title' => 'Administar Sistema Académico',
+			));
+
+		$wp_admin_bar->add_node($args);
+	}
+
 	public function after_logout_cookies() {
 		// Obtener todos los cookies del sitio
 		$cookies = $_COOKIE;
