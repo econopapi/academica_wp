@@ -153,6 +153,67 @@ input[type="number"]::-webkit-outer-spin-button {
     margin: 0 auto;
 }
 
+
+/* Popup container - can be anything you want */
+.popup {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Popup Content */
+.popup-content {
+    background-color: #fefefe;
+    margin: 5% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%; /* Could be more or less, depending on screen size */
+}
+
+/* Close button */
+.closeBtn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.closeBtn:hover,
+.closeBtn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    margin: 20px 0;
+}
+
+.pagination a, button {
+    text-decoration: none;
+    color: #007bff;
+    padding: 8px 16px;
+    margin: 0 4px;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s; 
+}
+
+.pagination a:hover, button:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
 .table-1 th,
 .table-1 td{
     font-size: 20px;
@@ -165,6 +226,11 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .table-1 caption {
     font-weight: bold;
+}
+
+.table-2 {
+    margin: 0 auto;
+    width: 90%;
 }
 
 
@@ -327,4 +393,44 @@ input[type="file"]::file-selector-button {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+}
+
+
+#docenteForm {
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    
+}
+
+#docenteForm label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+#docenteForm input[type="text"],
+#docenteForm input[type="email"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+#docenteForm button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#docenteForm button:hover {
+    background-color: #0056b3;
 }

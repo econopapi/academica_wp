@@ -13,10 +13,45 @@
  */
 
 echo "<h1>Académica UAM - Administración de Docentes</h1>";
+?>
 
+<div class="pagination">
+    <button id="openPopupBtn">Agregar docente</button>
+</div>
+
+<!-- Popup -->
+<div id="popupForm" class="popup">
+    <div class="popup-content">
+        <span class="closeBtn">&times;</span>
+        <h2>Alta docente</h2>
+        <form id="docenteForm">
+            <label for="numeroEconomico">Número Económico:</label>
+            <input type="text" id="numeroEconomico" name="numeroEconomico" required><br>
+            
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required><br>
+            
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required><br>
+            
+            <label for="telefono">Teléfono:</label>
+            <input type="text" id="telefono" name="telefono" required><br>
+            
+            <label for="extension">Extensión:</label>
+            <input type="text" id="extension" name="extension" required><br>
+            
+            <label for="cubiculo">Cubículo:</label>
+            <input type="text" id="cubiculo" name="cubiculo" required><br>
+            
+            <button type="submit">Alta</button>
+        </form>
+    </div>
+</div>
+
+<?php
 $api_page = isset($_GET['api_page']) ? $_GET['api_page'] : 1;
-echo "<p>Página actual: $api_page</p>";
-$limit = isset($_GET['limit']) ? $_GET['limit'] : 10;
+$limit = isset($_GET['limit']) ? $_GET['limit'] : 15;
+
 
 $endpoint = "https://academica.dlimon.net/historial_academico/docentes?page=$api_page&limit=$limit";
 
@@ -30,12 +65,12 @@ if (empty($data)) {
 } else {
     $docentes = json_decode($data);
     if ($docentes->status == 'success' && !empty($docentes->payload)) {
-        echo "<table border='1'>";
+        echo "<table class='table-2'>";
         echo "<tr>
-                <th>ID</th>
+                
                 <th>Número Económico</th>
                 <th>Nombre</th>
-                <th>Estatus</th>
+                
                 <th>Email</th>
                 <th>Teléfono</th>
                 <th>Extensión</th>
@@ -44,10 +79,10 @@ if (empty($data)) {
 
         foreach ($docentes->payload as $docente) {
             echo "<tr>
-                    <td>{$docente->id}</td>
+                    
                     <td>{$docente->numero_economico}</td>
                     <td>{$docente->nombre}</td>
-                    <td>{$docente->estatus}</td>
+                    
                     <td>{$docente->email}</td>
                     <td>{$docente->telefono}</td>
                     <td>{$docente->extension}</td>
@@ -68,8 +103,12 @@ if (empty($data)) {
         echo "</div>";
     } else {
         echo "<p>No se encontraron datos</p>";
+        echo "<a href='?page=academica_docentes'>Volver</a> ";
     }
 }
+?>
+
+<script src="<?php echo plugins_url('/js/academica-admin-alta-docentes.js', dirname(__FILE__)); ?>"></script>
 
 
 
