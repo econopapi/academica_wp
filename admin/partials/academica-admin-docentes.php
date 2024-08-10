@@ -25,11 +25,12 @@ echo "<h1>Académica UAM - Administración de Docentes</h1>";
         <span class="closeBtn">&times;</span>
         <h2>Alta docente</h2>
         <form id="docenteForm">
-            <label for="numeroEconomico">Número Económico:</label>
-            <input type="text" id="numeroEconomico" name="numeroEconomico" required><br>
-            
+
             <label for="nombre">Nombre:</label>
             <input type="text" id="nombre" name="nombre" required><br>
+            <label for="numeroEconomico">Número Económico:</label>
+            <input type="text" id="numeroEconomico" name="numeroEconomico" required><br>
+        
             
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required><br>
@@ -67,9 +68,9 @@ if (empty($data)) {
     if ($docentes->status == 'success' && !empty($docentes->payload)) {
         echo "<table class='table-2'>";
         echo "<tr>
-                
+                <th>Nombre</th>              
                 <th>Número Económico</th>
-                <th>Nombre</th>
+
                 
                 <th>Email</th>
                 <th>Teléfono</th>
@@ -79,9 +80,9 @@ if (empty($data)) {
 
         foreach ($docentes->payload as $docente) {
             echo "<tr>
-                    
+                    <td>{$docente->nombre}</td>                  
                     <td>{$docente->numero_economico}</td>
-                    <td>{$docente->nombre}</td>
+
                     
                     <td>{$docente->email}</td>
                     <td>{$docente->telefono}</td>
