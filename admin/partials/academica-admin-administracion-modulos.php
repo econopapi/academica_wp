@@ -12,7 +12,8 @@ https://academica.dlimon.net/modulos
 */
 
 // Fetch data from /modulos endpoint
-$modulos_json = file_get_contents('https://academica.dlimon.net/modulos');
+$api_url = get_option('academica_api_url');
+$modulos_json = file_get_contents($api_url . '/modulos');
 $modulos_data = json_decode($modulos_json, true);
 
 // Check if the data was fetched successfully
@@ -25,7 +26,7 @@ if ($modulos_data['status'] == 200) {
 
 ?>
 
-<!-- Popup -->
+<!-- Popup Mapeo Componentes-->
 <div id="popupForm" class="popup" style="display:none;">
     <div class="popup-content">
         <span class="closeBtn">&times;</span>
@@ -64,10 +65,38 @@ if ($modulos_data['status'] == 200) {
     </div>
 </div>
 
+
+<!-- Popup Registrar Módulo -->
+<div id="popupRegistrarModulo" class="popup" style="display:none;">
+    <div class="popup-content">
+        <span class="closeBtn">&times;</span>
+        <h2>Registrar Módulo</h2>
+        <form id="registrarModuloForm">
+            <label for="claveUea">Clave UEA:</label>
+            <input type="text" id="claveUea" name="claveUea" required>
+            <label for="nombreUea">Nombre UEA:</label>
+            <input type="text" id="nombreUea" name="nombreUea" required>
+            <label for="modulo">Módulo:</label>
+            <input type="text" id="modulo" name="modulo" required>
+            <button type="button" id="addModuloBtn">Agregar Módulo</button>
+        </form>
+        <h3>Eliminar Módulo</h3>
+        <div id="modulosList">
+            <!-- Lista de módulos se agregará aquí -->
+        </div>
+    </div>
+</div>
+
 <h2>Lista de Módulos</h2>
-<button onclick="location.href='registrar_modulo.php'">Registrar Módulo</button>
-<button onclick="location.href='registrar_componente.php'">Registrar Componente</button>
+
+<div style="text-align: center;">
+    <button id="registrarModuloBtn">Registrar Módulo</button>
+    <button id="registrarComponenteBtn">Registrar Componente</button>
+</div>
+
 <table class="table-2">
+
+
     <thead>
         <tr>
             <th>Clave UEA</th>

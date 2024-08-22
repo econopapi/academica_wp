@@ -1,3 +1,10 @@
+/* API Config can be obtained from:
+
+academicaApiConfig.apiUrl,
+academicaApiConfig.apiKey
+*/
+
+
 document.addEventListener('DOMContentLoaded', function() {
     // Get the popup
     var popup = document.getElementById("popupForm");
@@ -13,21 +20,32 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Close the popup when the user clicks anywhere outside of the popup
-    window.onclick = function(event) {
-        if (event.target == popup) {
-            popup.style.display = "none";
-        }
-    }
+    // window.onclick = function(event) {
+    //     if (event.target == popup) {
+    //         popup.style.display = "none";
+    //     }
+    // }
 
     // Function to fetch and display components
     async function fetchAndDisplayComponents(moduloId) {
         try {
             // Fetch all components
-            let response = await fetch('https://academica.dlimon.net/componentes');
-            let allComponents = await response.json();
+            
+            let response_componentes = await fetch(`${academicaApiConfig.apiUrl}/componentes/`, {
+                headers: {
+                    'ngrok-skip-browser-warning': 'true'
+                }
+            });
+            let allComponents = await response_componentes.json();
+
+            
 
             // Fetch module mapping
-            response = await fetch(`https://academica.dlimon.net/modulos/${moduloId}`);
+            let response = await fetch(`${academicaApiConfig.apiUrl}/modulos/${moduloId}`, {
+                headers: {
+                    'ngrok-skip-browser-warning': 'true'
+                }
+            });
             let moduleMapping = await response.json();
 
             // Display components in the popup
@@ -100,8 +118,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners to "Componentes" buttons
     document.querySelectorAll('.componentesBtn').forEach(btn => {
         btn.onclick = function() {
-            let moduloId = this.getAttribute('data-modulo-id');
-            fetchAndDisplayComponents(moduloId);
+            currentModuloId = this.getAttribute('data-modulo-id');
+            fetchAndDisplayComponents(currentModuloId);
         }
     });
 
@@ -120,12 +138,14 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             let payload = {
-                clave_uea: document.querySelector('.componentesBtn[data-modulo-id]').getAttribute('data-modulo-id'),
+                clave_uea: currentModuloId,
                 mapeo: componentes
             };
 
+            console.log('Payload:', payload);
+
             try {
-                let response = await fetch('https://academica.dlimon.net/modulos', {
+                let response = await fetch(`${academicaApiConfig.apiUrl}/modulos/`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -147,4 +167,102 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Element "componentesListBody" not found');
         }
     }
+
+    /* Begin Registro/Edicion/Eliminacion Compoentes */
+    const registrarModuloBtn = document.getElementById('registrarModuloBtn');
+    const popupRegistrarModulo = document.getElementById('popupRegistrarModulo');
+    const closeBtns = document.querySelectorAll('.closeBtn');
+    const modulosList = document.getElementById('modulosList');
+
+    registrarModuloBtn.addEventListener('click', function() {
+        popupRegistrarModulo.style.display = 'block';
+        fetchModulos();
+    });
+
+    closeBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            popupRegistrarModulo.style.display = 'none';
+        });
+    });
+
+    document.getElementById('addModuloBtn').addEventListener('click', function() {
+        const claveUea = document.getElementById('claveUea').value;
+        const nombreUea = document.getElementById('nombreUea').value;
+        const modulo = document.getElementById('modulo').value;
+
+        fetch(`${academicaApiConfig.apiUrl}/modulos/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                clave_uea: claveUea,
+                nombre_uea: nombreUea,
+                modulo: modulo
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                alert('Módulo agregado exitosamente');
+                fetchModulos();
+            } else {
+                alert('Error al agregar el módulo');
+            }
+        });
+    });
+
+    function fetchModulos() {
+        fetch(`${academicaApiConfig.apiUrl}/modulos/`, {
+            headers: {
+                'ngrok-skip-browser-warning': 'true'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200 && Array.isArray(data.data)) {
+                modulosList.innerHTML = '';
+                data.data.forEach(modulo => {
+                    const moduloItem = document.createElement('div');
+                    moduloItem.innerHTML = `
+                        <span>${modulo.nombre_uea} (Clave: ${modulo.clave_uea})</span>
+                        <button type="button" class="deleteModuloBtn" data-clave="${modulo.clave_uea}">Eliminar</button>
+                    `;
+                    modulosList.appendChild(moduloItem);
+                });
+
+                document.querySelectorAll('.deleteModuloBtn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const claveUea = this.getAttribute('data-clave');
+                        deleteModulo(claveUea);
+                    });
+                });
+            } else {
+                console.error('La respuesta de la API no es válida:', data);
+                alert('Error al obtener los módulos');
+            }
+        })
+        .catch(error => {
+            console.error('Error al obtener los módulos:', error);
+            alert('Error al obtener los módulos');
+        });
+    }
+
+    function deleteModulo(claveUea) {
+        fetch(`${academicaApiConfig.apiUrl}/modulos/${claveUea}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                alert('Módulo eliminado exitosamente');
+                fetchModulos();
+            } else {
+                alert('Error al eliminar el módulo');
+            }
+        });
+    }
+    /*End Registro/Edicion/Eliminacion Componentes*/
 });
+
+//
