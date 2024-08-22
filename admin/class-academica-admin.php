@@ -98,7 +98,13 @@ class Academica_Admin {
 
 		wp_enqueue_script( $this->academica, plugin_dir_url( __FILE__ ) . 'js/academica-admin.js', array( 'jquery' ), $this->version, false );
 
+		$api_url = get_option('academica_api_url', '');
+		$api_key = get_option('academica_api_key', '');
 
+		wp_localize_script($this->academica, 'academicaApiConfig', array(
+			'apiUrl' => $api_url,
+			'apiKey' => $api_key,
+		));
 
 	}
 
@@ -147,6 +153,14 @@ class Academica_Admin {
 						array($this, 'academica_admin_adminsitracion_modulos_page'));
 
 
+		add_submenu_page('academica',
+						'Academica UAM - Configuración de API',
+						'Configuración de API',
+						'manage_options',
+						'academica_api_config',
+						array($this, 'academica_admin_api_config_page'));
+
+
 		//add_submenu_page('academica', 'Academica Settings', 'Settings', 'manage_options', 'academica_settings', array($this, 'academica_settings_page'));
 	}
 
@@ -172,6 +186,10 @@ class Academica_Admin {
 
 	public function academica_admin_adminsitracion_modulos_page() {
 		include 'partials/academica-admin-administracion-modulos.php';
+	}
+
+	public function academica_admin_api_config_page() {
+		include 'partials/academica-admin-api-config.php';
 	}
 
 }

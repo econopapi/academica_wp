@@ -39,7 +39,7 @@ document.getElementById("docenteForm").addEventListener("submit", function(event
         cubiculo: document.getElementById("cubiculo").value
     };
 
-    fetch('https://academica.dlimon.net/historial_academico/docentes', {
+    fetch(`${academicaApiConfig.apiUrl}/historial_academico/docentes`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
