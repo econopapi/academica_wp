@@ -139,6 +139,13 @@ class Academica_Admin {
 						'academica_docentes',
 						array($this, 'academica_admin_docentes_page'));
 
+		add_submenu_page('academica',
+						'Academica UAM - Administración de Módulos',
+						'Administración de Módulos',
+						'manage_options',
+						'academica_modulos',
+						array($this, 'academica_admin_adminsitracion_modulos_page'));
+
 
 		//add_submenu_page('academica', 'Academica Settings', 'Settings', 'manage_options', 'academica_settings', array($this, 'academica_settings_page'));
 	}
@@ -161,6 +168,10 @@ class Academica_Admin {
 
 	public function academica_admin_alta_grupos_recuperacion_page() {
 		include 'partials/academica-admin-alta-grupos-recuperacion.php';
+	}
+
+	public function academica_admin_adminsitracion_modulos_page() {
+		include 'partials/academica-admin-administracion-modulos.php';
 	}
 
 }
