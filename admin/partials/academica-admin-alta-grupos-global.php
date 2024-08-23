@@ -31,13 +31,13 @@ echo "<h1>Académica UAM - Alta de Grupos (Evaluación Global)</h1>";
                 <tr>
                     <td>
                         <select id="trimestre" name="trimestre" disabled>
-                            <option value="24i">24 Invierno</option>
+                            <option value="">Trimestre</option>
                         </select>
                     </td>
                     <td>
                         <select id="modulo" name="modulo">}
                             <option value="">Módulo</option>
-                            <option value="4">4</option>
+                            <!-- <option value="4">4</option>
                             <option value="5">5</option>
                             <option value="6">6</option>
                             <option value="7">7</option>
@@ -45,7 +45,7 @@ echo "<h1>Académica UAM - Alta de Grupos (Evaluación Global)</h1>";
                             <option value="9">9</option>
                             <option value="10">10</option>
                             <option value="11">11</option>
-                            <option value="12">12</option>
+                            <option value="12">12</option> -->
                         </select>
                     </td>
                     <td>
@@ -67,9 +67,9 @@ echo "<h1>Académica UAM - Alta de Grupos (Evaluación Global)</h1>";
                     <th>Coordinación</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="componentes-tbody">
 
-            <tr>
+            <!-- <tr>
                 <td>Teoría</td>
                 <td><input type="text" name="teoria" placeholder="Número económico" style="width: 100%!important; padding: 2px!important;"></td>
                 <td><input type="radio" name ="coordinacion" value="teoria"></td>
@@ -91,7 +91,7 @@ echo "<h1>Académica UAM - Alta de Grupos (Evaluación Global)</h1>";
                 <td>Investigación</td>
                 <td><input type="text" name="investigacion" placeholder="Número económico" style="width: 100%!important; padding: 2px!important;"></td>
                 <td><input type="radio" name ="coordinacion" value="investigacion"></td>
-            </tr> 
+            </tr>  -->
             </tbody>
         </table>
 
