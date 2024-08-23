@@ -26,44 +26,59 @@ if ($modulos_data['status'] == 200) {
 
 ?>
 
+<!-- Pantalla de carga -->
+<div id="loading-screen" style="display:none">
+    <div class="loading-content">
+        <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Cargando" class="loading-image">
+        <div class="loader"></div>
+    </div>
+</div>
+
 <!-- Popup Mapeo Componentes-->
 <div id="popupForm" class="popup" style="display:none;">
     <div class="popup-content">
         <span class="closeBtn">&times;</span>
         <h2>Componentes del Módulo</h2>
         <form id="componentesForm">
-            <div id="componentesList">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nombre del Componente</th>
-                            <th>Ponderación</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody id="componentesListBody">
-                        <!-- Componentes agregados se agregarán aquí -->
-                    </tbody>
-                </table>
-            </div>
-            <h3>Agregar Componentes</h3>
-            <div id="catalogoComponentes">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nombre del Componente</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody id="catalogoComponentesBody">
-                        <!-- Componentes disponibles se agregarán aquí -->
-                    </tbody>
-                </table>
+            <div id="componentesContainer" style="display: flex; justify-content: space-between;">
+                <div id="componentesList" style="flex: 1; margin-right: 10px;border: 1px solid #ccc; border-radius: 10px; padding: 5px;">
+                    <table>
+                        <h3>Mapeo y ponderación de componentes</h3>
+                        <p>Composición y ponderaciones actuales del módulo</p>
+                        <thead>
+                            <tr>
+                                <th>Componente</th>
+                                <th>Ponderación (0/100)</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="componentesListBody">
+                            <!-- Componentes agregados se agregarán aquí -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="catalogoComponentes" style="flex: 1; margin-left: 10px;border: 1px solid #ccc; border-radius: 10px; padding: 5px;">
+                    <h3>Catálogo de Componentes</h3>
+                    <p>Componentes disponibles para mapear en el módulo. Evite repetir componentes en el mismo módulo.</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Componente</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="catalogoComponentesBody">
+                            <!-- Componentes disponibles se agregarán aquí -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <button type="button" id="saveChangesBtn">Guardar Cambios</button>
         </form>
     </div>
 </div>
+
+
 
 
 <!-- Popup Registrar Módulo -->
@@ -80,10 +95,30 @@ if ($modulos_data['status'] == 200) {
             <input type="text" id="modulo" name="modulo" required>
             <button type="button" id="addModuloBtn">Agregar Módulo</button>
         </form>
-        <h3>Eliminar Módulo</h3>
+        <h2>Módulos registrados</h3>
         <div id="modulosList">
             <!-- Lista de módulos se agregará aquí -->
         </div>
+    </div>
+</div>
+
+<!-- Popup Registrar Componente -->
+<div id="popupRegistrarComponente" class="popup" style="display:none;">
+    <div class="popup-content">
+        <span class="closeBtn">&times;</span>
+        <h2>Registrar Componente</h2>
+        <form id="registrarComponenteForm">
+            <label for="nombreComponente">Clave componente:</label>
+            <input type="text" id="nombreComponente" name="nombreComponente" placeholder="metodos-cuantitativos" required>
+            <label for="nombreExtensoComponente">Nombre extenso</label>
+            <input type="text" id="nombreExtensoComponente" name="nombreExtensoComponente" placeholder="Métodos cuantitativos" required>
+            <button type="submit" id="addComponenteBtn">Registrar</button>
+        </form>
+        <h3>Componentes Registrados</h3>
+        <div id="componentesList2">
+            <!-- Lista de componentes se agregará aquí -->
+        </div>
+
     </div>
 </div>
 

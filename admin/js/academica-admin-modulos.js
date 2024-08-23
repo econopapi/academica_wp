@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to fetch and display components
     async function fetchAndDisplayComponents(moduloId) {
+        // Mostrar la pantalla de carga
+        document.getElementById('loading-screen').style.display = 'block'; 
         try {
             // Fetch all components
             
@@ -65,6 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <td><button type="button" class="removeComponentBtn">Eliminar</button></td>
                         </tr>
                     `;
+
                 });
 
                 // Display available components in a table
@@ -107,6 +110,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Show the popup
                 popup.style.display = "block";
+                // Ocultar pantalla de carga
+                document.getElementById('loading-screen').style.display = 'none';
             } else {
                 console.error('Element "componentesListBody" or "catalogoComponentesBody" not found');
             }
@@ -168,6 +173,131 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    /* Begin Componentes */
+    
+    const registrarComponenteForm = document.getElementById('registrarComponenteForm');
+    const componentesList = document.getElementById('componentesList2');
+    const popupRegistrarComponente = document.getElementById('popupRegistrarComponente');
+    
+    // Mostrar el popup de Registrar Componente
+    document.getElementById('registrarComponenteBtn').addEventListener('click', function() {
+        popupRegistrarComponente.style.display = 'block';
+        fetchComponentes();
+    });
+
+    // Cerrar el popup de Registrar Componente
+    document.querySelector('#popupRegistrarComponente .closeBtn').addEventListener('click', function() {
+        popupRegistrarComponente.style.display = 'none';
+    });
+
+    // Manejar el envío del formulario de Registrar Componente
+    registrarComponenteForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const nombreComponente = document.getElementById('nombreComponente').value;
+        const nombreExtensoComponente = document.getElementById('nombreExtensoComponente').value;
+
+        fetch(`${academicaApiConfig.apiUrl}/componentes/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                nombre_componente: nombreComponente,
+                nombre_extenso: nombreExtensoComponente
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 201) {
+                alert('Componente registrado correctamente');
+                registrarComponenteForm.reset();
+                fetchComponentes();
+            } else {
+                alert('Error al registrar el componente');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+    // Función para cargar los componentes registrados
+    function fetchComponentes() {
+        console.log('fetchComponentes iniciado');
+        // Mostrar la pantalla de carga
+        document.getElementById('loading-screen').style.display = 'block';       
+        fetch(`${academicaApiConfig.apiUrl}/componentes/`, {
+            headers: {
+                'ngrok-skip-browser-warning': 'true'
+            }
+        })
+        .then(response => {
+            console.log('Respuesta recibida:', response);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Datos recibidos:', data);
+            if (data.status === 200 && Array.isArray(data.data)) {
+                //const componentesList = document.getElementById('componentesList'); // Asegúrate de que este ID sea correcto
+                if (componentesList) {
+                    console.log('componentesList encontrado');
+                    console.log(componentesList);
+                }
+        
+                componentesList.innerHTML = '';
+                
+                data.data.forEach(componente => {
+                    const componenteDiv = document.createElement('div');
+                
+                    componenteDiv.innerHTML = `
+                        <div class="componente-item">
+                        <span class="componente-text">${componente.nombre_componente} - ${componente.nombre_extenso}</span>
+                        <button class="deleteBtn" data-id="${componente.id}">Eliminar</button>
+                        </div>
+                    `;
+                    componentesList.appendChild(componenteDiv);
+                    console.log(`Componente añadido: ${componente.nombre_componente} - ${componente.nombre_extenso}`);
+                });
+                // Ocultar la pantalla de carga
+                document.getElementById('loading-screen').style.display = 'none'; 
+                console.log(componentesList);
+    
+                document.querySelectorAll('.deleteBtn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        deleteComponente(id);
+                    });
+                });
+            } else {
+                console.error('La respuesta de la API no es válida:', data);
+                alert('Error al obtener los componentes');
+                location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Error en la solicitud fetch:', error);
+            alert('Error al obtener los componentes');
+            location.reload();
+        });
+    }
+
+    // Función para eliminar un componente
+    function deleteComponente(id) {
+        fetch(`${academicaApiConfig.apiUrl}/componentes/${id}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                alert('Componente eliminado correctamente');
+                fetchComponentes();
+            } else {
+                alert('Error al eliminar el componente');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    /* End Componentes */
+
     /* Begin Registro/Edicion/Eliminacion Compoentes */
     const registrarModuloBtn = document.getElementById('registrarModuloBtn');
     const popupRegistrarModulo = document.getElementById('popupRegistrarModulo');
@@ -213,6 +343,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function fetchModulos() {
+        // Mostrar la pantalla de carga
+        document.getElementById('loading-screen').style.display = 'block';       
         fetch(`${academicaApiConfig.apiUrl}/modulos/`, {
             headers: {
                 'ngrok-skip-browser-warning': 'true'
@@ -225,10 +357,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 data.data.forEach(modulo => {
                     const moduloItem = document.createElement('div');
                     moduloItem.innerHTML = `
-                        <span>${modulo.nombre_uea} (Clave: ${modulo.clave_uea})</span>
+                        <div class="modulo-item">
+                        <span class="modulo-text">${modulo.nombre_uea} (Clave: ${modulo.clave_uea})</span>
                         <button type="button" class="deleteModuloBtn" data-clave="${modulo.clave_uea}">Eliminar</button>
+                        </div>
                     `;
                     modulosList.appendChild(moduloItem);
+                            // Ocultar la pantalla de carga
+                    document.getElementById('loading-screen').style.display = 'none'; 
                 });
 
                 document.querySelectorAll('.deleteModuloBtn').forEach(btn => {
@@ -240,15 +376,19 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 console.error('La respuesta de la API no es válida:', data);
                 alert('Error al obtener los módulos');
+                location.reload();
             }
         })
         .catch(error => {
             console.error('Error al obtener los módulos:', error);
             alert('Error al obtener los módulos');
+            location.reload();
         });
     }
 
     function deleteModulo(claveUea) {
+        // Mostrar la pantalla de carga
+        document.getElementById('loading-screen').style.display = 'block'; 
         fetch(`${academicaApiConfig.apiUrl}/modulos/${claveUea}`, {
             method: 'DELETE'
         })
@@ -257,12 +397,18 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.status === 200) {
                 alert('Módulo eliminado exitosamente');
                 fetchModulos();
+                // Mostrar la pantalla de carga
+                document.getElementById('loading-screen').style.display = 'none';
+                location.reload();
             } else {
                 alert('Error al eliminar el módulo');
+                location.reload();
             }
         });
     }
     /*End Registro/Edicion/Eliminacion Componentes*/
+
+
 });
 
 //
