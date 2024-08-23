@@ -15,6 +15,18 @@
 echo "<h1>Académica UAM - Administración de Trimestre</h1>";
 ?>
 
+<!--  sección para dar de alta un nuevo trimestre -->
+<form method="POST" action="" id="new-trimester-form">
+    <h2>Dar de Alta Nuevo Trimestre</h2>
+    <label for="trimestre_clave">Clave del Trimestre:</label>
+    <input type="text" name="trimestre_clave" id="trimestre_clave" required><br /><br />
+    
+    <label for="trimestre_nombre">Nombre del Trimestre:</label>
+    <input type="text" name="trimestre_nombre" id="trimestre_nombre" required><br /><br />
+    
+    <button type="button" onclick="addNewTrimester()">Agregar Nuevo Trimestre</button>
+</form>
+
 <form method="GET" action="" id="download-form">
     <label for="trimestre">Seleccionar Trimestre:</label>
     <select name="trimestre" id="trimestre">
