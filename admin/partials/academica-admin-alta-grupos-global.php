@@ -15,6 +15,26 @@
 echo "<h1>Académica UAM - Alta de Grupos (Evaluación Global)</h1>";
 ?>
 
+<h2>Grupos - Evaluación global</h2>
+<div>
+    <button id="addGrupoBtn">Alta de grupo</button>
+    <button id="catalogoGruposBtn">Catálogo de Grupos</button>
+</div>
+
+<table class="table-2" style="margin:0!important;">
+    <thead>
+        <tr>
+            <th>Trimestre</th>
+            <th>Grupo</th>
+            <th>Módulo</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody id="gruposTableBody">
+
+    </tbody>
+</table>
+
 <div class="evaluacion-componente-head">
 <div class="table-2">
     <form class="search-form-2" id="asignacion-form" enctype="multipart/form-data">       

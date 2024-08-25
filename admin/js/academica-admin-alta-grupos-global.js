@@ -37,6 +37,7 @@ selectModulo.addEventListener('change', function() {
 
 document.addEventListener('DOMContentLoaded', (event) => {
 
+    let trimestreActual;
     // Fetching and rendering modulos/componentes
     var selectTrimestre = document.getElementById('trimestre');
     var modulosSelect = document.getElementById('modulo');
@@ -54,9 +55,56 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 option.text = trimestreActual.toUpperCase();
                 selectTrimestre.appendChild(option);
                 selectTrimestre.disabled = true;
+                fetchGrupos(trimestreActual);
             }
         });
+
+    async function fetchGrupos(trimestre) {
+        try {
+            const response = await fetch(`${academicaApiConfig.apiUrl}/historial_academico/grupos_por_trimestre?trimestre=${trimestre}`);
+            const data = await response.json();
+
+            if (data.status === 'success' && data.payload) {
+                populateTable(data.payload);
+                document.querySelector('.table-2 thead').style.display = 'table-header-group';
+            } else {
+                console.error('Failed to fetch data:', data);
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    function populateTable(grupos) {
+        const tableBody = document.getElementById('gruposTableBody');
+        tableBody.innerHTML = ''; // Clear existing rows
+
+        grupos.forEach(grupo => {
+            const row = document.createElement('tr');
+
+            const trimestreCell = document.createElement('td');
+            trimestreCell.textContent = trimestre.value.toUpperCase();
+            row.appendChild(trimestreCell);
+
+            const grupoCell = document.createElement('td');
+            grupoCell.textContent = grupo.grupo;
+            row.appendChild(grupoCell);
+
+            const moduloCell = document.createElement('td');
+            moduloCell.textContent = `${grupo.modulo.modulo} - ${grupo.modulo.nombre_uea}`;
+            row.appendChild(moduloCell);
+
+            const accionesCell = document.createElement('td');
+            const detallesButton = document.createElement('button');
+            detallesButton.textContent = 'Detalles';
+            accionesCell.appendChild(detallesButton);
+            row.appendChild(accionesCell);
+
+            tableBody.appendChild(row);
+        });
+    }
         
+    
 
     fetch(`${academicaApiConfig.apiUrl}/modulos/`)
         .then(response => response.json())

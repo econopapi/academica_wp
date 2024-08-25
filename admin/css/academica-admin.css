@@ -9,9 +9,6 @@ div {
     font-family: Helvetica, sans-serif!important;
 }
 
-h2 {
-    text-align: center;
-}
 
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
@@ -140,9 +137,9 @@ input[type="number"]::-webkit-outer-spin-button {
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 5px;
-    padding: 20px;
-    max-width: 600px;
-    margin: 20px auto;
+    padding: 10px;
+    max-width: 50%;
+    /* margin: 20px auto; */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -161,10 +158,11 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .api-form input[type="text"],
 .api-form input[type="password"],
-.api-form select {
+.api-form select,
+.api-form option {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
+    padding: 5px;
+    margin-bottom: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
