@@ -11,10 +11,13 @@
  * @package    Academica
  * @subpackage Academica/admin/partials
  */
-
-echo "<h1>Académica UAM - Administración de Trimestre</h1>";
 ?>
+<div class="header-container">
+    <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Logo Académica UAM" class="logo">
+    <h1 class="title">Trimestres</h1>
+</div>
 
+<p>Administración de Trimestres.</p>
 
 
 <div id="trimestreActual"></div>

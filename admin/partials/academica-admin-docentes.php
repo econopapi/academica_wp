@@ -11,13 +11,15 @@
  * @package    Academica
  * @subpackage Academica/admin/partials
  */
-
-echo "<h1>Académica UAM - Administración de Docentes</h1>";
 ?>
-
-<div class="pagination">
-    <button id="openPopupBtn">Agregar docente</button>
+<div class="header-container">
+    <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Logo Académica UAM" class="logo">
+    <h1 class="title">Docentes</h1>
 </div>
+<p>Administración del directorio de docentes.</p>
+<button id="openPopupBtn">Agregar docente</button>
+
+
 
 <!-- Popup -->
 <div id="popupForm" class="popup">
@@ -49,10 +51,38 @@ echo "<h1>Académica UAM - Administración de Docentes</h1>";
     </div>
 </div>
 
+<div class="popup" id="editarDocentePopup">
+    <div class="popup-content">
+        <span class="closeBtn">&times;</span>
+        <h2>Editar docente</h2>
+        <form id="editarDocenteForm">
+
+            <label for="editarNombre">Nombre:</label>
+            <input type="text" id="editarNombre" name="nombre" required><br>
+            <label for="editarNumeroEconomico">Número Económico:</label>
+            <input type="text" id="editarNumeroEconomico" name="numeroEconomico" required><br>
+        
+            
+            <label for="editarEmail">Email:</label>
+            <input type="email" id="editarEmail" name="email" required><br>
+            
+            <label for="editarTelefono">Teléfono:</label>
+            <input type="text" id="editarTelefono" name="telefono" required><br>
+            
+            <label for="editarExtension">Extensión:</label>
+            <input type="text" id="editarExtension" name="extension" required><br>
+            
+            <label for="editarCubiculo">Cubículo:</label>
+            <input type="text" id="editarCubiculo" name="cubiculo" required><br>
+            
+            <button type="submit">Actualizar</button>
+        </form>
+    </div>    
+</div>
+
 <?php
 $api_page = isset($_GET['api_page']) ? $_GET['api_page'] : 1;
 $limit = isset($_GET['limit']) ? $_GET['limit'] : 15;
-
 
 $endpoint = "https://academica.dlimon.net/historial_academico/docentes?page=$api_page&limit=$limit";
 
@@ -70,24 +100,22 @@ if (empty($data)) {
         echo "<tr>
                 <th>Nombre</th>              
                 <th>Número Económico</th>
-
-                
                 <th>Email</th>
                 <th>Teléfono</th>
                 <th>Extensión</th>
                 <th>Cubículo</th>
+                <th>Acciones</th>
               </tr>";
 
         foreach ($docentes->payload as $docente) {
             echo "<tr>
                     <td>{$docente->nombre}</td>                  
                     <td>{$docente->numero_economico}</td>
-
-                    
                     <td>{$docente->email}</td>
                     <td>{$docente->telefono}</td>
                     <td>{$docente->extension}</td>
                     <td>{$docente->cubiculo}</td>
+                    <td><a href='#' class='editarDocenteBtn' data-docente='" . json_encode($docente) . "'>[Editar]</a></td>
                   </tr>";
         }
 
@@ -98,9 +126,9 @@ if (empty($data)) {
 
         echo "<div class='pagination'>";
         if ($api_page > 1) {
-            echo "<a href='?page=academica_docentes&api_page=$prev_page&limit=$limit'>Anterior</a> ";
+            echo "<a class='paginationBtn'href='?page=academica_docentes&api_page=$prev_page&limit=$limit'>Anterior</a> ";
         }
-        echo "<a href='?page=academica_docentes&api_page=$next_page&limit=$limit'>Siguiente</a>";
+        echo "<a class='paginationBtn' href='?page=academica_docentes&api_page=$next_page&limit=$limit'>Siguiente</a>";
         echo "</div>";
     } else {
         echo "<p>No se encontraron datos</p>";
@@ -108,9 +136,10 @@ if (empty($data)) {
     }
 }
 ?>
-
+<!-- Loading screen -->
+<div id="loading-screen" style="display:none">
+    <div class="loading-content">
+        <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Cargando" class="loading-image">
+        <div class="loader"></div>
+</div>
 <script src="<?php echo plugins_url('/js/academica-admin-alta-docentes.js', dirname(__FILE__)); ?>"></script>
-
-
-
-

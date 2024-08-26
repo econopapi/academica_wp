@@ -36,6 +36,35 @@ selectModulo.addEventListener('change', function() {
 });
 
 document.addEventListener('DOMContentLoaded', (event) => {
+    fetch(`${academicaApiConfig.apiUrl}/historial_academico/trimestre_actual`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success' && data.code === 200) {
+                trimestreActual = document.getElementById('trimestreActual');
+                var trimestre = data.payload.trimestre_nombre;
+                // Mostrar el trimestre en el DOM
+                var trimestreDiv = document.createElement('div');
+                trimestreDiv.id = 'trimestre-actual';
+                trimestreDiv.style.fontSize = '20px';
+                trimestreDiv.style.fontWeight = 'bold';
+                trimestreDiv.style.marginBottom = '10px';
+                trimestreDiv.innerText = '⭐ Trimestre Actual: ' + trimestre;
+                trimestreActual.appendChild(trimestreDiv);
+            } else {
+                trimestreActual.innerText = 'Error al obtener el trimestre actual';
+                console.error('Error al obtener el trimestre actual');
+            }
+        })
+        .catch(error => console.error('Error en la solicitud:', error));
+
+    addGrupoBtn = document.getElementById('addGrupoBtn');
+    var closeBtn = document.getElementsByClassName("closeBtn")[0];
+
+    if (closeBtn) {
+        closeBtn.onclick = function() {
+            document.getElementById('popupAltaGrupo').style.display = "none";
+        }
+    }
 
     let trimestreActual;
     // Fetching and rendering modulos/componentes
@@ -61,17 +90,21 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     async function fetchGrupos(trimestre) {
         try {
+            document.getElementById('loading-screen').style.display = 'block'; 
             const response = await fetch(`${academicaApiConfig.apiUrl}/historial_academico/grupos_por_trimestre?trimestre=${trimestre}`);
             const data = await response.json();
 
             if (data.status === 'success' && data.payload) {
                 populateTable(data.payload);
                 document.querySelector('.table-2 thead').style.display = 'table-header-group';
+                document.getElementById('loading-screen').style.display = 'none';
             } else {
                 console.error('Failed to fetch data:', data);
+                document.getElementById('loading-screen').style.display = 'none';
             }
         } catch (error) {
             console.error('Error fetching data:', error);
+            document.getElementById('loading-screen').style.display = 'none';
         }
     }
 
@@ -97,14 +130,134 @@ document.addEventListener('DOMContentLoaded', (event) => {
             const accionesCell = document.createElement('td');
             const detallesButton = document.createElement('button');
             detallesButton.textContent = 'Detalles';
+            detallesButton.className = 'detallesButton';
+            detallesButton.setAttribute('data-grupo', grupo.grupo);
+            detallesButton.setAttribute('data-trimestre', trimestre.value);
             accionesCell.appendChild(detallesButton);
             row.appendChild(accionesCell);
 
             tableBody.appendChild(row);
         });
-    }
+
+        // Event listener for "Detalles" buttons
+        const detalleButtons = document.querySelectorAll('.detallesButton');
+        const popupGrupoDetalle = document.getElementById('popupGrupoDetalle');
+        const popupContent = popupGrupoDetalle.querySelector('.popup-content');
+
+        detalleButtons.forEach(button => {
+            button.addEventListener('click', async function() {
+                // show the loading screen
+                document.getElementById('loading-screen').style.display = 'block';
+                const trimestre = this.getAttribute('data-trimestre');
+                const grupo = this.getAttribute('data-grupo');
         
-    
+                try {
+                    const response = await fetch(`${academicaApiConfig.apiUrl}/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`);
+                    const data = await response.json();
+        
+                    if (data.status === 'success') {
+                        const { informacion_general, calificaciones_alumnos } = data.payload;
+        
+                        // Clear previous content
+                        document.getElementById('grupoInfoGeneral').innerHTML = '';
+                        document.getElementById('grupoInfoDocentes').innerHTML = '';
+                        document.getElementById('grupoInfoAlumnos').innerHTML = '';
+        
+                        // Display general information
+                        const generalInfoHtml = `
+                            <h3>Información General</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Grupo</th>
+                                        <th>Trimestre</th>
+                                        <th>Módulo</th>
+                                        <th>UEA</th>
+                                        <th>Clave UEA</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>${informacion_general.grupo}</td>
+                                        <td>${informacion_general.trimestre}</td>
+                                        <td>${informacion_general.modulo}</td>
+                                        <td>${informacion_general.uea}</td>
+                                        <td>${informacion_general.clave_uea}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        `;
+                        document.getElementById('grupoInfoGeneral').insertAdjacentHTML('beforeend', generalInfoHtml);
+
+                            const docentesInfoHtml = `
+                            <h4>Docentes</h4>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Nombre</strong></td>
+                                        ${informacion_general.docentes.map(docente => `<td>${docente.nombre}</td>`).join('')}
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Componente</strong></td>
+                                        ${informacion_general.docentes.map(docente => `<td>${docente.componente}</td>`).join('')}
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Coordinación</strong></td>
+                                        ${informacion_general.docentes.map(docente => `<td>${docente.coordinacion ? 'Sí' : 'No'}</td>`).join('')}
+                                    </tr>
+                                </tbody>
+                            </table>
+                        `;
+                        document.getElementById('grupoInfoDocentes').insertAdjacentHTML('beforeend', docentesInfoHtml);
+        
+                        // Display student grades
+                        const studentGradesHtml = `
+                            <h3>Lista de Alumnos</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Número de Lista</th>
+                                        <th>Nombre</th>
+                                        <th>Matrícula</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${calificaciones_alumnos.map(alumno => `
+                                        <tr>
+                                            <td>${alumno.numero_lista}</td>
+                                            <td>${alumno.nombre_alumno}</td>
+                                            <td>${alumno.matricula}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        `;
+                        document.getElementById('grupoInfoAlumnos').insertAdjacentHTML('beforeend', studentGradesHtml);
+        
+                        // Show the popup
+                        popupGrupoDetalle.style.display = 'block';
+                        // hide the loading screen
+                        document.getElementById('loading-screen').style.display = 'none';
+                    } else {
+                        alert('Error al obtener los detalles del grupo.');
+                        //hide the loading screen
+                        document.getElementById('loading-screen').style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Error fetching group details:', error);
+                    alert('Error al obtener los detalles del grupo.');
+                    // hide the loading screen
+                    document.getElementById('loading-screen').style.display = 'none';
+                }
+            });
+        });
+    }
+
+    // Close popup when clicking the button with class closeGruposDetalle
+    document.querySelector('.closeGruposDetalle').addEventListener('click', function() {
+        popupGrupoDetalle.style.display = 'none';
+    });
+
 
     fetch(`${academicaApiConfig.apiUrl}/modulos/`)
         .then(response => response.json())
@@ -124,6 +277,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 });
             }
         });
+
+    addGrupoBtn.addEventListener('click', function() {
+        const popup = document.getElementById('popupAltaGrupo');
+        popup.style.display = 'block';
+    });
 
     // Fetch modulo/componentes cuando un módulo es seleccionado:
     modulosSelect.addEventListener('change', function() {

@@ -81,5 +81,5 @@ function downloadEvaluaciones() {
     // Ocultar la pantalla de carga después de un retraso para asegurar que la descarga ha comenzado
     setTimeout(function() {
         document.getElementById('loading-screen').style.display = 'none';
-    }, 3000); // Ajusta el tiempo si es necesario
+    }, 6000); // Ajusta el tiempo si es necesario
 }
