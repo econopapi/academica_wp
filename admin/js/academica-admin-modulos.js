@@ -6,6 +6,8 @@ academicaApiConfig.apiKey
 
 
 document.addEventListener('DOMContentLoaded', function() {
+
+    
     // Get the popup
     var popup = document.getElementById("popupForm");
 

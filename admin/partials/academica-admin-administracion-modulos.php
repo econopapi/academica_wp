@@ -1,7 +1,5 @@
 <?php 
 
-echo "<h1>Académica UAM - Administración de Módulos</h1>";
-
 /*
 Endpoints a consultar:
 
@@ -25,6 +23,12 @@ if ($modulos_data['status'] == 200) {
 }
 
 ?>
+<div class="header-container">
+    <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Logo Académica UAM" class="logo">
+    <h1 class="title">Módulos</h1>
+</div>
+
+<p>Configuración del plan de estudios: mapeo de módulos y componentes.</p>
 
 <!-- Pantalla de carga -->
 <div id="loading-screen" style="display:none">
@@ -122,14 +126,13 @@ if ($modulos_data['status'] == 200) {
     </div>
 </div>
 
-<h2>Lista de Módulos</h2>
+<div>
+    <button id="registrarModuloBtn">Administración de Módulos</button>
+    <button id="registrarComponenteBtn">Catálogo de Componentes</button>
+</div><br />
 
-<div style="text-align: center;">
-    <button id="registrarModuloBtn">Registrar Módulo</button>
-    <button id="registrarComponenteBtn">Registrar Componente</button>
-</div>
-
-<table class="table-2">
+<h2>Módulos registrados</h2>
+<table class="table-2" style="margin:0!important;">
 
 
     <thead>
@@ -137,7 +140,7 @@ if ($modulos_data['status'] == 200) {
             <th>Clave UEA</th>
             <th>Nombre UEA</th>
             <th>Módulo</th>
-            <th>Componentes</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -146,7 +149,7 @@ if ($modulos_data['status'] == 200) {
                 <td><?php echo htmlspecialchars($modulo['clave_uea']); ?></td>
                 <td><?php echo htmlspecialchars($modulo['nombre_uea']); ?></td>
                 <td><?php echo htmlspecialchars($modulo['modulo']); ?></td>
-                <td><button class="componentesBtn" data-modulo-id="<?php echo htmlspecialchars($modulo['clave_uea']); ?>">Componentes</button></td>
+                <td><button class="componentesBtn" data-modulo-id="<?php echo htmlspecialchars($modulo['clave_uea']); ?>">Configuración</button></td>
             </tr>
         <?php endforeach; ?>
     </tbody>

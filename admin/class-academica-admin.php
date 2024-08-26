@@ -118,40 +118,39 @@ class Academica_Admin {
 						1);
 
 		add_submenu_page('academica',
-						'Academica UAM - Administración de Trimestre',
-						'Administración de Trimestre',
+						'Trimestres',
+						'Trimestres',
 						'manage_options',
 						'academica_trimestre',
 						array($this, 'academica_admin_trimestre_page'));
 
 		add_submenu_page('academica',
-						'Academica UAM - Alta de Grupos (Evaluación Global)',
-						'Alta de Grupos (Evaluación Global)',
+						'Módulos',
+						'Módulos',
 						'manage_options',
-						'academica_grupos_global',
-						array($this, 'academica_admin_alta_grupos_global_page'));
+						'academica_modulos',
+						array($this, 'academica_admin_adminsitracion_modulos_page'));
 
 		add_submenu_page('academica',
-						'Academica UAM - Alta de Grupos (Evaluación de Recuperación)',
-						'Alta de Grupos (Evaluación de Recuperación)',
-						'manage_options',
-						'academica_grupos_recuperacion',
-						array($this, 'academica_admin_alta_grupos_recuperacion_page'));
-
-		add_submenu_page('academica',
-						'Academica UAM - Administración de Docentes',
-						'Administración de Docentes',
+						'Docentes',
+						'Docentes',
 						'manage_options',
 						'academica_docentes',
 						array($this, 'academica_admin_docentes_page'));
 
 		add_submenu_page('academica',
-						'Academica UAM - Administración de Módulos',
-						'Administración de Módulos',
+						'Grupos Global',
+						'Grupos Global',
 						'manage_options',
-						'academica_modulos',
-						array($this, 'academica_admin_adminsitracion_modulos_page'));
+						'academica_grupos_global',
+						array($this, 'academica_admin_alta_grupos_global_page'));
 
+		add_submenu_page('academica',
+						'Grupos Recuperación',
+						'Grupos Recuperación',
+						'manage_options',
+						'academica_grupos_recuperacion',
+						array($this, 'academica_admin_alta_grupos_recuperacion_page'));
 
 		add_submenu_page('academica',
 						'Academica UAM - Configuración de API',

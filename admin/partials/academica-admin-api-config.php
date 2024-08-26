@@ -1,20 +1,23 @@
 <?php
 
-echo "<h1>Academica UAM - Configuración de API</h1>";
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     check_admin_referer('academica_api_config_nonce');
 
     update_option('academica_api_url', sanitize_text_field($_POST['academica_api_url']));
     update_option('academica_api_key', sanitize_text_field($_POST['academica_api_key']));
+    //redirect to admin.php?page=academica
+    wp_redirect(admin_url('admin.php?page=academica'));
 }
 
 $api_url = get_option('academica_api_url', '');
 $api_key = get_option('academica_api_key', '');
 
 ?>
-
+<div class="header-container">
+    <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Logo Académica UAM" class="logo">
+    <h1 class="title">Configuración de API</h1>
+</div>
 <form method="POST" class="api-form">
     <p>Configuración de API.</p>
     <?php wp_nonce_field('academica_api_config_nonce'); ?>
