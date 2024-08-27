@@ -17,6 +17,8 @@
 
 require_once("wp-load.php");
 
+$api_url = get_option('academica_api_url');
+
 $current_user = wp_get_current_user();
 
 
@@ -40,10 +42,10 @@ $componente = $_GET['componente'];
 $trimestre = $_GET['trimestre'];
 $docente = $_GET['docente'];
 
-$docente_request = 'https://academica.dlimon.net/historial_academico/docentes?email=' . $user_email;
+$docente_request = $api_url . '/historial_academico/docentes?email=' . $user_email;
 $docente_response = wp_remote_get($docente_request);
 
-$trimestre_request = 'https://academica.dlimon.net/historial_academico/trimestre_actual';
+$trimestre_request = $api_url . '/historial_academico/trimestre_actual';
 $trimestre_response = wp_remote_get($trimestre_request);
 
 if (is_wp_error($docente_response) || is_wp_error($trimestre_response)) {
@@ -76,9 +78,8 @@ if ($docente != $docente_response_json['payload']['numero_economico']
     return false;
 }
 
-$lista_request = 'https://academica.dlimon.net/historial_academico/lista_alumnos_componente_global?trimestre='.$trimestre.'&grupo='.$grupo.'&componente='.$componente;
-$lista_response = wp_remote_get($lista_request);
-// check for error
+$lista_request = $api_url . '/historial_academico/lista_alumnos_componente_global?trimestre='.$trimestre.'&grupo='.$grupo.'&componente='.$componente;
+$lista_response = wp_remote_g check for error
 if (is_wp_error($lista_response)) {
     return false;
 }

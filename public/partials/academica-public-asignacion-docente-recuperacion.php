@@ -14,6 +14,7 @@
  * @subpackage Academica/public/partials
  */
 
+ $api_url = get_option('academica_api_url');
 
 require_once("wp-load.php");
 
@@ -66,10 +67,10 @@ if ($current_user->ID != 0) {
 
     <!-- get trimestre actual y detalles de docente -->
     <?php
-    $docente_request = 'https://academica.dlimon.net/historial_academico/docentes?email=' . $user_email;
+    $docente_request = $api_url . '/historial_academico/docentes?email=' . $user_email;
     $docente_response = wp_remote_get($docente_request);
 
-    $trimestre_request = 'https://academica.dlimon.net/historial_academico/trimestre_actual';
+    $trimestre_request = $api_url . '/historial_academico/trimestre_actual';
     $trimestre_response = wp_remote_get($trimestre_request);
 
     
@@ -97,7 +98,7 @@ if ($current_user->ID != 0) {
         echo 'No se pudo obtener el trimestre en la API.';
     }
     
-    $asignacion_request = 'https://academica.dlimon.net/historial_academico/asignacion_por_docente?recuperacion=true&numero_economico='.$numero_economico.'&trimestre='.$trimestre;
+    $asignacion_request = $api_url . '/historial_academico/asignacion_por_docente?recuperacion=true&numero_economico='.$numero_economico.'&trimestre='.$trimestre;
     $asignacion_response = wp_remote_get($asignacion_request);
     // check for error
     if (is_wp_error($asignacion_response)) {

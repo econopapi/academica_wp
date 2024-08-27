@@ -98,6 +98,14 @@ class Academica_Public {
 
 		wp_enqueue_script( $this->academica, plugin_dir_url( __FILE__ ) . 'js/academica-public.js', array( 'jquery' ), $this->version, false );
 
+		$api_url = get_option('academica_api_url', '');
+		$api_key = get_option('academica_api_key', '');
+
+		wp_localize_script($this->academica, 'academicaApiConfig', array(
+			'apiUrl' => $api_url,
+			'apiKey' => $api_key
+		));
+
 	}
 
 	public function get_seguimiento_global_grupo($trimestre, $grupo, $detalle) {
@@ -110,7 +118,9 @@ class Academica_Public {
 		
 		$query = http_build_query($params);
 
-		$url = 'http://academica.dlimon.net/historial_academico/seguimiento_global_grupo' . $query;
+		$api_url = get_option('academica_api_url', '');
+
+		$url = $api_url . '/historial_academico/seguimiento_global_grupo' . $query;
 
 		$response = wp_remote_get($url);
 	

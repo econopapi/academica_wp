@@ -14,7 +14,7 @@ selectModulo.addEventListener('change', function() {
     loadingOption.text = 'Cargando...';
     selectGrupo.appendChild(loadingOption);
 
-    fetch(`https://academica.dlimon.net/coordinacion/recuperacion/grupos?modulo=${moduloSeleccionado}`)
+    fetch(`${academicaApiConfig.apiUrl}/coordinacion/recuperacion/grupos?modulo=${moduloSeleccionado}`)
         .then(response => response.json())
         .then(data => {
 
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     
             console.log(JSON.stringify(data, 2, 2));
 
-            fetch(`https://conversely-pretty-shad.ngrok-free.app/coordinacion/recuperacion/grupos`, {
+            fetch(`${academicaApiConfig.apiUrl}/coordinacion/recuperacion/grupos`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
