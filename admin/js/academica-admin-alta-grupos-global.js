@@ -330,12 +330,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
     asignacionForm.addEventListener('submit', function(event) {
         event.preventDefault();
 
+        // show loading screen
+        document.getElementById('loading-screen').style.display = 'block';
+    
         // Info de asignación docente, grupo, módulo y trimestre
         var modulo = this.modulo.value;
         var grupo = this.grupo.value;
         var trimestre = this.trimestre.value;
-        var coordinacion = this.coordinacion.value;
-
+    
         // Obtener los componentes dinámicamente
         var componentes = Array.from(componentesTbody.querySelectorAll('tr')).map(tr => {
             var nombreComponente = tr.querySelector('td').textContent;
@@ -347,14 +349,29 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 coordinacion: esCoordinacion
             };
         });
-
+    
+        // Identificar docentes coordinadores
+        var coordinadores = componentes.filter(c => c.coordinacion).map(c => c.docente);
+        var docentesCoordinadores = new Set(coordinadores);
+    
+        // Marcar todos los componentes del docente coordinador como 'true' en coordinacion
+        componentes = componentes.map(c => {
+            if (docentesCoordinadores.has(c.docente)) {
+                return {
+                    ...c,
+                    coordinacion: true
+                };
+            }
+            return c;
+        });
+    
         // Serialización de archivos XLSX de listas de alumnos
         var excelFile = document.getElementById('excel_file');
         var reader = new FileReader();
         reader.onload = function(e) {
             var data = new Uint8Array(e.target.result);
             var workbook = XLSX.read(data, {type: 'array'});
-
+    
             var result = [];
             workbook.SheetNames.forEach(sheetName => {
                 var rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
@@ -369,17 +386,20 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     result = result.concat(rows);
                 }
             });
-
+    
             var data = {
                 uea: modulo,
                 grupo: grupo,
                 trimestre: trimestre,
                 docentes: componentes,
-                alumnos: result
+                alumnos: result,
+                coordinacion: docentesCoordinadores.size > 0 // Aquí se marca como true si hay coordinadores
             };
-
+    
             console.log(JSON.stringify(data, 2, 2));
-
+            
+            
+    
             fetch(`${academicaApiConfig.apiUrl}/coordinacion/global/grupos`, {
                 method: 'POST',
                 headers: {
@@ -387,8 +407,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 },
                 body: JSON.stringify(data)
             }).then(response => response.json())
-              .then(data => console.log(data));
+              .then(data => {
+                console.log(data);
+                alert('Grupo registrado con éxito!');
+                window.location.reload();
+              });
         };
         reader.readAsArrayBuffer(excelFile.files[0]);
     });
+    
 });
