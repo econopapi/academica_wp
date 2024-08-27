@@ -14,7 +14,7 @@ selectModulo.addEventListener('change', function() {
     loadingOption.text = 'Cargando...';
     selectGrupo.appendChild(loadingOption);
 
-    fetch(`https://academica.dlimon.net/coordinacion/global/grupos?modulo=${moduloSeleccionado}`)
+    fetch(`${academicaApiConfig.apiUrl}/coordinacion/global/grupos?modulo=${moduloSeleccionado}`)
         .then(response => response.json())
         .then(data => {
 
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     
             console.log(JSON.stringify(data, 2, 2));
 
-            fetch('https://academica.dlimon.net/coordinacion/global/grupos', {
+            fetch(`${academicaApiConfig.apiUrl}/coordinacion/global/grupos`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

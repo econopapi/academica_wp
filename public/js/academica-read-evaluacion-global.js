@@ -186,7 +186,7 @@ selectTrimestre.addEventListener('change', function() {
 
 
     // api GET request with selected data
-    fetch(`https://academica.dlimon.net/historial_academico/grupos_por_trimestre?trimestre=${trimestreSeleccionado}&docente=${docente}`)
+    fetch(`${academicaApiConfig.apiUrl}/historial_academico/grupos_por_trimestre?trimestre=${trimestreSeleccionado}&docente=${docente}`)
         .then(response => response.json())
         .then(data => {
             // Habilita el select "grupo" y llena sus opciones con la respuesta de la API
@@ -211,7 +211,7 @@ document.getElementById('grupo').addEventListener('change', function(event) {
     var grupo = document.getElementById('grupo').value;
 
 
-    fetch(`https://academica.dlimon.net/evaluacion_academica/get_seguimiento_id?trimestre=${trimestre}&grupo=${grupo}&docente_email=${hiddenDocente.value}`)
+    fetch(`${academicaApiConfig.apiUrl}/evaluacion_academica/get_seguimiento_id?trimestre=${trimestre}&grupo=${grupo}&docente_email=${hiddenDocente.value}`)
     .then(response => response.json())
     .then(data => {
         console.log(data);
@@ -221,14 +221,14 @@ document.getElementById('grupo').addEventListener('change', function(event) {
 
         
         if (data.code === 200) {
-            fetch(`https://academica.dlimon.net/evaluacion_academica/verificar_estado_evaluacion?id_seguimiento=${data.metadata.id_seguimiento_global}&docente_id=${data.metadata.docente_id}`)
+            fetch(`${academicaApiConfig.apiUrl}/evaluacion_academica/verificar_estado_evaluacion?id_seguimiento=${data.metadata.id_seguimiento_global}&docente_id=${data.metadata.docente_id}`)
             .then(response => response.json())
             .then(data => {
                 console.log(data);
 
                 if (data.code === 200) {
                 // verificar si la evaluacion ya fue firmada
-                    fetch(`https://academica.dlimon.net/evaluacion_academica/verificar_firma_seguimiento?id_seguimiento=${id_seguimiento_global}`)
+                    fetch(`${academicaApiConfig.apiUrl}/evaluacion_academica/verificar_firma_seguimiento?id_seguimiento=${id_seguimiento_global}`)
                     .then(response => response.json())
                     .then(data => {
                         console.log(data);
@@ -258,7 +258,7 @@ document.getElementById('grupo').addEventListener('change', function(event) {
     })
     .catch(error => console.error('Error:', error));
 
-    fetch(`https://academica.dlimon.net/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
+    fetch(`${academicaApiConfig.apiUrl}/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
         .then(response => response.json())
         .then(data => {
             //console.log(data);
@@ -323,7 +323,7 @@ function evaluacionPendienteDeFirma(id_seguimiento_global, docente_id, trimestre
         var id_seguimiento_global = hiddenSeguimientoGlobal.value;
         var docente_id = hiddenDocente.value;
 
-        let url = 'https://academica.dlimon.net/evaluacion_academica/firma_evaluacion';
+        let url = `${academicaApiConfig.apiUrl}/evaluacion_academica/firma_evaluacion`;
         let params = {
             id_seguimiento: id_seguimiento_global,
             docente_email: docente_id
@@ -406,7 +406,7 @@ function loadDataFromUrlParams() {
     // verify if the url has the params
     if (trimestre && grupo) {
 
-        fetch(`https://academica.dlimon.net/evaluacion_academica/get_seguimiento_id?trimestre=${trimestre}&grupo=${grupo}&docente_email=${hiddenDocente.value}`)
+        fetch(`${academicaApiConfig.apiUrl}/evaluacion_academica/get_seguimiento_id?trimestre=${trimestre}&grupo=${grupo}&docente_email=${hiddenDocente.value}`)
         .then(response => response.json())
         .then(data => {
             console.log(data);
@@ -414,14 +414,14 @@ function loadDataFromUrlParams() {
             var id_seguimiento_global = data.metadata.id_seguimiento_global; // Store the id_seguimiento_global
             var docente_id = data.metadata.docente_id;
             if (data.code === 200) {
-                fetch(`https://academica.dlimon.net/evaluacion_academica/verificar_estado_evaluacion?id_seguimiento=${data.metadata.id_seguimiento_global}&docente_id=${data.metadata.docente_id}`)
+                fetch(`${academicaApiConfig.apiUrl}/evaluacion_academica/verificar_estado_evaluacion?id_seguimiento=${data.metadata.id_seguimiento_global}&docente_id=${data.metadata.docente_id}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
 
                     if (data.code === 200) {
 
-                        fetch(`https://academica.dlimon.net/evaluacion_academica/verificar_firma_acta?id_seguimiento=${id_seguimiento_global}`)
+                        fetch(`${academicaApiConfig.apiUrl}/evaluacion_academica/verificar_firma_acta?id_seguimiento=${id_seguimiento_global}`)
                         .then(response => response.json())
                         .then(data => {
                             console.log(data);
@@ -449,7 +449,7 @@ function loadDataFromUrlParams() {
         })
         .catch(error => console.error('Error:', error));
 
-        fetch(`https://academica.dlimon.net/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
+        fetch(`${academicaApiConfig.apiUrl}/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
             .then(response => response.json())
             .then(data => {
                 //console.log(data);

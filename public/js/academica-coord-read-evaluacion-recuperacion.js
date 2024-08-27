@@ -11,7 +11,7 @@ selectTrimestre.addEventListener('change', function() {
     var trimestreSeleccionado = this.value;
 
     // Haz una solicitud GET a la API con el valor seleccionado
-    fetch('https://academica.dlimon.net/historial_academico/grupos_por_trimestre?trimestre=' + trimestreSeleccionado)
+    fetch(`${academicaApiConfig.apiUrl}/historial_academico/grupos_por_trimestre?trimestre=${trimestreSeleccionado}`)
         .then(response => response.json())
         .then(data => {
             // Habilita el select "grupo" y llena sus opciones con la respuesta de la API
@@ -32,7 +32,7 @@ selectModulo.addEventListener('change', function() {
 
     var moduloSeleccionado = this.value;
 
-    fetch('https://academica.dlimon.net/historial_academico/grupos_por_trimestre?trimestre=' + selectTrimestre.value + '&modulo=' + moduloSeleccionado + '&recuperacion=true')
+    fetch(`${academicaApiConfig.apiUrl}/historial_academico/grupos_por_trimestre?trimestre=${selectTrimestre.value}&modulo=${moduloSeleccionado}&recuperacion=true`)
         .then(response => response.json())
         .then(data => {
             // Habilitar selector de grupo y llenar opciones
@@ -57,7 +57,7 @@ document.getElementById('grupo').addEventListener('change', function(event) {
     var trimestre = document.getElementById('trimestre').value;
     var grupo = document.getElementById('grupo').value;
 
-    fetch(`https://academica.dlimon.net/historial_academico/seguimiento_recuperacion?trimestre=${trimestre}&grupo=${grupo}&modulo=${selectModulo.value}&detalle=true`)
+    fetch(`${academicaApiConfig.apiUrl}/historial_academico/seguimiento_recuperacion?trimestre=${trimestre}&grupo=${grupo}&modulo=${selectModulo.value}&detalle=true`)
         .then(response => response.json())
         .then(data => {
             // Hacer algo con los datos devueltos
@@ -222,7 +222,7 @@ function loadDataFromUrlParams() {
     // verify if the url has the params
     if (trimestre && grupo) {
 
-        fetch(`https://academica.dlimon.net/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
+        fetch(`${academicaApiConfig.apiUrl}/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
             .then(response => response.json())
             .then(data => {
                 // Hacer algo con los datos devueltos

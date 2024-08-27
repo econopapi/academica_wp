@@ -11,6 +11,9 @@
  * @package    Academica
  * @subpackage Academica/admin/partials
  */
+
+// get wp options
+$academica_api_url = get_option('academica_api_url');
 ?>
 <div class="header-container">
     <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Logo Académica UAM" class="logo">
@@ -84,7 +87,7 @@
 $api_page = isset($_GET['api_page']) ? $_GET['api_page'] : 1;
 $limit = isset($_GET['limit']) ? $_GET['limit'] : 15;
 
-$endpoint = "https://academica.dlimon.net/historial_academico/docentes?page=$api_page&limit=$limit";
+$endpoint = "$academica_api_url/historial_academico/docentes?page=$api_page&limit=$limit";
 
 $response = wp_remote_get($endpoint);
 $data = wp_remote_retrieve_body($response);

@@ -35,7 +35,7 @@ function submitForm(event) {
 
     var xhr = new XMLHttpRequest();
     var requestSuccessful = false; // Variable para almacenar el estado de la solicitud
-    xhr.open('POST', 'https://academica.dlimon.net/evaluacion_academica/componente', true);
+    xhr.open('POST', `${academicaApiConfig.apiUrl}/evaluacion_academica/componente`, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(JSON.stringify(data));
     xhr.onload = function () {
