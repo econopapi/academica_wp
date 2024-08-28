@@ -398,7 +398,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     
             console.log(JSON.stringify(data, 2, 2));
             
-            
+            //return;
     
             fetch(`${academicaApiConfig.apiUrl}/coordinacion/global/grupos`, {
                 method: 'POST',

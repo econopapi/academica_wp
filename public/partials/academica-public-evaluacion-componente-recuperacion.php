@@ -162,6 +162,14 @@ $lista_json = json_decode($lista_body, true);
     </div>
 </div>
 
+<!-- Pantalla de carga -->
+<div id="loading-screen" style="display:block">
+    <div class="loading-content">
+        <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Cargando" class="loading-image">
+        <div class="loader"></div>
+    </div>
+</div>
+
 <script src="<?php echo plugins_url('/js/academica-public-evaluacion-componente-recuperacion.js', dirname(__FILE__)); ?>"></script>
 
 

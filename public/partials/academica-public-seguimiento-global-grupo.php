@@ -77,7 +77,13 @@ if ($current_user->ID != 0) {
 <img class="center" src="https://uam.dlimon.net/wp-content/uploads/2024/02/AXOLOTL-1.png" alt="axolotl">
 </div>
 
-
+<!-- Pantalla de carga -->
+<div id="loading-screen" style="display:none">
+    <div class="loading-content">
+        <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Cargando" class="loading-image">
+        <div class="loader"></div>
+    </div>
+</div>
 
 <?php if ($user_role == 'administrator') { ?>
     <script src="<?php echo plugins_url('/js/academica-coord-read-evaluacion-global.js', dirname(__FILE__)); ?>"></script>
