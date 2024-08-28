@@ -7,21 +7,36 @@ var hiddenDocente = document.getElementById('docente');
 // disable the select "grupo" by default
 selectGrupo.disabled = true;
 
-function createTable(data) {
+function createTable(data, mapeo) {
+    if (data.length === 0) return null; // Si no hay datos, no se crea la tabla
+
     var table = document.createElement('table');
     var caption = table.createCaption();
     caption.textContent = 'Calificaciones';
     caption.style.fontWeight = 'bold';
 
+    // Claves que no se deben exluir:
+    var excludeKeys = ['numero_lista', 'nombre_alumno', 'matricula', 'calificacion_numero', 'calificacion_letra'];
+
+    var componentes = mapeo.map(docente => docente.componente);
+    // Filtrar las claves del primer objeto para incluir solo las necesarias
+    var titles = Object.keys(data[0]).filter(key => 
+        excludeKeys.includes(key) || componentes.includes(key)
+    );
+
+    // Remover "calificacion_numero" y "calificacion_letra" si están presentes
+    titles = titles.filter(title => title !== "calificacion_numero" && title !== "calificacion_letra");
+
+    // Añadir "calificacion_numero" y "calificacion_letra" al final
+    titles.push("calificacion_numero", "calificacion_letra");
+
     // Añadir cabeceras de tabla
     var thead = document.createElement('thead');
     var headerRow = document.createElement('tr');
 
-    var titles = ['Lista', 'Nombre', 'Matrícula', 'Teoría', 'Matemáticas', 'Taller', 'Investigación', 'Taller2', 'Calificación número', 'Calificación letra'];
-
     titles.forEach(title => {
         var th = document.createElement('th');
-        th.textContent = title;
+        th.textContent = title.replace(/_/g, ' '); // Reemplaza guiones bajos por espacios
         headerRow.appendChild(th);
     });
     thead.appendChild(headerRow);
@@ -31,9 +46,9 @@ function createTable(data) {
     var tbody = document.createElement('tbody');
     data.forEach(item => {
         var row = document.createElement('tr');
-        Object.keys(item).forEach(key => {
+        titles.forEach(key => {
             var td = document.createElement('td');
-            td.textContent = item[key];
+            td.textContent = item[key] !== null ? item[key] : ''; // Manejar valores null
             row.appendChild(td);
         });
         tbody.appendChild(row);
@@ -241,7 +256,7 @@ document.getElementById('grupo').addEventListener('change', function(event) {
             clearTables();
 
             // Crear tabla de calificaciones
-            var table = createTable(data.payload.calificaciones_alumnos);
+            var table = createTable(data.payload.calificaciones_alumnos, data.payload.informacion_general.docentes);
             document.getElementById('seguimiento_global_grupo_table').appendChild(table);
 
             // Crear tabla de información general
@@ -440,7 +455,7 @@ function loadDataFromUrlParams() {
                 clearTables();
 
                 // Crear tabla de calificaciones
-                var table = createTable(data.payload.calificaciones_alumnos);
+                var table = createTable(data.payload.calificaciones_alumnos, data.payload.informacion_general.docentes);
                 document.getElementById('seguimiento_global_grupo_table').appendChild(table);
 
                 // Crear tabla de información general
