@@ -1,33 +1,4 @@
-// // Crear el overlay y la pantalla de carga
-// var overlay = document.createElement('div');
-// overlay.id = 'overlay';
-// overlay.style.display = 'none';
-// document.body.appendChild(overlay);
 
-// var loadingScreen = document.createElement('div');
-// loadingScreen.id = 'loadingScreen';
-// loadingScreen.style.display = 'none';
-// document.body.appendChild(loadingScreen);
-
-// // Mostrar el overlay y la pantalla de carga
-// overlay.style.display = 'block';
-// loadingScreen.style.display = 'block';
-
-// // Ejecutar tus funciones
-// asyncFunction1().then(() => {
-// return asyncFunction2();
-// }).then(() => {
-// return asyncFunction3();
-// }).then(() => {
-// // Ocultar el overlay y la pantalla de carga
-// overlay.style.display = 'none';
-// loadingScreen.style.display = 'none';
-// }).catch((error) => {
-// console.error(error);
-// // Asegúrate de ocultar el overlay y la pantalla de carga incluso si hay un error
-// overlay.style.display = 'none';
-// loadingScreen.style.display = 'none';
-// });
 
 var selectTrimestre = document.getElementById('trimestre');
 var selectGrupo = document.getElementById('grupo');
@@ -46,7 +17,7 @@ function createTable(data) {
     var thead = document.createElement('thead');
     var headerRow = document.createElement('tr');
 
-    var titles = ['Lista', 'Nombre', 'Matrícula', 'Teoría', 'Matemáticas', 'Taller', 'Investigación', 'Calificación número', 'Calificación letra'];
+    var titles = ['Lista', 'Nombre', 'Matrícula', 'Teoría', 'Matemáticas', 'Taller', 'Investigación', 'Taller2', 'Calificación número', 'Calificación letra'];
 
     titles.forEach(title => {
         var th = document.createElement('th');
@@ -207,6 +178,8 @@ selectTrimestre.addEventListener('change', function() {
 document.getElementById('grupo').addEventListener('change', function(event) {
     event.preventDefault();
 
+    document.getElementById('loading-screen').style.display = 'block';
+
     var trimestre = document.getElementById('trimestre').value;
     var grupo = document.getElementById('grupo').value;
 
@@ -234,11 +207,12 @@ document.getElementById('grupo').addEventListener('change', function(event) {
                         console.log(data);
                         if (data.code === 200) {
                         // evaluacion completa y firmada
+                            document.getElementById('loading-screen').style.display = 'none';
                             evaluacionFirmada(id_seguimiento_global, docente_id);
                             
                         } else if (data.code === 422) {
                         // evaluacion completa. pendiente de confirmacion
-
+                            document.getElementById('loading-screen').style.display = 'none';
                             evaluacionPendienteDeFirma(id_seguimiento_global, docente_id, grupo, trimestre);
                         }
                     })
@@ -246,6 +220,7 @@ document.getElementById('grupo').addEventListener('change', function(event) {
 
                 } else if (data.code === 422) {
                 // evaluacion incompleta. falta evaluar componentes
+                    document.getElementById('loading-screen').style.display = 'none';
                     evaluacionIncompleta();
                 }
 
@@ -261,6 +236,7 @@ document.getElementById('grupo').addEventListener('change', function(event) {
     fetch(`${academicaApiConfig.apiUrl}/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
         .then(response => response.json())
         .then(data => {
+            document.getElementById('loading-screen').style.display = 'block';
             //console.log(data);
             clearTables();
 
@@ -275,6 +251,7 @@ document.getElementById('grupo').addEventListener('change', function(event) {
             // Crear tabla de asignación docente
             var docentesTable = createDocentesTable(data.payload.informacion_general.docentes);
             document.getElementById('asignacion_docente').appendChild(docentesTable);
+            document.getElementById('loading-screen').style.display = 'none';
         })
         .catch(error => console.error('Error:', error));
 });
@@ -320,6 +297,7 @@ function evaluacionPendienteDeFirma(id_seguimiento_global, docente_id, trimestre
 
     form.addEventListener('submit', function(event) {
         event.preventDefault();
+        document.getElementById('loading-screen').style.display = 'block';
         var id_seguimiento_global = hiddenSeguimientoGlobal.value;
         var docente_id = hiddenDocente.value;
 
@@ -346,6 +324,7 @@ function evaluacionPendienteDeFirma(id_seguimiento_global, docente_id, trimestre
                 window.location.reload();
             } else {
                 alert('Error al firmar el acta');
+                window.location.reload();
             }
         })
     });
@@ -395,6 +374,7 @@ function evaluacionIncompleta() {
 function loadDataFromUrlParams() {
 
     console.log('loadDataFromUrlParams');
+    document.getElementById('loading-screen').style.display = 'block';
 
     // current url
     var url = new URL(window.location.href);
@@ -421,15 +401,17 @@ function loadDataFromUrlParams() {
 
                     if (data.code === 200) {
 
-                        fetch(`${academicaApiConfig.apiUrl}/evaluacion_academica/verificar_firma_acta?id_seguimiento=${id_seguimiento_global}`)
+                        fetch(`${academicaApiConfig.apiUrl}/evaluacion_academica/verificar_firma_seguimiento?id_seguimiento=${id_seguimiento_global}`)
                         .then(response => response.json())
                         .then(data => {
                             console.log(data);
                             if (data.code === 200) {
                             // evaluacion completa y firmada
+                                document.getElementById('loading-screen').style.display = 'none';
                                 evaluacionFirmada(id_seguimiento_global, docente_id);
                             } else if (data.code === 422) {
                                 console.log(trimestre, grupo);
+                                document.getElementById('loading-screen').style.display = 'none';
                                 evaluacionPendienteDeFirma(id_seguimiento_global, docente_id, trimestre, grupo);
                             }
                         })
@@ -437,6 +419,7 @@ function loadDataFromUrlParams() {
 
                     } else if (data.code === 422) {
                     // evaluacion incompleta. falta evaluar componentes
+                        document.getElementById('loading-screen').style.display = 'none';
                         evaluacionIncompleta();
                     }
 
@@ -453,6 +436,7 @@ function loadDataFromUrlParams() {
             .then(response => response.json())
             .then(data => {
                 //console.log(data);
+                document.getElementById('loading-screen').style.display = 'block';
                 clearTables();
 
                 // Crear tabla de calificaciones
@@ -466,6 +450,7 @@ function loadDataFromUrlParams() {
                 // Crear tabla de asignación docente
                 var docentesTable = createDocentesTable(data.payload.informacion_general.docentes);
                 document.getElementById('asignacion_docente').appendChild(docentesTable);
+                document.getElementById('loading-screen').style.display = 'none';
             })
             .catch(error => console.error('Error:', error));
     }

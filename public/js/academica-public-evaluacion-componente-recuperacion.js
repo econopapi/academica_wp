@@ -14,6 +14,7 @@ var url_params = {
 
 function submitForm(event) {
     event.preventDefault();
+    document.getElementById('loading-screen').style.display = 'block';
     var matriculas = document.querySelectorAll('input[name^="matriculas"]');
     var calificaciones = document.querySelectorAll('input[name^="calificacion"]');
 
@@ -44,6 +45,7 @@ function submitForm(event) {
             window.open('/academica-historial-academico-evaluacion-recuperacion-grupo?trimestre=' + url_params.trimestre + '&grupo=' + url_params.grupo + '&modulo=' + url_params.modulo, '_self');
         } else {
             alert('Error al enviar la evaluación');
+            window.location.reload();
         }
     };
     

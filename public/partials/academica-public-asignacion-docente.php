@@ -16,6 +16,7 @@
 
 $api_url = get_option('academica_api_url');
 
+
 require_once("wp-load.php");
 
 $current_user = wp_get_current_user();
@@ -67,15 +68,19 @@ if ($current_user->ID != 0) {
     <!-- get trimestre actual y detalles de docente -->
     <?php
     $docente_request = $api_url . '/historial_academico/docentes?email=' . $user_email;
+    
+    
     $docente_response = wp_remote_get($docente_request);
 
     $trimestre_request = $api_url . '/historial_academico/trimestre_actual';
     $trimestre_response = wp_remote_get($trimestre_request);
 
+
     
 
     if (is_wp_error($docente_response) || is_wp_error($trimestre_response)) {
         return false;
+        echo 'error';
     }
 
     $docente_response_body = wp_remote_retrieve_body($docente_response);
@@ -84,27 +89,34 @@ if ($current_user->ID != 0) {
     $trimestre_response_body = wp_remote_retrieve_body($trimestre_response);
     $trimestre_response_json = json_decode($trimestre_response_body, true);
 
-
     if (!empty($docente_response_json['payload']['numero_economico'])) {
         $numero_economico = $docente_response_json['payload']['numero_economico'];
+        
     } else {
         echo 'No se pudo obtener el número económico en la API.';
     }
 
     if (!empty($trimestre_response_json['payload']['trimestre'])) {
         $trimestre = $trimestre_response_json['payload']['trimestre'];
+        
     } else {
         echo 'No se pudo obtener el trimestre en la API.';
     }
     
-    $asignacion_request = $api_url = '/historial_academico/asignacion_por_docente?numero_economico='.$numero_economico.'&trimestre='.$trimestre;
+    $asignacion_request = $api_url . '/historial_academico/asignacion_por_docente?numero_economico='.$numero_economico.'&trimestre='.$trimestre;
+    
     $asignacion_response = wp_remote_get($asignacion_request);
+
+    
+    
     // check for error
     if (is_wp_error($asignacion_response)) {
         return false;
+        
     }
     // get body
     $asignacion_body = wp_remote_retrieve_body($asignacion_response);
+    
     // decode body
     $asignacion_json = json_decode($asignacion_body, true);
 

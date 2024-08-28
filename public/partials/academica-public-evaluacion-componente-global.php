@@ -79,7 +79,8 @@ if ($docente != $docente_response_json['payload']['numero_economico']
 }
 
 $lista_request = $api_url . '/historial_academico/lista_alumnos_componente_global?trimestre='.$trimestre.'&grupo='.$grupo.'&componente='.$componente;
-$lista_response = wp_remote_g check for error
+echo $lista_request;
+$lista_response = wp_remote_get($lista_request);
 if (is_wp_error($lista_response)) {
     return false;
 }
@@ -150,6 +151,14 @@ $lista_json = json_decode($lista_body, true);
         
         <input type="submit" value="Enviar evaluación">
     </form>
+    </div>
+</div>
+
+<!-- Pantalla de carga -->
+<div id="loading-screen" style="display:none">
+    <div class="loading-content">
+        <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Cargando" class="loading-image">
+        <div class="loader"></div>
     </div>
 </div>
 

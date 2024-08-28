@@ -1,13 +1,16 @@
 <?php
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
     check_admin_referer('academica_api_config_nonce');
 
     update_option('academica_api_url', sanitize_text_field($_POST['academica_api_url']));
     update_option('academica_api_key', sanitize_text_field($_POST['academica_api_key']));
-    //redirect to admin.php?page=academica
-    wp_redirect(admin_url('admin.php?page=academica'));
+
+    // Imprimir JavaScript para redirigir después de procesar el formulario
+    echo '<script type="text/javascript">
+        window.location.href = "' . esc_url(admin_url('admin.php?page=academica')) . '";
+    </script>';
+    exit();
 }
 
 $api_url = get_option('academica_api_url', '');
@@ -30,3 +33,4 @@ $api_key = get_option('academica_api_key', '');
     <br>
     <input type="submit" value="Actualizar">
 </form>
+
