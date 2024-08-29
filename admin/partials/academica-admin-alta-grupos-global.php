@@ -68,7 +68,7 @@
 
 <div id="popupAltaGrupo" class="popup" style="display:none;">
     <div class="popup-content">
-        <span class="closeBtn">&times;</span>
+        <span class="closeBtn closeAltaGruposBtn">&times;</span>
         <div class="table-2">
             <form class="search-form-2" id="asignacion-form" enctype="multipart/form-data">       
                 <table class="table-1">     
@@ -159,7 +159,8 @@
                     <tbody>
                         <tr>
                             <td class="center-content">
-                                <label>El archivo XLSX debe contener únicamente tres columnas: número de lista, matrícula y nombre</label>                
+                                <label>El archivo XLSX debe contener únicamente tres columnas con los siguientes encabezados: <strong>número_lista, matricula, nombre_alumno</strong></label>
+                                <a href="https://economia.xoc.uam.mx/archivos/grupo_global_muestra.xlsx"><strong>[Descargar plantilla XLSX de ejemplo]</strong></a>                
                             </td>
                         </tr>
                         <tr>

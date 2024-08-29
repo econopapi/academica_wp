@@ -22,7 +22,7 @@
 
 <div id="trimestreActual"></div>
 
-<div style="display:inline-block;">
+
     <!--  sección para dar de alta un nuevo trimestre -->
     <form method="POST" action="" id="new-trimester-form" class="api-form" style="display:inline-block; vertical-align: top; margin-right: 20px;">
         <h2>Dar de Alta Nuevo Trimestre</h2>
@@ -34,23 +34,8 @@
         
         <button type="button" onclick="addTrimestre()">Agregar Nuevo Trimestre</button>
     </form>
-    <form method="GET" action="" id="download-form" class="api-form" style="display:inline-block; vertical-align: top;">
-        <h2>Historial de evaluaciones</h2>
-        <label for="trimestre">Seleccionar Trimestre:</label>
-        <select name="trimestre" id="trimestre">
-            <option value="24i">24-Invierno</option>
-            <option value="23o">23-Otoño</option>
-        </select><br /><br />
-        
-        <label for="tipo_evaluacion">Seleccionar Tipo de Evaluación:</label>
-        <select name="tipo_evaluacion" id="tipo_evaluacion">
-            <option value="global">Evaluación Global</option>
-            <option value="recuperacion">Evaluación de Recuperación</option>
-        </select><br /><br />
-        
-        <button type="button" onclick="downloadEvaluaciones()">Descargar Evaluaciones Trimestrales</button>
-    </form>
-</div>
+
+
 
 
 

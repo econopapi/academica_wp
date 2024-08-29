@@ -98,22 +98,33 @@ document.addEventListener('DOMContentLoaded', function () {
     //         editarDocentePopup.style.display = 'none';
     //     }
     // });
+    let emailOriginal;
 
+    // Captura el email original cuando el usuario hace foco en el campo de email
+    document.getElementById('editarEmail').addEventListener('focus', function() {
+        if (!emailOriginal) {  // Solo captura si no se ha capturado antes
+            emailOriginal = this.value;
+            console.log('Email Original Capturado:', emailOriginal);
+        }
+    });
+    
     editarDocenteForm.addEventListener('submit', function (event) {
-        // show the loading screen
+        // Mostrar la pantalla de carga
         document.getElementById('loading-screen').style.display = 'block';
         event.preventDefault();
-
+    
         const docenteData = {
             numero_economico: document.getElementById('editarNumeroEconomico').value,
             nombre: document.getElementById('editarNombre').value,
-            email: document.getElementById('editarEmail').value,
+            email_nuevo: document.getElementById('editarEmail').value,  // Email editado
+            email_original: emailOriginal,  // Email original capturado
             telefono: document.getElementById('editarTelefono').value,
             extension: document.getElementById('editarExtension').value,
             cubiculo: document.getElementById('editarCubiculo').value,
             estatus: "true"
         };
-
+    
+    
         fetch(`${academicaApiConfig.apiUrl}/historial_academico/docentes`, {
             method: 'PUT',
             headers: {

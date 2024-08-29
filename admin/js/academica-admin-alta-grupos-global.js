@@ -233,7 +233,47 @@ document.addEventListener('DOMContentLoaded', (event) => {
                             </table>
                         `;
                         document.getElementById('grupoInfoAlumnos').insertAdjacentHTML('beforeend', studentGradesHtml);
-        
+
+                // Add delete button
+                const deleteButtonHtml = `
+                    <button id="delete-group-button" data-id="${informacion_general.id_seguimiento_global}">Eliminar Grupo</button>
+                `;
+                document.getElementById('grupoInfoAlumnos').insertAdjacentHTML('beforeend', deleteButtonHtml);
+
+                // Add event listener to the delete button
+                document.getElementById('delete-group-button').addEventListener('click', async function() {
+                    document.getElementById('loading-screen').style.display = 'block';
+                    const idSeguimientoGlobal = this.getAttribute('data-id');
+                    if (confirm('¿Estás seguro de que deseas eliminar este grupo?')) {
+                        try {
+                            
+                            const deleteResponse = await fetch(`${academicaApiConfig.apiUrl}/coordinacion/global/grupos`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    id_seguimiento_global: parseInt(idSeguimientoGlobal, 10)
+                                })
+                            });
+
+                            if (deleteResponse.ok) {
+                                alert('Grupo eliminado exitosamente.');
+                                // Optionally, hide the popup or refresh the content
+                                popupGrupoDetalle.style.display = 'none';
+                                window.location.reload();
+                            } else {
+                                alert('Error al eliminar el grupo.');
+                                window.location.reload();
+                            }
+                        } catch (error) {
+                            console.error('Error deleting group:', error);
+                            alert('Error al eliminar el grupo.');
+                            window.location.reload();
+                        }
+                    }
+                });                                                
+
                         // Show the popup
                         popupGrupoDetalle.style.display = 'block';
                         // hide the loading screen
@@ -252,6 +292,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
             });
         });
     }
+
+    // Close popup when clicking the button with class closeGruposDetalle
+    document.querySelector('.closeAltaGruposBtn').addEventListener('click', function() {
+        popupAltaGrupo.style.display = 'none';
+    });
 
     // Close popup when clicking the button with class closeGruposDetalle
     document.querySelector('.closeGruposDetalle').addEventListener('click', function() {
@@ -364,28 +409,108 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
             return c;
         });
+
+        // Verificar subida de archivo
+        var excelFile = document.getElementById('excel_file');
+        if (excelFile.files.lenght === 0) {
+            alert('Por favor, suba un archivo Excel (.xlsx)');
+            document.getElementById('loading-screen').style.display = 'none';
+            return;
+        }
+
+        if(!excelFile.files[0].name.endsWith('.xlsx')) {
+            alert('El archivo debe ser un Excel con extensioń .xlsx');
+            document.getElementById('loading-screen').style.display = 'none';
+            return;
+        }
     
         // Serialización de archivos XLSX de listas de alumnos
-        var excelFile = document.getElementById('excel_file');
+        
+        // var reader = new FileReader();
+        // reader.onload = function(e) {
+        //     var data = new Uint8Array(e.target.result);
+        //     var workbook = XLSX.read(data, {type: 'array'});
+    
+        //     var result = [];
+        //     workbook.SheetNames.forEach(sheetName => {
+        //         var rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+        //         if (rows.length) {
+        //             rows = rows.map(row => {
+        //                 return {
+        //                     numero_lista: row['numero_lista'],
+        //                     matricula: row['matricula'],
+        //                     nombre: row['nombre_alumno'],
+        //                 };
+        //             });
+        //             result = result.concat(rows);
+        //         }
+        //     });
+    
+        //     var data = {
+        //         uea: modulo,
+        //         grupo: grupo,
+        //         trimestre: trimestre,
+        //         docentes: componentes,
+        //         alumnos: result,
+        //         coordinacion: docentesCoordinadores.size > 0 // Aquí se marca como true si hay coordinadores
+        //     };
+    
+        //     console.log(JSON.stringify(data, 2, 2));
+            
+            
+    
+        //     fetch(`${academicaApiConfig.apiUrl}/coordinacion/global/grupos`, {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         },
+        //         body: JSON.stringify(data)
+        //     }).then(response => response.json())
+        //       .then(data => {
+        //         console.log(data);
+        //         alert('Grupo registrado con éxito!');
+        //         window.location.reload();
+        //       });
+        // };
+
         var reader = new FileReader();
         reader.onload = function(e) {
             var data = new Uint8Array(e.target.result);
-            var workbook = XLSX.read(data, {type: 'array'});
+            var workbook;
+            try {
+                workbook = XLSX.read(data, {type: 'array'});
+            } catch (error) {
+                alert('Error al leer el archivo Excel. Asegúrate de que esté correctamente formateado.');
+                document.getElementById('loading-screen').style.display = 'none';
+                return;
+            }
     
             var result = [];
+            var validColumns = ['numero_lista', 'matricula', 'nombre_alumno'];
+            var isValid = true;
+    
             workbook.SheetNames.forEach(sheetName => {
                 var rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
                 if (rows.length) {
-                    rows = rows.map(row => {
-                        return {
+                    rows.forEach(row => {
+                        // Verificar si el formato de la fila es válido
+                        if (!validColumns.every(col => row.hasOwnProperty(col))) {
+                            isValid = false;
+                        }
+                        result.push({
                             numero_lista: row['numero_lista'],
                             matricula: row['matricula'],
                             nombre: row['nombre_alumno'],
-                        };
+                        });
                     });
-                    result = result.concat(rows);
                 }
             });
+    
+            if (!isValid) {
+                alert('El archivo Excel tiene un formato incorrecto. Asegúrate de que las columnas sean correctas.');
+                document.getElementById('loading-screen').style.display = 'none';
+                return;
+            }
     
             var data = {
                 uea: modulo,
@@ -396,9 +521,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 coordinacion: docentesCoordinadores.size > 0 // Aquí se marca como true si hay coordinadores
             };
     
-            console.log(JSON.stringify(data, 2, 2));
-            
-            
+            console.log(JSON.stringify(data, null, 2));
+
+            //return;
     
             fetch(`${academicaApiConfig.apiUrl}/coordinacion/global/grupos`, {
                 method: 'POST',
@@ -406,13 +531,31 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
-            }).then(response => response.json())
-              .then(data => {
-                console.log(data);
+            })
+            .then(response => {
+                if (response.status === 404) {
+                    return response.json().then(data => {
+                        // Manejo del error 404
+                        alert(`Error: ${data.message}`);
+                        document.getElementById('loading-screen').style.display = 'none';
+                        return Promise.reject('Error 404');
+                    });
+                } else if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Error al registrar el grupo');
+                }
+            })
+            .then(data => {
                 alert('Grupo registrado con éxito!');
                 window.location.reload();
-              });
-        };
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al registrar el grupo');
+                document.getElementById('loading-screen').style.display = 'none';
+            });
+        };     
         reader.readAsArrayBuffer(excelFile.files[0]);
     });
     

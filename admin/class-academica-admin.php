@@ -118,6 +118,13 @@ class Academica_Admin {
 						1);
 
 		add_submenu_page('academica',
+						'Historial académico',
+						'Historial académico',
+						'manage_options',
+						'academica_historial_academico',
+						array($this, 'academica_admin_historial_academico_page'));
+
+		add_submenu_page('academica',
 						'Trimestres',
 						'Trimestres',
 						'manage_options',
@@ -189,6 +196,10 @@ class Academica_Admin {
 
 	public function academica_admin_api_config_page() {
 		include 'partials/academica-admin-api-config.php';
+	}
+
+	public function academica_admin_historial_academico_page() {
+		include 'partials/academica-admin-historial-academico.php';
 	}
 
 }

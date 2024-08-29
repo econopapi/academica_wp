@@ -132,17 +132,47 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Save changes
     document.getElementById("saveChangesBtn").onclick = async function() {
+        
         let componentesListBody = document.getElementById("componentesListBody");
         if (componentesListBody) {
             let componentes = [];
+            let sumaPonderaciones = 0;
 
             componentesListBody.querySelectorAll('tr').forEach(tr => {
                 let input = tr.querySelector('input');
-                componentes.push({
-                    id_componente: input.getAttribute('data-componente-id'),
-                    ponderacion: input.value
-                });
+
+                // Verificar si el input y su valor son válidos
+                if (input) {
+                    let ponderacion = parseFloat(input.value);  // Convertir el valor a número
+
+                    if (!isNaN(ponderacion)) {  // Asegurarse de que el valor sea un número válido
+                        componentes.push({
+                            id_componente: input.getAttribute('data-componente-id'),
+                            ponderacion: ponderacion
+                        });
+
+                        sumaPonderaciones += ponderacion;
+                    } else {
+                        console.error(`Valor de ponderación inválido en la fila: ${input.value}`);
+                        alert('Valor de ponderación inválido');
+                        document.getElementById('loading-screen').style.display = 'none';
+                        return;
+
+                    }
+                } else {
+                    console.error('No se pudo encontrar el input en la fila.');
+                    alert('No se pudo encontrar el input en la fila');
+                    document.getElementById('loading-screen').style.display = 'none';
+                    return;
+                }
             });
+
+            // Verificar que la suma de las ponderaciones sea igual a 100
+            if (sumaPonderaciones !== 100) {
+                alert('La suma de las ponderaciones debe ser exactamente 100.');
+                document.getElementById('loading-screen').style.display = 'none';
+                return; // No continuar si la suma no es 100
+            }
 
             let payload = {
                 clave_uea: currentModuloId,
@@ -152,6 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Payload:', payload);
 
             try {
+                document.getElementById('loading-screen').style.display = 'block'; 
                 let response = await fetch(`${academicaApiConfig.apiUrl}/modulos/`, {
                     method: 'POST',
                     headers: {
@@ -164,14 +195,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     let result = await response.json();
                     alert('Cambios guardados exitosamente: ' + result.message);
                     popup.style.display = "none";
+                    document.getElementById('loading-screen').style.display = 'none'; 
                 } else {
                     alert('Error al guardar los cambios');
+                    document.getElementById('loading-screen').style.display = 'none'; 
                 }
             } catch (error) {
                 console.error('Error saving changes:', error);
+                document.getElementById('loading-screen').style.display = 'none'; 
             }
         } else {
             console.error('Element "componentesListBody" not found');
+            document.getElementById('loading-screen').style.display = 'none'; 
         }
     }
 
@@ -318,6 +353,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.getElementById('addModuloBtn').addEventListener('click', function() {
+
+        document.getElementById('loading-screen').style.display = 'block';
         const claveUea = document.getElementById('claveUea').value;
         const nombreUea = document.getElementById('nombreUea').value;
         const modulo = document.getElementById('modulo').value;
@@ -337,9 +374,10 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.status === 200) {
                 alert('Módulo agregado exitosamente');
-                fetchModulos();
+                window.location.reload();
             } else {
                 alert('Error al agregar el módulo');
+                window.location.reload();
             }
         });
     });
