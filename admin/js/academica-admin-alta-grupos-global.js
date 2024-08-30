@@ -1,6 +1,13 @@
 var selectModulo = document.getElementById('modulo');
 var selectGrupo = document.getElementById('grupo');
 var asignacionForm = document.getElementById('asignacion-form');
+var moduloCatalogoSelect = document.getElementById('moduloCatalogoSelect')
+var catalogoGruposBtn = document.getElementById('catalogoGruposBtn')
+var inputGrupoCatalogoDiv = document.getElementById('inputGrupoCatalogoDiv');
+var buttonGrupoCatalogoDiv = document.getElementById('buttonGrupoCatalogoDiv');
+
+inputGrupoCatalogoDiv.style.display = 'none';
+buttonGrupoCatalogoDiv.style.display = 'none';
 
 selectGrupo.disabled = true;
 selectModulo.addEventListener('change', function() {
@@ -293,6 +300,61 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
     }
 
+    function renderGruposCatalogoTable(grupos) {
+        catalogoGruposTable = document.getElementById('catalogoGruposTable');
+        // Crea la tabla y su encabezado
+        let tableHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Grupo</th>
+                        <th>Fecha de Creación</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        // Itera sobre los datos y genera filas de la tabla
+        grupos.forEach(grupo => {
+            tableHTML += `
+                <tr>
+                    <td>${grupo.id}</td>
+                    <td>${grupo.grupo}</td>
+                    <td>${new Date(grupo.created_at).toLocaleDateString('es-ES')}</td>
+                </tr>
+            `;
+        });
+
+        // Cierra la tabla
+        tableHTML += `
+                </tbody>
+            </table>
+        `;
+
+        // Inserta la tabla generada en el div
+        catalogoGruposTable.innerHTML = tableHTML;
+
+    }
+
+    moduloCatalogoSelect.addEventListener('change', function() {
+        inputGrupoCatalogoDiv.style.display = 'block';
+        buttonGrupoCatalogoDiv.style.display = 'block';
+        const selectedValue = moduloCatalogoSelect.options[moduloCatalogoSelect.selectedIndex].value;
+
+        console.log("Valor seleccionado:", selectedValue); // Solo para ver en la consola
+        
+        fetch(`${academicaApiConfig.apiUrl}/historial_academico/grupos_por_modulo?modulo=${selectedValue}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    renderGruposCatalogoTable(data.data);
+                } else {
+                    alert('Error al obtener datos');
+                }
+            })
+    })
+
     // Close popup when clicking the button with class closeGruposDetalle
     document.querySelector('.closeAltaGruposBtn').addEventListener('click', function() {
         popupAltaGrupo.style.display = 'none';
@@ -302,6 +364,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
     document.querySelector('.closeGruposDetalle').addEventListener('click', function() {
         popupGrupoDetalle.style.display = 'none';
     });
+
+    document.querySelector('.closeCatalogoGrupos').addEventListener('click', function() {
+        popupCatalogoGrupos.style.display = 'none';
+    })
 
 
     fetch(`${academicaApiConfig.apiUrl}/modulos/`)
@@ -313,12 +379,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     option.value = modulo.modulo;
                     option.text = `${modulo.modulo}. ${modulo.nombre_uea}`;
                     modulosSelect.appendChild(option);
+                    moduloCatalogoSelect.appendChild(option);
 
                     const claveUeaHidden = document.createElement('input');
                     claveUeaHidden.type = 'hidden';
                     claveUeaHidden.name = `clave_uea_${modulo.modulo}`;
                     claveUeaHidden.value = modulo.clave_uea;
                     modulosSelect.appendChild(claveUeaHidden);
+                    
                 });
             }
         });
@@ -327,6 +395,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
         const popup = document.getElementById('popupAltaGrupo');
         popup.style.display = 'block';
     });
+
+    catalogoGruposBtn.addEventListener('click', function() {
+        const popup = document.getElementById('popupCatalogoGrupos');
+        popup.style.display = 'block';
+    })
+
+
 
     // Fetch modulo/componentes cuando un módulo es seleccionado:
     modulosSelect.addEventListener('change', function() {

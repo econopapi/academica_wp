@@ -66,6 +66,37 @@
     </div>
 </div>
 
+<div class="popup" id="popupCatalogoGrupos">
+    <div class="popup-content">
+        <span class="closeBtn closeCatalogoGrupos">&times;</span>
+        <h2>Catálogo de Grupos</h2>
+        <form class="search-form-2" id="catalogoGruposForm">
+        <div style="display: flex; align-items: center;">
+            <div>
+
+                <select name="moduloCatalogoSelect" id="moduloCatalogoSelect">
+                    <option value="">Módulo</option>
+                </select>
+
+            </div>
+            <div id="inputGrupoCatalogoDiv">
+                <input type="text" id="grupoCatalogo" name="grupoCatalogo" placeholder="Grupo">                
+            </div>
+            <div id="buttonGrupoCatalogoDiv">
+                <button id="registarGrupoCatalogo">Registrar grupo</button>
+            </div>
+            <div>
+                <p>Use esta interfaz para gestionar y mapear los grupos que cada módulo puede tener y su respectiva nomenclatura. Se sugiere registrar más grupos para tener holgura al momento de dar de alta seguimientos.</p>
+            </div>
+
+        </div>
+        </form>        
+        <div class="table-2" id="catalogoGruposTable">
+            <!-- Aquí se mostrarán los grupos por módulo obtenidos de la API -->
+        </div>
+    </div>
+</div>
+
 <div id="popupAltaGrupo" class="popup" style="display:none;">
     <div class="popup-content">
         <span class="closeBtn closeAltaGruposBtn">&times;</span>
