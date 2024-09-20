@@ -371,25 +371,32 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 
     fetch(`${academicaApiConfig.apiUrl}/modulos/`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 200) {
-                data.data.forEach(modulo => {
-                    const option = document.createElement('option');
-                    option.value = modulo.modulo;
-                    option.text = `${modulo.modulo}. ${modulo.nombre_uea}`;
-                    modulosSelect.appendChild(option);
-                    moduloCatalogoSelect.appendChild(option);
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 200) {
+            data.data.forEach(modulo => {
+                // Crear la primera opción para modulosSelect
+                const option1 = document.createElement('option');
+                option1.value = modulo.modulo;
+                option1.text = `${modulo.modulo}. ${modulo.nombre_uea}`;
+                modulosSelect.appendChild(option1);
 
-                    const claveUeaHidden = document.createElement('input');
-                    claveUeaHidden.type = 'hidden';
-                    claveUeaHidden.name = `clave_uea_${modulo.modulo}`;
-                    claveUeaHidden.value = modulo.clave_uea;
-                    modulosSelect.appendChild(claveUeaHidden);
-                    
-                });
-            }
-        });
+                // Crear una segunda opción para moduloCatalogoSelect
+                const option2 = document.createElement('option');
+                option2.value = modulo.modulo;
+                option2.text = `${modulo.modulo}. ${modulo.nombre_uea}`;
+                moduloCatalogoSelect.appendChild(option2);
+
+                // Crear y agregar input hidden
+                const claveUeaHidden = document.createElement('input');
+                claveUeaHidden.type = 'hidden';
+                claveUeaHidden.name = `clave_uea_${modulo.modulo}`;
+                claveUeaHidden.value = modulo.clave_uea;
+                modulosSelect.appendChild(claveUeaHidden);
+            });
+        }
+    });
+
 
     addGrupoBtn.addEventListener('click', function() {
         const popup = document.getElementById('popupAltaGrupo');
