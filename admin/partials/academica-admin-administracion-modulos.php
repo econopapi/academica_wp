@@ -30,14 +30,6 @@ if ($modulos_data['status'] == 200) {
 
 <p>Configuración del plan de estudios: mapeo de módulos y componentes.</p>
 
-<!-- Pantalla de carga -->
-<div id="loading-screen" style="display:none">
-    <div class="loading-content">
-        <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Cargando" class="loading-image">
-        <div class="loader"></div>
-    </div>
-</div>
-
 <!-- Popup Mapeo Componentes-->
 <div id="popupForm" class="popup" style="display:none;">
     <div class="popup-content">
@@ -154,5 +146,13 @@ if ($modulos_data['status'] == 200) {
         <?php endforeach; ?>
     </tbody>
 </table>
+
+<!-- Pantalla de carga -->
+<div id="loading-screen" style="display:none">
+    <div class="loading-content">
+        <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Cargando" class="loading-image">
+        <div class="loader"></div>
+    </div>
+</div>
 
 <script src="<?php echo plugins_url('/js/academica-admin-modulos.js', dirname(__FILE__)); ?>"></script>

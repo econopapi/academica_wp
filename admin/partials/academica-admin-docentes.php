@@ -129,9 +129,9 @@ if (empty($data)) {
 
         echo "<div class='pagination'>";
         if ($api_page > 1) {
-            echo "<a class='paginationBtn'href='?page=academica_docentes&api_page=$prev_page&limit=$limit'>Anterior</a> ";
+            echo "<a class='paginationBtn'href='?page=academica_docentes&api_page=$prev_page&limit=$limit'><<</a> ";
         }
-        echo "<a class='paginationBtn' href='?page=academica_docentes&api_page=$next_page&limit=$limit'>Siguiente</a>";
+        echo "<a class='paginationBtn' href='?page=academica_docentes&api_page=$next_page&limit=$limit'>>></a>";
         echo "</div>";
     } else {
         echo "<p>No se encontraron datos</p>";

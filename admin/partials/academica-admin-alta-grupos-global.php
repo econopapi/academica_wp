@@ -66,9 +66,40 @@
     </div>
 </div>
 
+<div class="popup" id="popupCatalogoGrupos">
+    <div class="popup-content">
+        <span class="closeBtn closeCatalogoGrupos">&times;</span>
+        <h2>Catálogo de Grupos</h2>
+        <form class="search-form-2" id="catalogoGruposForm">
+        <div style="display: flex; align-items: center;">
+            <div>
+
+                <select name="moduloCatalogoSelect" id="moduloCatalogoSelect">
+                    <option value="">Módulo</option>
+                </select>
+
+            </div>
+            <div id="inputGrupoCatalogoDiv">
+                <input type="text" id="grupoCatalogo" name="grupoCatalogo" placeholder="Grupo">                
+            </div>
+            <div id="buttonGrupoCatalogoDiv">
+                <button id="registarGrupoCatalogo">Registrar grupo</button>
+            </div>
+            <div>
+                <p>Use esta interfaz para gestionar y mapear los grupos que cada módulo puede tener y su respectiva nomenclatura. Se sugiere registrar más grupos para tener holgura al momento de dar de alta seguimientos.</p>
+            </div>
+
+        </div>
+        </form>        
+        <div class="table-2" id="catalogoGruposTable">
+            <!-- Aquí se mostrarán los grupos por módulo obtenidos de la API -->
+        </div>
+    </div>
+</div>
+
 <div id="popupAltaGrupo" class="popup" style="display:none;">
     <div class="popup-content">
-        <span class="closeBtn">&times;</span>
+        <span class="closeBtn closeAltaGruposBtn">&times;</span>
         <div class="table-2">
             <form class="search-form-2" id="asignacion-form" enctype="multipart/form-data">       
                 <table class="table-1">     
@@ -90,15 +121,6 @@
                             <td>
                                 <select id="modulo" name="modulo">}
                                     <option value="">Módulo</option>
-                                    <!-- <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                    <option value="8">8</option>
-                                    <option value="9">9</option>
-                                    <option value="10">10</option>
-                                    <option value="11">11</option>
-                                    <option value="12">12</option> -->
                                 </select>
                             </td>
                             <td>
@@ -159,7 +181,8 @@
                     <tbody>
                         <tr>
                             <td class="center-content">
-                                <label>El archivo XLSX debe contener únicamente tres columnas: número de lista, matrícula y nombre</label>                
+                                <label>El archivo XLSX debe contener únicamente tres columnas con los siguientes encabezados: <strong>número_lista, matricula, nombre_alumno</strong></label>
+                                <a href="https://economia.xoc.uam.mx/archivos/grupo_global_muestra.xlsx"><strong>[Descargar plantilla XLSX de ejemplo]</strong></a>                
                             </td>
                         </tr>
                         <tr>
