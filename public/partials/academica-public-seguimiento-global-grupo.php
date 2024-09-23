@@ -13,7 +13,7 @@
  */
 //echo plugins_url('/js/academica-read-evaluacion-global.js', dirname(__FILE__));
 //echo plugins_url('/css/academica-public-seguimiento-global-grupo.css', dirname(__FILE__));
-require_once("wp-load.php");
+//require_once("wp-load.php");
 
 $current_user = wp_get_current_user();
 

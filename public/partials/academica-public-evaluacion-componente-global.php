@@ -15,7 +15,7 @@
  */
 
 
-require_once("wp-load.php");
+//require_once("wp-load.php");
 
 $api_url = get_option('academica_api_url');
 
