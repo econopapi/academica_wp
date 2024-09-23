@@ -16,7 +16,7 @@
 
  $api_url = get_option('academica_api_url');
 
-require_once("wp-load.php");
+//require_once("wp-load.php");
 
 $current_user = wp_get_current_user();
 
