@@ -31,7 +31,7 @@
 
 <div>
     <button id="addGrupoBtn">Alta de grupo</button>
-    <button id="catalogoGruposBtn">Catálogo de Grupos</button>
+    <button id="catalogoGruposBtn">Configuración</button>
 </div>
 
 <h2>Grupos registrados</h2>
