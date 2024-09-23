@@ -215,14 +215,24 @@ class Academica {
 
 	public function after_login_redirect($user_login, $user) {
 
-		if (strpos($user->user_email, '@correo.xoc.uam.mx') !== false){
-			wp_redirect( '/academica-docentes-asignacion-global' );
-		} else {
+		// Verifica si el correo pertenece a @correo.xoc.uam.mx
+		if (strpos($user->user_email, '@correo.xoc.uam.mx') !== false) {
+			wp_redirect(home_url('academica-docentes-asignacion-global/'));
+			exit;
+		} 
+		// Verifica si el usuario tiene el rol de administrador
+		else if (in_array('administrator', $user->roles)) {
+			wp_redirect(admin_url('admin.php?page=academica'));
+			exit;
+		} 
+		// Redirige a la página de inicio si no cumple con las anteriores
+		else {
 			wp_redirect(home_url());
+			exit;
 		}
-
-		exit();
 	}
+	
+	
 
 	public function hide_admin_bar() {
 		if (!current_user_can('administrator') && !is_admin()) {
