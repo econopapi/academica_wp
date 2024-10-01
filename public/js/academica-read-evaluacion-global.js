@@ -1,28 +1,35 @@
+var selectTrimestre = document.getElementById('trimestre');
+var selectGrupo = document.getElementById('grupo');
+var hiddenDocente = document.getElementById('docente');
+
+function loadTrimestres() {
+    fetch(`${academicaApiConfig.apiUrl}/trimestres/`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 200) {
+            const trimestres = data.data;
+
+            trimestres.forEach(trimestre => {
+                const option = document.createElement('option');
+                option.value = trimestre.trimestre;
+                option.textContent = trimestre.trimestre_nombre;
+                selectTrimestre.appendChild(option)
+            });
+        } else {
+            console.error('Error al obtener trimestres;', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud', error);
+    })
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    var selectTrimestre = document.getElementById('trimestre');
-    var selectGrupo = document.getElementById('grupo');
-    var hiddenDocente = document.getElementById('docente');
+
     // disable the select "grupo" by default
     selectGrupo.disabled = true;
-    fetch(`${academicaApiConfig.apiUrl}/trimestres/`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 200) {
-                const trimestres = data.data;
 
-                trimestres.forEach(trimestre => {
-                    const option = document.createElement('option');
-                    option.value = trimestre.trimestre;
-                    option.textContent = trimestre.trimestre_nombre;
-                    selectTrimestre.appendChild(option)
-                });
-            } else {
-                console.error('Error al obtener trimestres;', data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error en la solicitud', error);
-        })
+    loadTrimestres();
         
     function createTable(data, mapeo) {
         if (data.length === 0) return null; // Si no hay datos, no se crea la tabla
@@ -186,6 +193,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Toma el valor seleccionado en "trimestre"
         var trimestreSeleccionado = this.value;
         var docente = hiddenDocente.value;
+
+        selectGrupo.innerHTML='<option value="">Cargando...</option>';
+
+        
     
     
         // api GET request with selected data
@@ -413,6 +424,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('loading-screen').style.display = 'none';
                 })
                 .catch(error => console.error('Error:', error));
+        } else {
+            // fetch(`${academicaApiConfig.apiUrl}/trimestres/`)
+            // .then(response => response.json())
+            // .then(data => {
+            //     if (data.status === 200) {
+            //         const trimestres = data.data;
+
+            //         trimestres.forEach(trimestre => {
+            //             const option = document.createElement('option');
+            //             option.value = trimestre.trimestre;
+            //             option.textContent = trimestre.trimestre_nombre;
+            //             selectTrimestre.appendChild(option);
+                        
+            //         });
+            //         document.getElementById('loading-screen').style.display = 'none';
+            //         selectGrupo.disabled = true;  // Mantener deshabilitado el grupo hasta que se seleccione un trimestre
+            //     } else {
+            //         console.error('Error al obtener trimestres:', data.message);
+            //     }
+            // })
+            // .catch(error => console.error('Error en la solicitud', error));
+            //loadTrimestres();
+            document.getElementById('loading-screen').style.display = 'none';
         }
     
     }
