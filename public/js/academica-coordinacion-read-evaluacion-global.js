@@ -357,7 +357,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // verify if the url has the params
         if (trimestre && grupo) {
     
-            fetch(`${academicaApiConfig.apiUrl}/evaluacion_academica/get_seguimiento_id?trimestre=${trimestre}&grupo=${grupo}&docente_email=${hiddenDocente.value}`)
+            fetch(`${academicaApiConfig.apiUrl}/evaluacion_academica/get_seguimiento_id?trimestre=${trimestre}&grupo=${grupo}`)
             .then(response => response.json())
             .then(data => {
                 console.log(data);

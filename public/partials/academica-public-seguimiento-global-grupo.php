@@ -84,7 +84,7 @@ if ($current_user->ID != 0) {
 </div>
 
 <?php if ($user_role == 'administrator') { ?>
-    <script src="<?php echo plugins_url('/js/academica-coordi-read-evaluacion-global.js', dirname(__FILE__)); ?>"></script>
+    <script src="<?php echo plugins_url('/js/academica-coordinacion-read-evaluacion-global.js', dirname(__FILE__)); ?>"></script>
 <?php } else { ?>
     <script src="<?php echo plugins_url('/js/academica-read-evaluacion-global.js', dirname(__FILE__)); ?>"></script>
 <?php } ?>
