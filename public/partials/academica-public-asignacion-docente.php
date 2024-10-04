@@ -27,7 +27,7 @@ if ($current_user->ID != 0) {
     $user_id = $current_user->ID;
     $user_login = $current_user->user_login;
     $user_email = $current_user->user_email;
-    //$user_email = 'macr@azc.uam.mx';
+    //$user_email = 'avazquezg@correo.xoc.uam.mx';
     $user_roles = $current_user->roles;
     $user_role = !empty($user_roles) ? $user_roles[0] : 'Sin Rol';
 
