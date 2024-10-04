@@ -19,15 +19,22 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .asignacion-docente-head {
     margin: 0 auto;
-    width: 85%;
-    
+    width: 85%; 
+}
+
+#seguimiento_global_grupo_table {
+    max-width: 100%!important;
 }
 
 #seguimiento_global_grupo_table,
-#seguimiento_recuperacion_grupo_table,
+#seguimiento_recuperacion_grupo_table {
+    margin: 0 auto;
+    width: 100%;
+}
+
 #head {
     margin: 0 auto;
-    width: 85%;
+    width: 80%;
 }
 
 #seguimiento_global_grupo_table table,
@@ -41,10 +48,9 @@ input[type="number"]::-webkit-outer-spin-button {
 #seguimiento_recuperacion_grupo_table th,
 #seguimiento_global_grupo_table td,
 #seguimiento_recuperacion_grupo_table td {
-    padding-left: 16px;
-    padding-right: 16px;
-    padding-top: 6px;
-    text-align: left;
+
+    padding: 5px;
+    text-align: center;
     border-bottom: 1px solid #ddd;
 }
 
