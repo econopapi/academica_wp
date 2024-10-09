@@ -27,7 +27,7 @@ if ($current_user->ID != 0) {
     $user_id = $current_user->ID;
     $user_login = $current_user->user_login;
     $user_email = $current_user->user_email;
-    //$user_email = 'rchavez@correo.xoc.uam.mx';
+    //$user_email = 'plcv4746@correo.xoc.uam.mx';
     $user_roles = $current_user->roles;
     $user_role = !empty($user_roles) ? $user_roles[0] : 'Sin Rol';
 
@@ -143,7 +143,11 @@ $lista_json = json_decode($lista_body, true);
                     <input type="hidden" name="matriculas[<?php echo $i; ?>]" value="<?php echo $lista_json['payload']['lista_alumnos'][$i]['matricula']; ?>">
                     <td><?php echo $lista_json['payload']['lista_alumnos'][$i]['nombre_alumno']; ?></td>
                     <td>
-                        <input type="number" step="0.01" name="calificacion[<?php echo $i; ?>]" value="<?php echo $lista_json['payload']['lista_alumnos'][$i][$componente]; ?>">
+                    <input type="number" 
+                            step="0.01" 
+                            name="calificacion[<?php echo $i; ?>]" 
+                            value="<?php echo $lista_json['payload']['lista_alumnos'][$i][$componente]; ?>"
+                            data-global="<?php echo $lista_json['payload']['lista_alumnos'][$i]['global_json'][$componente]; ?>">
                     </td>
                 </tr>
             <?php } ?>
@@ -163,7 +167,7 @@ $lista_json = json_decode($lista_body, true);
 </div>
 
 <!-- Pantalla de carga -->
-<div id="loading-screen" style="display:block">
+<div id="loading-screen" style="display:none">
     <div class="loading-content">
         <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Cargando" class="loading-image">
         <div class="loader"></div>
