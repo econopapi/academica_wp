@@ -8,8 +8,8 @@
  * @link       http://example.com
  * @since      0.1
  *
- * @package    Academica
- * @subpackage Academica/admin/partials
+ * @package    academica_wp
+ * @subpackage academica_wp/admin/partials
  */
 ?>
 <div class="header-container">
@@ -126,7 +126,6 @@
                             <td>
                                 <select id="grupo" name="grupo">
                                     <option value="">Grupo</option>
-                                    <option value="23o">SD01E</option>
                                 </select>
                             </td>
                         </tr>

@@ -1,53 +1,59 @@
-var selectModulo = document.getElementById('modulo');
-var selectGrupo = document.getElementById('grupo');
-var asignacionForm = document.getElementById('asignacion-form');
-var moduloCatalogoSelect = document.getElementById('moduloCatalogoSelect')
-var catalogoGruposBtn = document.getElementById('catalogoGruposBtn')
-var inputGrupoCatalogoDiv = document.getElementById('inputGrupoCatalogoDiv');
-var buttonGrupoCatalogoDiv = document.getElementById('buttonGrupoCatalogoDiv');
 
-inputGrupoCatalogoDiv.style.display = 'none';
-buttonGrupoCatalogoDiv.style.display = 'none';
-
-selectGrupo.disabled = true;
-selectModulo.addEventListener('change', function() {
-
-    var moduloSeleccionado = this.value;
-
-    // Crear la opción de "Cargando..."
-    selectGrupo.innerHTML = '';
-    var loadingOption = document.createElement('option');
-    loadingOption.value = '';
-    loadingOption.text = 'Cargando...';
-    selectGrupo.appendChild(loadingOption);
-
-    fetch(`${academicaApiConfig.apiUrl}/coordinacion/global/grupos?modulo=${moduloSeleccionado}`)
-        .then(response => response.json())
-        .then(data => {
-
-            selectGrupo.disabled = false;
-            selectGrupo.innerHTML = '';
-
-            var option = document.createElement('option');
-            option.value = '';
-            option.text = 'Seleccione un grupo';
-            selectGrupo.appendChild(option);
-
-            data.data.forEach(grupo => {
-                var option = document.createElement('option');
-                option.value = grupo;
-                option.text = grupo.toUpperCase();
-                selectGrupo.appendChild(option);
-            });
-        });
-});
 
 document.addEventListener('DOMContentLoaded', (event) => {
+    var trimestreActual = document.getElementById('trimestreActual');
+    var selectTrimestre = document.getElementById('trimestre');
+    var selectModulo = document.getElementById('modulo');
+    var selectGrupo = document.getElementById('grupo');
+    var asignacionForm = document.getElementById('asignacion-form');
+    var moduloCatalogoSelect = document.getElementById('moduloCatalogoSelect')
+    var catalogoGruposBtn = document.getElementById('catalogoGruposBtn')
+    var inputGrupoCatalogoDiv = document.getElementById('inputGrupoCatalogoDiv');
+    var buttonGrupoCatalogoDiv = document.getElementById('buttonGrupoCatalogoDiv');
+    var componentesTbody = document.getElementById('componentes-tbody');
+
+    inputGrupoCatalogoDiv.style.display = 'none';
+    buttonGrupoCatalogoDiv.style.display = 'none';
+
+    selectGrupo.disabled = true;
+    selectModulo.addEventListener('change', function() {
+
+        var moduloSeleccionado = this.value;
+
+        // Crear la opción de "Cargando..."
+        selectGrupo.innerHTML = '';
+        var loadingOption = document.createElement('option');
+        loadingOption.value = '';
+        loadingOption.text = 'Cargando...';
+        selectGrupo.appendChild(loadingOption);
+
+        fetch(`${academicaApiConfig.apiUrl}/coordinacion/global/grupos?modulo=${moduloSeleccionado}`)
+            .then(response => response.json())
+            .then(data => {
+
+                selectGrupo.disabled = false;
+                selectGrupo.innerHTML = '';
+
+                var option = document.createElement('option');
+                option.value = '';
+                option.text = 'Seleccione un grupo';
+                selectGrupo.appendChild(option);
+
+                data.data.forEach(grupo => {
+                    var option = document.createElement('option');
+                    option.value = grupo;
+                    option.text = grupo.toUpperCase();
+                    selectGrupo.appendChild(option);
+                });
+            });
+    });
+
+
     fetch(`${academicaApiConfig.apiUrl}/historial_academico/trimestre_actual`)
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success' && data.code === 200) {
-                trimestreActual = document.getElementById('trimestreActual');
+                
                 var trimestre = data.payload.trimestre_nombre;
                 // Mostrar el trimestre en el DOM
                 var trimestreDiv = document.createElement('div');
@@ -57,6 +63,16 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 trimestreDiv.style.marginBottom = '10px';
                 trimestreDiv.innerText = '⭐ Trimestre Actual: ' + trimestre;
                 trimestreActual.appendChild(trimestreDiv);
+
+                const trimestreActualData = data.payload.trimestre;
+                selectTrimestre.innerHTML = '';
+                const option = document.createElement('option');
+                option.value = trimestreActualData;
+                option.text = trimestreActualData.toUpperCase();
+                selectTrimestre.appendChild(option);
+                selectTrimestre.disabled = true;
+                fetchGrupos(trimestreActualData);
+
             } else {
                 trimestreActual.innerText = 'Error al obtener el trimestre actual';
                 console.error('Error al obtener el trimestre actual');
@@ -72,28 +88,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
             document.getElementById('popupAltaGrupo').style.display = "none";
         }
     }
-
-    let trimestreActual;
-    // Fetching and rendering modulos/componentes
-    var selectTrimestre = document.getElementById('trimestre');
-    var modulosSelect = document.getElementById('modulo');
-    var componentesTbody = document.getElementById('componentes-tbody');
-
-    // Obtener trimestre actual
-    fetch(`${academicaApiConfig.apiUrl}/historial_academico/trimestre_actual`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.code === 200) {
-                const trimestreActual = data.payload.trimestre;
-                selectTrimestre.innerHTML = '';
-                const option = document.createElement('option');
-                option.value = trimestreActual;
-                option.text = trimestreActual.toUpperCase();
-                selectTrimestre.appendChild(option);
-                selectTrimestre.disabled = true;
-                fetchGrupos(trimestreActual);
-            }
-        });
 
     async function fetchGrupos(trimestre) {
         try {
@@ -375,11 +369,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
     .then(data => {
         if (data.status === 200) {
             data.data.forEach(modulo => {
-                // Crear la primera opción para modulosSelect
+                // Crear la primera opción para selectModulo
                 const option1 = document.createElement('option');
                 option1.value = modulo.modulo;
                 option1.text = `${modulo.modulo}. ${modulo.nombre_uea}`;
-                modulosSelect.appendChild(option1);
+                selectModulo.appendChild(option1);
 
                 // Crear una segunda opción para moduloCatalogoSelect
                 const option2 = document.createElement('option');
@@ -392,7 +386,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 claveUeaHidden.type = 'hidden';
                 claveUeaHidden.name = `clave_uea_${modulo.modulo}`;
                 claveUeaHidden.value = modulo.clave_uea;
-                modulosSelect.appendChild(claveUeaHidden);
+                selectModulo.appendChild(claveUeaHidden);
             });
         }
     });
@@ -411,7 +405,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 
     // Fetch modulo/componentes cuando un módulo es seleccionado:
-    modulosSelect.addEventListener('change', function() {
+    selectModulo.addEventListener('change', function() {
         const claveUea = this.value;
         if (claveUea) {
 

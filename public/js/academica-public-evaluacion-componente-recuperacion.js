@@ -1,55 +1,80 @@
-var data = {
-    'id_seguimiento': document.getElementById('id_seguimiento_recuperacion').value,
-    'numero_economico': document.getElementById('docente_id').value,
-    'componente': document.getElementById('componente_id').value,
-    'recuperacion': 'true', // This is the only difference between this file and academica-public-evaluacion-componente-global.js
-    'calificaciones': []
-};
 
-var url_params = {
-    'trimestre': document.getElementById('trimestre').value,
-    'grupo': document.getElementById('grupo').value,
-    'modulo': document.getElementById('modulo').value
-};
 
-function submitForm(event) {
-    event.preventDefault();
-    document.getElementById('loading-screen').style.display = 'block';
-    var matriculas = document.querySelectorAll('input[name^="matriculas"]');
-    var calificaciones = document.querySelectorAll('input[name^="calificacion"]');
+document.addEventListener('DOMContentLoaded', function() {
+    const calificacionInputs = document.querySelectorAll('input[name^="calificacion"]');
 
-    for (var i = 0; i < matriculas.length; i++) {
-        var calificacionValue = parseFloat(calificaciones[i].value);
-        if (isNaN(calificacionValue) || calificacionValue < 0.0 || calificacionValue > 10.0) {
-            alert('La calificación debe ser un número entre 0.0 y 10.0');
-            console.log('Error en calificación');
-            return;
+    calificacionInputs.forEach(input => {
+        const globalCalificacion = parseFloat(input.getAttribute('data-global'));
+
+        // Si el valor de global_json del componente es 6 o más, desactivar el input
+        if (!isNaN(globalCalificacion) && globalCalificacion >= 6) {
+            input.disabled = true;
+            input.title = "Calificación acreditada en evaluación global";
+            input.style.backgroundColor = "#d4edda"; // Fondo verde claro
+            input.style.color = "#155724"; // Texto verde oscuro
+
+            // Agregar texto adicional junto al input
+            const acreditadoText = document.createElement('span');
+            acreditadoText.innerText = "< Acreditado en Global";
+            acreditadoText.style.color = "#155724";
+            acreditadoText.style.fontWeight = "bold";
+            input.parentNode.appendChild(acreditadoText);
         }
-        var calificacion = {
-            'matricula_alumno': matriculas[i].value,
-            'calificacion_numero': parseFloat(calificaciones[i].value)
-        };
-        data.calificaciones.push(calificacion);
-    }
+    });
 
-    console.log(data)
-
-    var xhr = new XMLHttpRequest();
-    var requestSuccessful = false; // Variable para almacenar el estado de la solicitud
-    xhr.open('POST', `${academicaApiConfig.apiUrl}/evaluacion_academica/componente`, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(JSON.stringify(data));
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-            alert('Evaluación enviada con éxito');
-            window.open('/academica-historial-academico-evaluacion-recuperacion-grupo?trimestre=' + url_params.trimestre + '&grupo=' + url_params.grupo + '&modulo=' + url_params.modulo, '_self');
-        } else {
-            alert('Error al enviar la evaluación');
-            window.location.reload();
-        }
+    var data = {
+        'id_seguimiento': document.getElementById('id_seguimiento_recuperacion').value,
+        'numero_economico': document.getElementById('docente_id').value,
+        'componente': document.getElementById('componente_id').value,
+        'recuperacion': 'true', // This is the only difference between this file and academica-public-evaluacion-componente-global.js
+        'calificaciones': []
     };
     
-}
-
-
-document.getElementById('lista_componente').addEventListener('submit', submitForm);
+    var url_params = {
+        'trimestre': document.getElementById('trimestre').value,
+        'grupo': document.getElementById('grupo').value,
+        'modulo': document.getElementById('modulo').value
+    };
+    
+    function submitForm(event) {
+        event.preventDefault();
+        document.getElementById('loading-screen').style.display = 'block';
+        var matriculas = document.querySelectorAll('input[name^="matriculas"]');
+        var calificaciones = document.querySelectorAll('input[name^="calificacion"]');
+    
+        for (var i = 0; i < matriculas.length; i++) {
+            var calificacionValue = parseFloat(calificaciones[i].value);
+            if (isNaN(calificacionValue) || calificacionValue < 0.0 || calificacionValue > 10.0) {
+                alert('La calificación debe ser un número entre 0.0 y 10.0');
+                console.log('Error en calificación');
+                return;
+            }
+            var calificacion = {
+                'matricula_alumno': matriculas[i].value,
+                'calificacion_numero': parseFloat(calificaciones[i].value)
+            };
+            data.calificaciones.push(calificacion);
+        }
+    
+        console.log(data)
+    
+        var xhr = new XMLHttpRequest();
+        var requestSuccessful = false; // Variable para almacenar el estado de la solicitud
+        xhr.open('POST', `${academicaApiConfig.apiUrl}/evaluacion_academica/componente`, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(data));
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                alert('Evaluación enviada con éxito');
+                window.open('/academica-historial-academico-evaluacion-recuperacion-grupo?trimestre=' + url_params.trimestre + '&grupo=' + url_params.grupo + '&modulo=' + url_params.modulo, '_self');
+            } else {
+                alert('Error al enviar la evaluación');
+                window.location.reload();
+            }
+        };
+        
+    }
+    
+    
+    document.getElementById('lista_componente').addEventListener('submit', submitForm);
+});
