@@ -143,7 +143,7 @@ $lista_json = json_decode($lista_body, true);
                     <input type="hidden" name="matriculas[<?php echo $i; ?>]" value="<?php echo $lista_json['payload']['lista_alumnos'][$i]['matricula']; ?>">
                     <td><?php echo $lista_json['payload']['lista_alumnos'][$i]['nombre_alumno']; ?></td>
                     <td>
-                    <input type="number" 
+                    <input id="input-componente" type="number" 
                             step="0.01" 
                             name="calificacion[<?php echo $i; ?>]" 
                             value="<?php echo $lista_json['payload']['lista_alumnos'][$i][$componente]; ?>"
