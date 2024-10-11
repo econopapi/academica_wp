@@ -5,6 +5,31 @@ var selectModulo = document.getElementById('modulo');
 // Deshabilita el select "grupo" al cargar la página
 selectGrupo.disabled = true;
 
+function loadTrimestres() {
+    fetch(`${academicaApiConfig.apiUrl}/trimestres/`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 200) {
+            const trimestres = data.data;
+
+            trimestres.forEach(trimestre => {
+                const option = document.createElement('option');
+                option.value = trimestre.trimestre;
+                option.textContent = trimestre.trimestre_nombre;
+                selectTrimestre.appendChild(option)
+            });
+        } else {
+            console.error('Error al obtener trimestres;', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud', error);
+    })
+}
+
+loadTrimestres()
+selectTrimestre.disabled = false;
+
 // Agrega un evento de cambio al select "trimestre"
 selectTrimestre.addEventListener('change', function() {
     // Toma el valor seleccionado en "trimestre"
