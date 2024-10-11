@@ -38,6 +38,31 @@ var hiddenDocente = document.getElementById('docente');
 selectGrupo.disabled = true;
 selectModulo.disabled = true;
 
+function loadTrimestres() {
+    fetch(`${academicaApiConfig.apiUrl}/trimestres/`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 200) {
+            const trimestres = data.data;
+
+            trimestres.forEach(trimestre => {
+                const option = document.createElement('option');
+                option.value = trimestre.trimestre;
+                option.textContent = trimestre.trimestre_nombre;
+                selectTrimestre.appendChild(option)
+            });
+        } else {
+            console.error('Error al obtener trimestres;', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud', error);
+    })
+}
+
+loadTrimestres()
+selectTrimestre.disabled = false;
+
 function createTable(data) {
     var table = document.createElement('table');
     var caption = table.createCaption();
@@ -203,12 +228,34 @@ selectTrimestre.addEventListener('change', function() {
         .then(response => response.json())
         .then(data => {
             // Habilita el select "grupo" y llena sus opciones con la respuesta de la API
-            selectGrupo.disabled = false;
+            selectModulo.disabled = false;
             var seen = {};
             var options = data['payload'].reduce(function(acc, grupo) {
                 if (!seen[grupo.grupo]) {
                     acc.push('<option value="'+ grupo.grupo +'">' + grupo.grupo.toUpperCase() + '</option>');
                     seen[grupo.grupo] = true;
+                }
+                return acc;
+            }, []);
+            selectGrupo.innerHTML = '<option value="">Grupo</option>' + options.join('');
+        });
+});
+
+selectModulo.addEventListener('change', function() {
+
+    var moduloSeleccionado = this.value;
+
+    fetch(`${academicaApiConfig.apiUrl}/historial_academico/grupos_por_trimestre?trimestre=${selectTrimestre.value}&modulo=${moduloSeleccionado}&recuperacion=true`)
+        .then(response => response.json())
+        .then(data => {
+            // Habilitar selector de grupo y llenar opciones
+            selectGrupo.disabled = false;
+            var seen = {};
+            var options = data['payload'].reduce(function(acc, item) {
+                var grupo = item.grupo.grupo; // Ajuste aquí para acceder correctamente al valor de grupo
+                if (!seen[grupo]) {
+                    acc.push('<option value="'+ grupo +'">' + grupo.toUpperCase() + '</option>');
+                    seen[grupo] = true;
                 }
                 return acc;
             }, []);
@@ -224,12 +271,12 @@ document.getElementById('grupo').addEventListener('change', function(event) {
     var grupo = document.getElementById('grupo').value;
 
 
-    fetch(`${academicaApiConfig.apiUrl}/evaluacion_academica/get_seguimiento_id?trimestre=${trimestre}&grupo=${grupo}&docente_email=${hiddenDocente.value}`)
+    fetch(`${academicaApiConfig.apiUrl}/evaluacion_academica/get_seguimiento_id?trimestre=${trimestre}&grupo=${grupo}&docente_email=${hiddenDocente.value}&recuperacion=true&modulo=${selectModulo.value}`)
     .then(response => response.json())
     .then(data => {
         console.log(data);
         // fill the div with id "estatus_firma" with the data obtained
-        var id_seguimiento_global = data.metadata.id_seguimiento_global; // Store the id_seguimiento_global
+        var id_seguimiento_recuperacion = data.metadata.id_seguimiento_recuperacion; // Store the id_seguimiento_global
         var docente_id = data.metadata.docente_id; // Store the docente_id
 
         
@@ -247,12 +294,12 @@ document.getElementById('grupo').addEventListener('change', function(event) {
                         console.log(data);
                         if (data.code === 200) {
                         // evaluacion completa y firmada
-                            evaluacionFirmada(id_seguimiento_global, docente_id);
+                            evaluacionFirmada(id_seguimiento_recuperacion, docente_id);
                             
                         } else if (data.code === 422) {
                         // evaluacion completa. pendiente de confirmacion
 
-                            evaluacionPendienteDeFirma(id_seguimiento_global, docente_id, grupo, trimestre);
+                            evaluacionPendienteDeFirma(id_seguimiento_recuperacion, docente_id, grupo, trimestre);
                         }
                     })
                     .catch(error => console.error('Error:', error));
@@ -271,7 +318,7 @@ document.getElementById('grupo').addEventListener('change', function(event) {
     })
     .catch(error => console.error('Error:', error));
 
-    fetch(`${academicaApiConfig.apiUrl}/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
+    fetch(`${academicaApiConfig.apiUrl}/historial_academico/seguimiento_recuperacion?trimestre=${trimestre}&grupo=${grupo}&modulo=${selectModulo.value}&detalle=true`)
         .then(response => response.json())
         .then(data => {
             //console.log(data);
@@ -490,5 +537,4 @@ function loadDataFromUrlParams() {
 window.onload = function(){
     console.log('window.onload');
     loadDataFromUrlParams();
-
 }

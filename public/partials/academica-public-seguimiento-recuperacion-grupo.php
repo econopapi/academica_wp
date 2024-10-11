@@ -47,7 +47,7 @@ if ($current_user->ID != 0) {
 <form id="seguimiento_global_grupo_form" class="search-form-1">
     <label for="trimestre">Trimestre:</label>
     <select id="trimestre" name="trimestre" disabled>
-        <option value="24i">24 Invierno</option>
+        <option value="">Trimestre</option>
     </select>
 
     <label for="modulo">Módulo:</label>
