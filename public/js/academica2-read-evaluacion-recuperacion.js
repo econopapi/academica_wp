@@ -3,7 +3,7 @@ var selectModulo = document.getElementById('modulo');
 var selectGrupo = document.getElementById('grupo');
 var hiddenDocente = document.getElementById('docente');
 
-selectModulo.disabled = true;
+//selectModulo.disabled = true;
 
 function loadTrimestres() {
     fetch(`${academicaApiConfig.apiUrl}/trimestres/`)
@@ -18,6 +18,7 @@ function loadTrimestres() {
                 option.textContent = trimestre.trimestre_nombre;
                 selectTrimestre.appendChild(option)
             });
+            
         } else {
             console.error('Error al obtener trimestres;', data.message);
         }
@@ -31,28 +32,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // disable the select "grupo" by default
     selectGrupo.disabled = true;
-
-    selectModulo.addEventListener('change', function() {
-
-        var moduloSeleccionado = this.value;
+    selectModulo.style.display = 'none';
     
-        fetch(`${academicaApiConfig.apiUrl}/historial_academico/grupos_por_trimestre?trimestre=${selectTrimestre.value}&modulo=${moduloSeleccionado}&recuperacion=true`)
-            .then(response => response.json())
-            .then(data => {
-                // Habilitar selector de grupo y llenar opciones
-                selectGrupo.disabled = false;
-                var seen = {};
-                var options = data['payload'].reduce(function(acc, item) {
-                    var grupo = item.grupo.grupo; // Ajuste aquí para acceder correctamente al valor de grupo
-                    if (!seen[grupo]) {
-                        acc.push('<option value="'+ grupo +'">' + grupo.toUpperCase() + '</option>');
-                        seen[grupo] = true;
-                    }
-                    return acc;
-                }, []);
-                selectGrupo.innerHTML = '<option value="">Grupo</option>' + options.join('');
-            });
-    });
     
 
     loadTrimestres();
@@ -225,22 +206,24 @@ document.addEventListener('DOMContentLoaded', function() {
         
     
     
-        // api GET request with selected data
-        fetch(`${academicaApiConfig.apiUrl}/historial_academico/grupos_por_trimestre?recuperacion=true&modulo=${modulo}trimestre=${trimestreSeleccionado}&docente=${docente}`)
-            .then(response => response.json())
-            .then(data => {
-                // Habilita el select "grupo" y llena sus opciones con la respuesta de la API
-                selectGrupo.disabled = false;
-                var seen = {};
-                var options = data['payload'].reduce(function(acc, grupo) {
-                    if (!seen[grupo.grupo]) {
-                        acc.push('<option value="'+ grupo.grupo +'">' + grupo.grupo.toUpperCase() + '</option>');
-                        seen[grupo.grupo] = true;
-                    }
-                    return acc;
-                }, []);
-                selectGrupo.innerHTML = '<option value="">Grupo</option>' + options.join('');
-            });
+    // API GET request with selected data
+    fetch(`${academicaApiConfig.apiUrl}/historial_academico/grupos_por_trimestre?recuperacion=true&trimestre=${trimestreSeleccionado}&docente=${docente}`)
+        .then(response => response.json())
+        .then(data => {
+            // Habilita el select "grupo" y llena sus opciones con la respuesta de la API
+            selectGrupo.disabled = false;
+            var seen = {};
+            var options = data['payload'].reduce(function(acc, item) {
+                const grupo = item.grupo.grupo; // Accede a "grupo.grupo"
+                const modulo = item.uea.modulo;
+                if (!seen[grupo]) {
+                    acc.push('<option value="'+ grupo +'" modulo="'+modulo+'">' + grupo.toUpperCase() + '</option>');
+                    seen[grupo] = true;
+                }
+                return acc;
+            }, []);
+            selectGrupo.innerHTML = '<option value="">Grupo</option>' + options.join('');
+        });
     });
     
     document.getElementById('grupo').addEventListener('change', function(event) {
@@ -249,9 +232,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Obtener los valores de trimestre y grupo seleccionados
         var trimestre = document.getElementById('trimestre').value;
         var grupo = document.getElementById('grupo').value;
+        var modulo = document.getElementById('grupo').selectedOptions[0].getAttribute('modulo');
+        //alert(modulo);
     
         // Redirigir a la misma página con los parámetros de URL
-        window.location.href = `${window.location.pathname}?trimestre=${trimestre}&grupo=${grupo}`;
+        window.location.href = `${window.location.pathname}?trimestre=${trimestre}&grupo=${grupo}&modulo=${modulo}`;
     });
     
     function evaluacionPendienteDeFirma(id_seguimiento_recuperacion, docente_id, trimestre, grupo) {
@@ -430,7 +415,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 
             })
             .catch(error => console.error('Error:', error));
-    
+            
+            
             fetch(`${academicaApiConfig.apiUrl}/historial_academico/seguimiento_recuperacion?recuperacion=true&modulo=${modulo}&trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
                 .then(response => response.json())
                 .then(data => {
