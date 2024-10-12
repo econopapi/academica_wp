@@ -23,7 +23,7 @@ if ($current_user->ID != 0) {
     $user_id = $current_user->ID;
     $user_login = $current_user->user_login;
     $user_email = $current_user->user_email;
-    //$user_email = 'panj4441@correo.xoc.uam.mx';
+    //$user_email = 'nzarco@correo.xoc.uam.mx';
     $user_roles = $current_user->roles;
     $user_role = !empty($user_roles) ? $user_roles[0] : 'Sin Rol';
     //$user_role = 'editor';
@@ -46,8 +46,8 @@ if ($current_user->ID != 0) {
 <h2>Evaluaciones de recuperación</h2>
 <form id="seguimiento_global_grupo_form" class="search-form-1">
     <label for="trimestre">Trimestre:</label>
-    <select id="trimestre" name="trimestre" disabled>
-        
+    <select id="trimestre" name="trimestre">
+        <option value="">Trimestre</option>
     </select>
 
     <label for="modulo">Módulo:</label>

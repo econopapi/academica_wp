@@ -264,7 +264,7 @@ function loadDataFromUrlParams() {
     // verify if the url has the params
     if (trimestre && grupo) {
 
-        fetch(`${academicaApiConfig.apiUrl}/historial_academico/seguimiento_global?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
+        fetch(`${academicaApiConfig.apiUrl}/historial_academico/seguimiento_recuperacion?trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
             .then(response => response.json())
             .then(data => {
                 // Hacer algo con los datos devueltos
