@@ -23,7 +23,7 @@ if ($current_user->ID != 0) {
     $user_id = $current_user->ID;
     $user_login = $current_user->user_login;
     $user_email = $current_user->user_email;
-    //$user_email = 'rchavez@correo.xoc.uam.mx';
+    //$user_email = 'panj4441@correo.xoc.uam.mx';
     $user_roles = $current_user->roles;
     $user_role = !empty($user_roles) ? $user_roles[0] : 'Sin Rol';
     //$user_role = 'editor';
@@ -47,7 +47,7 @@ if ($current_user->ID != 0) {
 <form id="seguimiento_global_grupo_form" class="search-form-1">
     <label for="trimestre">Trimestre:</label>
     <select id="trimestre" name="trimestre" disabled>
-        <option value="">Trimestre</option>
+        
     </select>
 
     <label for="modulo">Módulo:</label>
@@ -90,10 +90,16 @@ if ($current_user->ID != 0) {
 <img class="center" src="https://uam.dlimon.net/wp-content/uploads/2024/02/AXOLOTL-1.png" alt="axolotl">
 </div>
 
-
+<!-- Pantalla de carga -->
+<div id="loading-screen" style="display:none">
+    <div class="loading-content">
+        <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Cargando" class="loading-image">
+        <div class="loader"></div>
+    </div>
+</div>
 
 <?php if ($user_role == 'administrator') { ?>
-    <script src="<?php echo plugins_url('/js/academica-coord-read-evaluacion-recuperacion.js', dirname(__FILE__)); ?>"></script>
+    <script src="<?php echo plugins_url('/js/academica2-coord-read-evaluacion-recuperacion.js', dirname(__FILE__)); ?>"></script>
 <?php } else { ?>
-    <script src="<?php echo plugins_url('/js/academica-read-evaluacion-recuperacion.js', dirname(__FILE__)); ?>"></script>
+    <script src="<?php echo plugins_url('/js/academica2-read-evaluacion-recuperacion.js', dirname(__FILE__)); ?>"></script>
 <?php } ?>
