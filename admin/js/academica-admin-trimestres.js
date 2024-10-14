@@ -20,6 +20,32 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(error => console.error('Error en la solicitud:', error));
+
+        if (document.getElementById('download-form')) {
+            // Hacer la segunda solicitud fetch solo si "download-form" existe
+            fetch(`${academicaApiConfig.apiUrl}/trimestres`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 200 && data.message === 'success') {
+                        var trimestres = data.data; // Accedemos a "data.data"
+                        var trimestreSelect = document.getElementById('trimestre');
+    
+                        // Limpiar las opciones actuales del select
+                        trimestreSelect.innerHTML = '';
+    
+                        // Agregar las nuevas opciones al select
+                        trimestres.forEach(function(trimestre) {
+                            var option = document.createElement('option');
+                            option.value = trimestre.trimestre; // ID del trimestre
+                            option.textContent = trimestre.trimestre_nombre; // Nombre del trimestre
+                            trimestreSelect.appendChild(option);
+                        });
+                    } else {
+                        console.error('Error al obtener los trimestres');
+                    }
+                })
+                .catch(error => console.error('Error en la segunda solicitud:', error));
+        }
 });
 
 async function addTrimestre() {

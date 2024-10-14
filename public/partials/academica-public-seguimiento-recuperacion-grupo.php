@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 <?php
 
 /**
@@ -15,6 +17,8 @@
 //echo plugins_url('/css/academica-public-seguimiento-global-grupo.css', dirname(__FILE__));
 //require_once("wp-load.php");
 
+
+
 $current_user = wp_get_current_user();
 
 
@@ -23,7 +27,7 @@ if ($current_user->ID != 0) {
     $user_id = $current_user->ID;
     $user_login = $current_user->user_login;
     $user_email = $current_user->user_email;
-    //$user_email = 'nzarco@correo.xoc.uam.mx';
+    //$user_email = 'jmcorona@correo.xoc.uam.mx';
     $user_roles = $current_user->roles;
     $user_role = !empty($user_roles) ? $user_roles[0] : 'Sin Rol';
     //$user_role = 'editor';
@@ -77,14 +81,12 @@ if ($current_user->ID != 0) {
 <div id="head">
     <div id="info_general"></div>
     <div id="asignacion_docente"></div>
-
 </div>
 
 <div class="notification-area">
     <div id="estatus_firma"></div>
     <div id="notification"></div>
 </div>
-
 
 <div id="seguimiento_recuperacion_grupo_table">
 <img class="center" src="https://uam.dlimon.net/wp-content/uploads/2024/02/AXOLOTL-1.png" alt="axolotl">
@@ -98,8 +100,18 @@ if ($current_user->ID != 0) {
     </div>
 </div>
 
+<!-- Biblioteca jsPDF para la creación de PDFs -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.14/jspdf.plugin.autotable.min.js"></script>
+
+
+<!-- Biblioteca SheetJS para la creación de archivos Excel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+
+
 <?php if ($user_role == 'administrator') { ?>
     <script src="<?php echo plugins_url('/js/academica2-coord-read-evaluacion-recuperacion.js', dirname(__FILE__)); ?>"></script>
 <?php } else { ?>
     <script src="<?php echo plugins_url('/js/academica2-read-evaluacion-recuperacion.js', dirname(__FILE__)); ?>"></script>
 <?php } ?>
+
