@@ -27,8 +27,8 @@
     <h2>Historial de evaluaciones</h2>
     <label for="trimestre">Seleccionar Trimestre:</label>
     <select name="trimestre" id="trimestre">
-        <option value="24i">24-Invierno</option>
-        <option value="23o">23-Otoño</option>
+        <option value="">Trimestre</option>
+        
     </select><br /><br />
     
     <label for="tipo_evaluacion">Seleccionar Tipo de Evaluación:</label>
