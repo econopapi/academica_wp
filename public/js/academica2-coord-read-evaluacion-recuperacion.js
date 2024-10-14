@@ -130,13 +130,34 @@ function createTable(data, mapeo) {
     // Añadir "calificacion_numero" y "calificacion_letra" al final
     titles.push("calificacion_numero", "calificacion_letra");
 
+    // Crear un objeto que mapee los valores de "componente" a "componente_extenso"
+    var componenteMap = mapeo.reduce((acc, docente) => {
+        acc[docente.componente] = docente.componente_extenso;
+        return acc;
+    }, {});
+
+    // Agregar un objeto para mapear los títulos de las columnas fijas
+    var fixedColumnTitles = {
+        'numero_lista': 'Lista',
+        'nombre_alumno': 'Nombre',
+        'matricula': 'Matrícula',
+        'calificacion_numero': 'Calificación (Número)',
+        'calificacion_letra': 'Calificación (Letra)'
+    };
+
     // Añadir cabeceras de tabla
     var thead = document.createElement('thead');
     var headerRow = document.createElement('tr');
 
     titles.forEach(title => {
         var th = document.createElement('th');
-        th.textContent = title.replace(/_/g, ' '); // Reemplaza guiones bajos por espacios
+        th.textContent = fixedColumnTitles[title] || title.replace(/_/g, ' '); // Reemplaza guiones bajos por espacios
+
+        // Utiliza el objeto "componenteMap" para obtener el título correspondiente
+        if (componenteMap[title]) {
+            th.textContent = componenteMap[title];
+        }
+
         headerRow.appendChild(th);
     });
     thead.appendChild(headerRow);
@@ -164,30 +185,57 @@ function createInfoTable(informacion_general) {
     caption.textContent = 'Información general';
     caption.style.fontWeight = 'bold';
 
-    // For each property in "informacion_general"
+    // Mapping of current keys to desired names
+    var keyMapping = {
+        'grupo': 'Grupo',
+        'trimestre': 'Trimestre',
+        'modulo': 'Módulo',
+        'uea': 'UEA',
+        'clave_uea': 'Clave UEA',
+        'coordinador': 'Coordinador/a'
+    };
+
+    // Get unique coordinators
+    var coordinadores = informacion_general.docentes
+        .filter(docente => docente.coordinacion)
+        .reduce((unique, docente) => {
+            if (!unique.some(d => d.nombre === docente.nombre)) {
+                unique.push(docente);
+            }
+            return unique;
+        }, []);
+
+    // Combine coordinator names into a single string
+    var coordinadorNames = coordinadores.map(coordinador => coordinador.nombre).join(', ');
+
+    // Add each property from "informacion_general" except "docentes"
     for (var key in informacion_general) {
         if (key === 'docentes') continue;
 
-        // Create a table row for each property
         var infoTableRow = document.createElement('tr');
 
-        // Create a table header cell for the property
         var infoTableHeaderCell = document.createElement('th');
-        infoTableHeaderCell.textContent = key;
-
-        // Add the header cell to the row
+        infoTableHeaderCell.textContent = keyMapping[key] || key;
         infoTableRow.appendChild(infoTableHeaderCell);
 
-        // Create a table cell for the property value
         var infoTableCell = document.createElement('td');
         infoTableCell.textContent = informacion_general[key];
-
-        // Add the cell to the row
         infoTableRow.appendChild(infoTableCell);
 
-        // Add the row to the table
         infoTable.appendChild(infoTableRow);
     }
+
+    // Add a row for the coordinator(s)
+    var coordinatorRow = document.createElement('tr');
+    var coordinatorHeaderCell = document.createElement('th');
+    coordinatorHeaderCell.textContent = keyMapping['coordinador'];
+    coordinatorRow.appendChild(coordinatorHeaderCell);
+
+    var coordinatorCell = document.createElement('td');
+    coordinatorCell.textContent = `⭐ ${coordinadorNames}`;
+    coordinatorRow.appendChild(coordinatorCell);
+
+    infoTable.appendChild(coordinatorRow);
 
     return infoTable;
 }
@@ -198,23 +246,18 @@ function createDocentesTable(docentes) {
     caption.textContent = 'Asignación docente';
     caption.style.fontWeight = 'bold';
 
-    // Obtener las claves de la primera docente
-    var firstDocente = docentes[0];
-
-    var docenteKeys = Object.keys(firstDocente).filter(key => !key.includes('coordinacion') && key !== 'numero_economico');
-
     // Crear la fila de encabezado
     var headerRow = document.createElement('tr');
 
-    // Para cada clave en docenteKeys
-    docenteKeys.forEach(function(key) {
-        // Crear una celda para cada clave
-        var headerCell = document.createElement('th');
-        headerCell.textContent = key;
+    // Crear celdas para las columnas "nombre" y "componente_extenso"
+    var headerCell1 = document.createElement('th');
+    headerCell1.textContent = 'Nombre';
+    var headerCell2 = document.createElement('th');
+    headerCell2.textContent = 'Componente';
 
-        // Agregar la celda al encabezado
-        headerRow.appendChild(headerCell);
-    });
+    // Agregar las celdas al encabezado
+    headerRow.appendChild(headerCell1);
+    headerRow.appendChild(headerCell2);
 
     // Agregar la fila de encabezado a la tabla
     docentesTable.appendChild(headerRow);
@@ -224,16 +267,15 @@ function createDocentesTable(docentes) {
         // Crear una nueva fila
         var docenteRow = document.createElement('tr');
 
-        // Para cada propiedad en el objeto
-        for (var docenteKey in docente) {
-            if (docenteKey.includes('coordinacion') || docenteKey.includes('numero_economico')) continue;
-            // Crear una celda para cada propiedad en el objeto
-            var docenteCell = document.createElement('td');
-            docenteCell.textContent = docente[docenteKey];
+        // Crear celdas para las columnas "nombre" y "componente_extenso"
+        var docenteCell1 = document.createElement('td');
+        docenteCell1.textContent = docente.nombre;
+        var docenteCell2 = document.createElement('td');
+        docenteCell2.textContent = docente.componente_extenso;
 
-            // Agregar la celda a la fila
-            docenteRow.appendChild(docenteCell);
-        }
+        // Agregar las celdas a la fila
+        docenteRow.appendChild(docenteCell1);
+        docenteRow.appendChild(docenteCell2);
 
         // Agregar la fila a la tabla
         docentesTable.appendChild(docenteRow);
