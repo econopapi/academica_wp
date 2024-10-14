@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Obtener el valor del grupo para nombrar el PDF
         const grupoValue = document.getElementById("info_general").querySelector("td").innerText; // Asumiendo que el grupo es la primera celda
         // Descargar el PDF
-        doc.save(c);
+        doc.save(`${grupoValue}_Evaluacion.pdf`);
     }
         
     function createTable(data, mapeo) {
