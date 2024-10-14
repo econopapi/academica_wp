@@ -1,6 +1,6 @@
 # Académica WordPress
 
-Autor: Daniel Limón\n
+Autor: Daniel Limón <br>
 Email: dani@dlimon.net
 
 Plugin de WordPress para conectar el sistema Académica a sitios web desplegados con WordPress.
