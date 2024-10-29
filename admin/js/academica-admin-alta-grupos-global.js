@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     .then(response => response.json())
     .then(data => {
         if (data.status === 200) {
-            data.data.forEach(modulo => {
+            data.payload.data.forEach(modulo => {
                 // Crear la primera opción para selectModulo
                 const option1 = document.createElement('option');
                 option1.value = modulo.modulo;

@@ -7,7 +7,7 @@ function loadTrimestres() {
     .then(response => response.json())
     .then(data => {
         if (data.status === 200) {
-            const trimestres = data.data;
+            const trimestres = data.payload.data;
 
             trimestres.forEach(trimestre => {
                 const option = document.createElement('option');
@@ -277,7 +277,7 @@ document.addEventListener('DOMContentLoaded', function() {
             let params = {
                 id_seguimiento: id_seguimiento_global,
                 docente_email: docente_id
-            };   
+            };
     
             fetch(url, {
                 method: 'POST',
