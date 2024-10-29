@@ -32,7 +32,8 @@ function submitForm(event) {
 
     
 
-    console.log(data)
+    console.log(JSON.stringify(data, null, 4));
+    //return;
 
     var xhr = new XMLHttpRequest();
     var requestSuccessful = false; // Variable para almacenar el estado de la solicitud
