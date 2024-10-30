@@ -11,12 +11,13 @@ https://academica.dlimon.net/modulos
 
 // Fetch data from /modulos endpoint
 $api_url = get_option('academica_api_url');
+$api_key = get_option('academica_api_key');
 $modulos_json = file_get_contents($api_url . '/modulos');
 $modulos_data = json_decode($modulos_json, true);
 
 // Check if the data was fetched successfully
 if ($modulos_data['status'] == 200) {
-    $modulos = $modulos_data['data'];
+    $modulos = $modulos_data['payload']['data'];
 } else {
     echo "<p>Error fetching modules data.</p>";
     $modulos = [];
