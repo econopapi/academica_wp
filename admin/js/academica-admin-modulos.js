@@ -118,10 +118,10 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('loading-screen').style.display = 'block';
             // Componentes
             let response_componentes = await apiRequest('GET', '/componentes/');
-            let allComponents = response_componentes.data;
+            let allComponents = response_componentes.payload.data;
             // Mapeo de módulo
             let response = await apiRequest('GET', `/modulos/${moduloId}`);
-            let moduleMapping = response.data;
+            let moduleMapping = response.payload.data[0]
             // Componentes en popup
             let componentesListBody = document.getElementById("componentesListBody");
             let catalogoComponentesBody = document.getElementById("catalogoComponentesBody");     
@@ -130,6 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 catalogoComponentesBody.innerHTML = '';
                 // Mostrar componentes mapeados
                 moduleMapping.mapeo.forEach(mapeo => {
+                    
                     let component = allComponents.find(c => c.nombre_componente === mapeo.nombre_componente);
                     if (component) {
                         componentesListBody.innerHTML += `
@@ -149,7 +150,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         </tr>
                     `;
                 });
-                addRemoveComponentListeners();
+                document.querySelectorAll('.removeComponentBtn').forEach(btn => {
+                    btn.onclick = function() {
+                        this.parentElement.parentElement.remove();
+                    }
+                });
                 // Add event listeners for add buttons
                 document.querySelectorAll('.addComponentBtn').forEach(btn => {
                     btn.onclick = function() {
@@ -164,7 +169,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </tr>
                             `;
                             // Re-add event listeners for new remove buttons
-                            addRemoveComponentListeners();
+                            document.querySelectorAll('.removeComponentBtn').forEach(btn => {
+                                btn.onclick = function() {
+                                    this.parentElement.parentElement.remove();
+                                }
+                            });
                         }
                     };
                 });
@@ -238,31 +247,53 @@ document.addEventListener('DOMContentLoaded', function() {
                 mapeo: componentes
             };
 
-            console.log('Payload:', payload);
+            //console.log('Payload:', payload);
 
+            // try {
+            //     document.getElementById('loading-screen').style.display = 'block'; 
+            //     let response = await fetch(`${academicaApiConfig.apiUrl}/modulos/`, {
+            //         method: 'POST',
+            //         headers: {
+            //             'Content-Type': 'application/json'
+            //         },
+            //         body: JSON.stringify(payload)
+            //     });
+
+            //     if (response.ok) {
+            //         let result = await response.json();
+            //         alert('Cambios guardados exitosamente: ' + result.message);
+            //         popup.style.display = "none";
+            //         document.getElementById('loading-screen').style.display = 'none'; 
+            //     } else {
+            //         alert('Error al guardar los cambios');
+            //         document.getElementById('loading-screen').style.display = 'none'; 
+            //     }
+            // } catch (error) {
+            //     console.error('Error saving changes:', error);
+            //     document.getElementById('loading-screen').style.display = 'none'; 
+            // }
             try {
-                document.getElementById('loading-screen').style.display = 'block'; 
-                let response = await fetch(`${academicaApiConfig.apiUrl}/modulos/`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                if (response.ok) {
-                    let result = await response.json();
+                // Mostrar la pantalla de carga
+                document.getElementById('loading-screen').style.display = 'block';
+        
+                // Realizar la solicitud para guardar los cambios
+                const result = await apiRequest('POST', '/modulos/', payload);
+        
+                // Verificar la respuesta de la solicitud
+                if (result && result.status === 200) {
                     alert('Cambios guardados exitosamente: ' + result.message);
                     popup.style.display = "none";
-                    document.getElementById('loading-screen').style.display = 'none'; 
                 } else {
                     alert('Error al guardar los cambios');
-                    document.getElementById('loading-screen').style.display = 'none'; 
                 }
             } catch (error) {
                 console.error('Error saving changes:', error);
-                document.getElementById('loading-screen').style.display = 'none'; 
+            } finally {
+                // Ocultar la pantalla de carga al final
+                document.getElementById('loading-screen').style.display = 'none';
             }
+                        
+
         } else {
             console.error('Element "componentesListBody" not found');
             document.getElementById('loading-screen').style.display = 'none'; 
@@ -413,18 +444,14 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             // Realizar la solicitud para obtener los componentes
             const data = await apiRequest('GET', '/componentes/');
-            alert('fetchComponentes');
-            console.log(data);
-
-            console.log('Datos recibidos:', data);
             if (data.status === 200) {
-                const componentesList = document.getElementById('componentesList'); // Asegúrate de que este ID sea correcto
+                const componentesList = document.getElementById('componentesList2'); // Asegúrate de que este ID sea correcto
                 
                 if (componentesList) {
-                    console.log('componentesList encontrado');
                     componentesList.innerHTML = '';
                     
-                    data.data.forEach(componente => {
+                    data.payload.data.forEach(componente => {
+                        //
                         const componenteDiv = document.createElement('div');
                         
                         componenteDiv.innerHTML = `
@@ -464,21 +491,43 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Función para eliminar un componente
-    function deleteComponente(id) {
-        fetch(`${academicaApiConfig.apiUrl}/componentes/${id}`, {
-            method: 'DELETE'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 200) {
+    // // Función para eliminar un componente
+    // function deleteComponente(id) {
+    //     fetch(`${academicaApiConfig.apiUrl}/componentes/${id}`, {
+    //         method: 'DELETE'
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         if (data.status === 200) {
+    //             alert('Componente eliminado correctamente');
+    //             fetchComponentes();
+    //         } else {
+    //             alert('Error al eliminar el componente');
+    //         }
+    //     })
+    //     .catch(error => console.error('Error:', error));
+    // }
+
+    async function deleteComponente(id) {
+        try {
+            // Mostrar la pantalla de carga
+            document.getElementById('loading-screen').style.display = 'block';
+    
+            // Llamada a la función apiRequest para eliminar el componente
+            const data = await apiRequest(`/componentes/${id}`, 'DELETE');
+    
+            if (data && data.status === 200) {
                 alert('Componente eliminado correctamente');
                 fetchComponentes();
             } else {
                 alert('Error al eliminar el componente');
             }
-        })
-        .catch(error => console.error('Error:', error));
+        } catch (error) {
+            console.error('Error eliminando el componente:', error);
+        } finally {
+            // Ocultar la pantalla de carga
+            document.getElementById('loading-screen').style.display = 'none';
+        }
     }
 
     /* End Componentes */
@@ -507,27 +556,35 @@ document.addEventListener('DOMContentLoaded', function() {
         const nombreUea = document.getElementById('nombreUea').value;
         const modulo = document.getElementById('modulo').value;
 
-        fetch(`${academicaApiConfig.apiUrl}/modulos/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
+        try {
+            // Mostrar la pantalla de carga
+            document.getElementById('loading-screen').style.display = 'block';
+    
+            // Preparar el payload
+            const payload = {
                 clave_uea: claveUea,
                 nombre_uea: nombreUea,
                 modulo: modulo
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 200) {
+            };
+    
+            // Llamada a la función apiRequest para agregar un módulo
+            const data = apiRequest('/modulos/', 'POST', payload);
+    
+            if (data && data.status === 200) {
                 alert('Módulo agregado exitosamente');
                 window.location.reload();
             } else {
                 alert('Error al agregar el módulo');
                 window.location.reload();
             }
-        });
+        } catch (error) {
+            console.error('Error agregando el módulo:', error);
+            alert('Error al agregar el módulo');
+        } finally {
+            // Ocultar la pantalla de carga
+            document.getElementById('loading-screen').style.display = 'none';
+        }
+        
     });
 
     // function fetchModulos() {
@@ -581,7 +638,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             // Realizar la solicitud para obtener los módulos
             const data = await apiRequest('GET', '/modulos/');
-            console.log(JSON.stringify(data));
+            //console.log(JSON.stringify(data));
     
             if (data.status === 200 && Array.isArray(data.payload.data)) {
                 const modulosList = document.getElementById('modulosList'); // Asegúrate de que este ID sea correcto
