@@ -38,6 +38,7 @@
 <table class="table-2" style="margin:0!important;">
     <thead>
         <tr>
+            <th>ID</th>
             <th>Trimestre</th>
             <th>Grupo</th>
             <th>Módulo</th>
