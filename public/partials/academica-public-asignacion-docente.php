@@ -15,7 +15,7 @@
  */
 
 $api_url = get_option('academica_api_url');
-
+$api_key = get_option('academica_api_key');
 
 //require_once("wp-load.php");
 
@@ -116,6 +116,7 @@ if ($current_user->ID != 0) {
     }
     // get body
     $asignacion_body = wp_remote_retrieve_body($asignacion_response);
+    print_r($asignacion_body);
     
     // decode body
     $asignacion_json = json_decode($asignacion_body, true);
