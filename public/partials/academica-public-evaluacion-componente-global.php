@@ -18,6 +18,12 @@
 //require_once("wp-load.php");
 
 $api_url = get_option('academica_api_url');
+$api_key = get_option('academica_api_key');
+$args = [
+    'headers' => [
+        'X-ACADEMICA-API-KEY' => $academica_api_key
+    ]
+];
 
 $current_user = wp_get_current_user();
 
@@ -41,12 +47,13 @@ $grupo = $_GET['grupo'];
 $componente = $_GET['componente'];
 $trimestre = $_GET['trimestre'];
 $docente = $_GET['docente'];
+$id_evaluacion = $_GET['evaluacion'];
 
-$docente_request = $api_url . '/historial_academico/docentes?email=' . $user_email;
-$docente_response = wp_remote_get($docente_request);
+$docente_request = $api_url . '/docentes?email=' . $user_email;
+$docente_response = wp_remote_get($docente_request, $args);
 
-$trimestre_request = $api_url . '/historial_academico/trimestre_actual';
-$trimestre_response = wp_remote_get($trimestre_request);
+$trimestre_request = $api_url . '/trimestres/actual';
+$trimestre_response = wp_remote_get($trimestre_request, $args);
 
 if (is_wp_error($docente_response) || is_wp_error($trimestre_response)) {
     return false;
@@ -60,27 +67,28 @@ $trimestre_response_json = json_decode($trimestre_response_body, true);
 
 
 
-if (!empty($docente_response_json['payload']['numero_economico'])) {
-    $numero_economico = $docente_response_json['payload']['numero_economico'];
+if (!empty($docente_response_json['payload']['data'][0]['numero_economico'])) {
+    $numero_economico = $docente_response_json['payload']['data'][0]['numero_economico'];
 } else {
     echo 'No se pudo obtener el número económico en la API.';
 }
 
-if (!empty($trimestre_response_json['payload']['trimestre'])) {
-    $trimestre = $trimestre_response_json['payload']['trimestre'];
+if (!empty($trimestre_response_json['payload']['data'][0]['trimestre'])) {
+    $trimestre = $trimestre_response_json['payload']['data'][0]['trimestre'];
 } else {
     echo 'No se pudo obtener el trimestre en la API.';
 }
 
-if ($docente != $docente_response_json['payload']['numero_economico']
-    || $trimestre != $trimestre_response_json['payload']['trimestre']) {
+if ($docente != $docente_response_json['payload']['data'][0]['numero_economico']
+    || $trimestre != $trimestre_response_json['payload']['data'][0]['trimestre']) {
     echo 'No tienes permiso para ver estos datos ;).';
     return false;
 }
 
-$lista_request = $api_url . '/historial_academico/lista_alumnos_componente_global?trimestre='.$trimestre.'&grupo='.$grupo.'&componente='.$componente;
+//$lista_request = $api_url . '/historial_academico/lista_alumnos_componente_global?trimestre='.$trimestre.'&grupo='.$grupo.'&componente='.$componente;
+$lista_request = $api_url . '/evaluaciones/'.$id_evaluacion.'?detalle=true';
 echo $lista_request;
-$lista_response = wp_remote_get($lista_request);
+$lista_response = wp_remote_get($lista_request, $args);
 if (is_wp_error($lista_response)) {
     return false;
 }
@@ -88,7 +96,8 @@ if (is_wp_error($lista_response)) {
 $lista_body = wp_remote_retrieve_body($lista_response);
 // decode body
 $lista_json = json_decode($lista_body, true);
-
+$informacion_general = $lista_json['payload']['informacion_general'];
+$lista_alumnos = $lista_json['payload']['lista_alumnos'];
 ?>
 
 <h2>Evaluación de componente - Global</h2>
@@ -100,7 +109,7 @@ $lista_json = json_decode($lista_body, true);
             <tbody>
                 <tr>
                     <td><strong>Grupo:</strong></td>
-                    <td><?php echo strtoupper($grupo); ?></td>
+                    <td><?php echo strtoupper($informacion_general[0]['grupo']['grupo']); ?></td>
                 </tr>
                 <tr>
                     <td><strong>Componente:</strong></td>
@@ -108,7 +117,7 @@ $lista_json = json_decode($lista_body, true);
                 </tr>
                 <tr>
                     <td><strong>Trimestre:</strong></td>
-                    <td><?php echo strtoupper($trimestre); ?></td>
+                    <td><?php echo strtoupper($informacion_general[0]['trimestre']['trimestre']); ?></td>
                 </tr>
                 <tr>
                     <td><strong>Docente:</strong></td>
@@ -130,24 +139,25 @@ $lista_json = json_decode($lista_body, true);
                 </tr>
             </thead>
             <tbody>
-            <?php for ($i = 0; $i < count($lista_json['payload']['lista_alumnos']); $i++) { ?>
+            <?php for ($i = 0; $i < count($lista_alumnos); $i++) { ?>
                 <tr>
-                    <td><?php echo $lista_json['payload']['lista_alumnos'][$i]['numero_lista']; ?></td>
-                    <td><?php echo $lista_json['payload']['lista_alumnos'][$i]['matricula']; ?>
-                    <input type="hidden" name="matriculas[<?php echo $i; ?>]" value="<?php echo $lista_json['payload']['lista_alumnos'][$i]['matricula']; ?>">
-                    <td><?php echo $lista_json['payload']['lista_alumnos'][$i]['nombre_alumno']; ?></td>
+                    <td><?php echo $lista_alumnos[$i]['numero_lista']; ?></td>
+                    <td><?php echo $lista_alumnos[$i]['matricula']; ?>
+                    <input type="hidden" name="matriculas[<?php echo $i; ?>]" value="<?php echo $lista_alumnos[$i]['matricula']; ?>">
+                    <td><?php echo $lista_alumnos[$i]['nombre_alumno']; ?></td>
                     <td>
-                        <input type="number" step="0.01" name="calificacion[<?php echo $i; ?>]" value="<?php echo $lista_json['payload']['lista_alumnos'][$i][$componente]; ?>">
+                        <input type="number" step="0.01" name="calificacion[<?php echo $i; ?>]" value="<?php echo $lista_alumnos[$i][$componente]; ?>">
                     </td>
                 </tr>
             <?php } ?>
             </tbody>
         </table>
-        <input type="hidden" id="id_seguimiento_global" value="<?php echo $lista_json['payload']['id_seguimiento']; ?>">
+        <input type="hidden" id="id_evaluacion" value="<?php echo $id_evaluacion; ?>">
+        <input type="hidden" id="id_seguimiento_global" value="<?php echo $informacion_general[0]['id']; ?>">
         <input type="hidden" id="docente_id" value="<?php echo $docente; ?>">
         <input type="hidden" id="componente_id" value="<?php echo $componente; ?>">
-        <input type="hidden" id="trimestre" value="<?php echo $trimestre; ?>">
-        <input type="hidden" id="grupo" value="<?php echo $grupo; ?>">
+        <input type="hidden" id="trimestre" value="<?php echo $informacion_general['trimestre']['trimestre']; ?>">
+        <input type="hidden" id="grupo" value="<?php echo $informacion_general['grupo']['grupo']; ?>">
         
         <input type="submit" value="Enviar evaluación">
     </form>

@@ -1,13 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
 	'use sctrict';
 
-	function apiRequest(method, endpoint, data=null) {
+	window.apiRequest = function(method, endpoint, data=null) {
 		return new Promise((resolve, reject) => {
 			var xhr = new XMLHttpRequest();
-			xhr.open(method, `${academicaApiconfig.apiUrl}${endpoint}`, true);
-			if (request == 'POST' || request == 'PUT') {
+			xhr.open(method, `${academicaApiConfig.apiUrl}${endpoint}`, true);
+			if (method == 'POST' || method == 'PUT') {
 				xhr.setRequestHeader('Content-Type', 'application/json'); }
-			xhr.setRequestHeader('X-ACADEMICA-API-KEY', academicaApiconfig.apiKey);
+			xhr.setRequestHeader('X-ACADEMICA-API-KEY', academicaApiConfig.apiKey);
 
 			xhr.onload = function () {
 				if (xhr.status >= 200 && xhr.status < 300) {

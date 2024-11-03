@@ -67,13 +67,18 @@ if ($current_user->ID != 0) {
 
     <!-- get trimestre actual y detalles de docente -->
     <?php
-    $docente_request = $api_url . '/historial_academico/docentes?email=' . $user_email;
-    
-    
-    $docente_response = wp_remote_get($docente_request);
+    $args = [
+        'headers' => [
+            'X-ACADEMICA-API-KEY' => $academica_api_key
+        ]
+    ];
+    $docente_request = $api_url . '/docentes?email=' . $user_email;
 
-    $trimestre_request = $api_url . '/historial_academico/trimestre_actual';
-    $trimestre_response = wp_remote_get($trimestre_request);
+    
+    $docente_response = wp_remote_get($docente_request, $args);
+
+    $trimestre_request = $api_url . '/trimestres/actual';
+    $trimestre_response = wp_remote_get($trimestre_request, $args);
 
 
     
@@ -89,23 +94,25 @@ if ($current_user->ID != 0) {
     $trimestre_response_body = wp_remote_retrieve_body($trimestre_response);
     $trimestre_response_json = json_decode($trimestre_response_body, true);
 
-    if (!empty($docente_response_json['payload']['numero_economico'])) {
-        $numero_economico = $docente_response_json['payload']['numero_economico'];
+    
+
+    if (!empty($docente_response_json['payload']['data'][0]['numero_economico'])) {
+        $numero_economico = $docente_response_json['payload']['data'][0]['numero_economico'];
         
     } else {
         echo 'No se pudo obtener el número económico en la API.';
     }
 
-    if (!empty($trimestre_response_json['payload']['trimestre'])) {
-        $trimestre = $trimestre_response_json['payload']['trimestre'];
+    if (!empty($trimestre_response_json['payload']['data'][0]['trimestre'])) {
+        $trimestre = $trimestre_response_json['payload']['data'][0]['trimestre'];
         
     } else {
         echo 'No se pudo obtener el trimestre en la API.';
     }
     
-    $asignacion_request = $api_url . '/historial_academico/asignacion_por_docente?numero_economico='.$numero_economico.'&trimestre='.$trimestre;
+    $asignacion_request = $api_url . '/evaluaciones?docente='.$numero_economico.'&trimestre='.$trimestre;
     
-    $asignacion_response = wp_remote_get($asignacion_request);
+    $asignacion_response = wp_remote_get($asignacion_request, $args);
 
     
     
@@ -116,7 +123,9 @@ if ($current_user->ID != 0) {
     }
     // get body
     $asignacion_body = wp_remote_retrieve_body($asignacion_response);
-    print_r($asignacion_body);
+    //echo $asignacion_body;
+    
+    //print_r($asignacion_body);
     
     // decode body
     $asignacion_json = json_decode($asignacion_body, true);
@@ -141,15 +150,15 @@ if ($current_user->ID != 0) {
                 <tbody>
                     <tr>
                         <td><strong>Nombre:</strong></td>
-                        <td><?php echo $docente_response_json['payload']['nombre']; ?></td>
+                        <td><?php echo $docente_response_json['payload']['data'][0]['nombre']; ?></td>
                     </tr>
                     <tr>
                         <td><strong>Número económico:</strong></td>
-                        <td><?php echo $docente_response_json['payload']['numero_economico']; ?></td>
+                        <td><?php echo $docente_response_json['payload']['data'][0]['numero_economico']; ?></td>
                     </tr>
                     <tr>
                         <td><strong>Trimestre:</strong></td>
-                        <td><?php echo strtoupper($trimestre_response_json['payload']['trimestre']); ?></td>
+                        <td><?php echo strtoupper($trimestre_response_json['payload']['data'][0]['trimestre']); ?></td>
                     </tr>
                 </tbody>
             </table>
@@ -182,28 +191,27 @@ if ($current_user->ID != 0) {
                             if (empty($asignacion['asignacion'][$i]['grupo'])) {
                                 continue;
                             } else {
-                                if ($asignacion['asignacion'][$i]['evaluacion_firmada'] == True) {
-                                    echo 'Finalizada ';
+                                if ($asignacion['asignacion'][$i]['evaluacion_finalizada'] == True) {
+                                    echo '✔️✔️ Finalizada ';
                                     echo '<a href="/academica-historial-academico-evaluacion-global-grupo?grupo='
                                         . urlencode($asignacion['asignacion'][$i]['grupo'])
                                         . '&trimestre=' . urlencode($trimestre_response_json['payload']['trimestre']) . '">[Ver evaluación]</a>';
-
-                                    
                                 } else {
                                     if ($asignacion['asignacion'][$i]['evaluacion_completada'] == True) {
-                                        echo 'Completada ';
+                                        echo '✔️ Completada ';
                                         echo '<a href="/academica-docentes-evaluacion-componente-global?grupo='
                                             . urlencode($asignacion['asignacion'][$i]['grupo'])
-                                            . '&componente=' . urlencode($asignacion['asignacion'][$i]['componente'])
-                                            . '&trimestre=' . urlencode($trimestre_response_json['payload']['trimestre'])
-                                            . '&docente=' . urlencode($docente_response_json['payload']['numero_economico']) . '">[Editar]</a>';
+                                            . '&evaluacion=' . urlencode($asignacion['asignacion'][$i]['id'])
+                                            . '&componente=' . urlencode($asignacion['asignacion'][$i]['componente_clave'])
+                                            . '&trimestre=' . urlencode($trimestre_response_json['payload']['data'][0]['trimestre'])
+                                            . '&docente=' . urlencode($docente_response_json['payload']['data'][0]['numero_economico']) . '">[Editar]</a>';
                                     } else {
-                                        echo 'Pendiente ';
+                                        echo '⚠️ Pendiente ';
                                         echo '<a href="/academica-docentes-evaluacion-componente-global?grupo='
                                             . urlencode($asignacion['asignacion'][$i]['grupo'])
                                             . '&componente=' . urlencode($asignacion['asignacion'][$i]['componente'])
-                                            . '&trimestre=' . urlencode($trimestre_response_json['payload']['trimestre'])
-                                            . '&docente=' . urlencode($docente_response_json['payload']['numero_economico']) . '">[Evaluar]</a>';
+                                            . '&trimestre=' . urlencode($trimestre_response_json['payload']['data']['trimestre'])
+                                            . '&docente=' . urlencode($docente_response_json['payload']['data']['numero_economico']) . '">[Evaluar]</a>';
                                     }
                                 }
                             }
