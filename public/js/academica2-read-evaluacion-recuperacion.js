@@ -10,7 +10,7 @@ function loadTrimestres() {
     .then(response => response.json())
     .then(data => {
         if (data.status === 200) {
-            const trimestres = data.data;
+            const trimestres = data.payload.data;
 
             trimestres.forEach(trimestre => {
                 const option = document.createElement('option');
@@ -84,9 +84,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const grupoValue = document.getElementById("info_general").querySelector("td").innerText; // Asumiendo que el grupo es la primera celda
         XLSX.writeFile(workbook, `${grupoValue}_Evaluacion.xlsx`);
     }
-    
-    
-
     
     function exportPDF() {
         const { jsPDF } = window.jspdf;
@@ -392,6 +389,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // Para cada objeto en "docentes"
         docentes.forEach(function(docente) {
+            console.log(docente);
             // Crear una nueva fila
             var docenteRow = document.createElement('tr');
     

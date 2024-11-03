@@ -192,13 +192,13 @@ if ($current_user->ID != 0) {
                                 continue;
                             } else {
                                 if ($asignacion['asignacion'][$i]['evaluacion_finalizada'] == True) {
-                                    echo '✔️✔️ Finalizada ';
+                                    echo '✅✅ Finalizada ';
                                     echo '<a href="/academica-historial-academico-evaluacion-global-grupo?grupo='
                                         . urlencode($asignacion['asignacion'][$i]['grupo'])
                                         . '&trimestre=' . urlencode($trimestre_response_json['payload']['trimestre']) . '">[Ver evaluación]</a>';
                                 } else {
                                     if ($asignacion['asignacion'][$i]['evaluacion_completada'] == True) {
-                                        echo '✔️ Completada ';
+                                        echo '✅ Completada ';
                                         echo '<a href="/academica-docentes-evaluacion-componente-global?grupo='
                                             . urlencode($asignacion['asignacion'][$i]['grupo'])
                                             . '&evaluacion=' . urlencode($asignacion['asignacion'][$i]['id'])

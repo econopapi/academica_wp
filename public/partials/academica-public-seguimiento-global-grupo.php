@@ -83,7 +83,11 @@ if ($current_user->ID != 0) {
         <div class="loader"></div>
     </div>
 </div>
-
+<!-- Biblioteca jsPDF para la creación de PDFs -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.14/jspdf.plugin.autotable.min.js"></script>
+<!-- Biblioteca SheetJS para la creación de archivos Excel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
 <?php if ($user_role == 'administrator') { ?>
     <script src="<?php echo plugins_url('/js/academica-coordinacion-read-evaluacion-global.js', dirname(__FILE__)); ?>"></script>
 <?php } else { ?>
