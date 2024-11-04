@@ -77,7 +77,7 @@ if ($current_user->ID != 0) {
 </div>
 
 <!-- Pantalla de carga -->
-<div id="loading-screen" style="display:none">
+<div id="loading-screen" style="display:block">
     <div class="loading-content">
         <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Cargando" class="loading-image">
         <div class="loader"></div>

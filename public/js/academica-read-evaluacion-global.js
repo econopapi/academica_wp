@@ -442,7 +442,7 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.href = `${window.location.pathname}?trimestre=${trimestre}&grupo=${grupo}`;
     });
     
-    function evaluacionPendienteDeFirma(id_evaluacion, docente_id, trimestre, grupo) {
+    function evaluacionPendienteDeFirma(id_evaluacion, docente_id) {
         var div = document.createElement('div');
         div.className = 'notification-orange';
         div.textContent = "Evaluación completa. Pendiente de confirmación.";
@@ -558,13 +558,13 @@ document.addEventListener('DOMContentLoaded', function() {
         var url = new URL(window.location.href);
     
         // get url params
-        var trimestre = url.searchParams.get('trimestre');
-        var grupo = url.searchParams.get('grupo');
+        // var trimestre = url.searchParams.get('trimestre');
+        // var grupo = url.searchParams.get('grupo');
         var id_evaluacion = url.searchParams.get('evaluacion');
         var docente = url.searchParams.get('docente');
     
         // verify if the url has the params
-        if (trimestre && grupo) {
+        if (id_evaluacion) {
             // Preparar los parámetros para la solicitud
             const endpoint = `/evaluaciones/${id_evaluacion}?detalle=true`;
             // Realizar la solicitud usando apiRequest

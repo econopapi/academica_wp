@@ -87,7 +87,6 @@ if ($docente != $docente_response_json['payload']['data'][0]['numero_economico']
 
 //$lista_request = $api_url . '/historial_academico/lista_alumnos_componente_global?trimestre='.$trimestre.'&grupo='.$grupo.'&componente='.$componente;
 $lista_request = $api_url . '/evaluaciones/'.$id_evaluacion.'?detalle=true';
-echo $lista_request;
 $lista_response = wp_remote_get($lista_request, $args);
 if (is_wp_error($lista_response)) {
     return false;
@@ -155,6 +154,7 @@ $lista_alumnos = $lista_json['payload']['lista_alumnos'];
         <input type="hidden" id="id_evaluacion" value="<?php echo $id_evaluacion; ?>">
         <input type="hidden" id="id_seguimiento_global" value="<?php echo $informacion_general[0]['id']; ?>">
         <input type="hidden" id="docente_id" value="<?php echo $docente; ?>">
+        <input type="hidden" id="docente_email" value="<?php echo $user_email; ?>">
         <input type="hidden" id="componente_id" value="<?php echo $componente; ?>">
         <input type="hidden" id="trimestre" value="<?php echo $informacion_general['trimestre']['trimestre']; ?>">
         <input type="hidden" id="grupo" value="<?php echo $informacion_general['grupo']['grupo']; ?>">

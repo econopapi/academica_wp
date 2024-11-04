@@ -193,9 +193,9 @@ if ($current_user->ID != 0) {
                             } else {
                                 if ($asignacion['asignacion'][$i]['evaluacion_finalizada'] == True) {
                                     echo '✅✅ Finalizada ';
-                                    echo '<a href="/academica-historial-academico-evaluacion-global-grupo?grupo='
-                                        . urlencode($asignacion['asignacion'][$i]['grupo'])
-                                        . '&trimestre=' . urlencode($trimestre_response_json['payload']['trimestre']) . '">[Ver evaluación]</a>';
+                                    echo '<a href="/academica-historial-academico-evaluacion-global-grupo/'
+                                        . '?evaluacion=' . urlencode($asignacion['asignacion'][$i]['id'])
+                                        . '&docente=' . urlencode($docente_response_json['payload']['data'][0]['email']) .'">[Ver evaluación]</a>';
                                 } else {
                                     if ($asignacion['asignacion'][$i]['evaluacion_completada'] == True) {
                                         echo '✅ Completada ';
@@ -209,9 +209,10 @@ if ($current_user->ID != 0) {
                                         echo '⚠️ Pendiente ';
                                         echo '<a href="/academica-docentes-evaluacion-componente-global?grupo='
                                             . urlencode($asignacion['asignacion'][$i]['grupo'])
-                                            . '&componente=' . urlencode($asignacion['asignacion'][$i]['componente'])
-                                            . '&trimestre=' . urlencode($trimestre_response_json['payload']['data']['trimestre'])
-                                            . '&docente=' . urlencode($docente_response_json['payload']['data']['numero_economico']) . '">[Evaluar]</a>';
+                                            . '&evaluacion=' . urlencode($asignacion['asignacion'][$i]['id'])
+                                            . '&componente=' . urlencode($asignacion['asignacion'][$i]['componente_clave'])
+                                            . '&trimestre=' . urlencode($trimestre_response_json['payload']['data'][0]['trimestre'])
+                                            . '&docente=' . urlencode($docente_response_json['payload']['data'][0]['numero_economico']) . '">[Evaluar]</a>';
                                     }
                                 }
                             }
