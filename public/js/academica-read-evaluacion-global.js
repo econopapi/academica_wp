@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Captura las tablas HTML
         const infoGeneralTable = document.querySelector("#info_general table");
         const asignacionDocenteTable = document.querySelector("#asignacion_docente table");
-        const calificacionesTable = document.querySelector("#seguimiento_recuperacion_grupo_table table");
+        const calificacionesTable = document.querySelector("#seguimiento_global_grupo_table table");
     
         // Convierte las tablas en hojas de Excel usando SheetJS
         const workbook = XLSX.utils.book_new();
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // Añadir el título debajo del logo
         doc.setFontSize(16);
-        doc.text("Evaluación de recuperación", 30, 20); // Ajusta la posición según sea necesario
+        doc.text("Evaluación global", 30, 20); // Ajusta la posición según sea necesario
     
         // Posición inicial Y
         let currentY = 35; // Establecer una posición arbitraria para el siguiente contenido
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
         doc.text("Calificaciones", 10, currentY);
         currentY += 10; // Incrementa la posición para el siguiente contenido
     
-        const calificacionesData = getTableData("seguimiento_recuperacion_grupo_table");
+        const calificacionesData = getTableData("seguimiento_global_grupo_table");
     
         // Crea la tabla de calificaciones
         doc.autoTable({
