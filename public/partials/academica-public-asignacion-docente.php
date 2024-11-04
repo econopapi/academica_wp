@@ -192,7 +192,7 @@ if ($current_user->ID != 0) {
                                 continue;
                             } else {
                                 if ($asignacion['asignacion'][$i]['evaluacion_finalizada'] == True) {
-                                    echo '✅✅ Finalizada ';
+                                    echo '☑️ Finalizada ';
                                     echo '<a href="/academica-historial-academico-evaluacion-global-grupo/'
                                         . '?evaluacion=' . urlencode($asignacion['asignacion'][$i]['id'])
                                         . '&docente=' . urlencode($docente_response_json['payload']['data'][0]['email']) .'">[Ver evaluación]</a>';

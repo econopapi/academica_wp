@@ -383,7 +383,7 @@ input[type="file"]::file-selector-button {
     font-size: 16px;
     font-weight: bold;
     color: #fff;
-    background-color: #4CAF50; /* Color de fondo para Excel */
+    background-color: #0072CE; /* Color de fondo para Excel */
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -395,6 +395,14 @@ input[type="file"]::file-selector-button {
     font-size: 18px;
 }
 
+#botonDescargarExcel {
+    background-color: #5eba63; /* Color de fondo para PDF */
+}
+
+#botonDescargarExcel:hover {
+    background-color: #45a049; /* Color de hover para Excel */
+}
+
 /* Estilo específico para el botón PDF */
 #botonDescargarPDF {
     background-color: #e74c3c; /* Color de fondo para PDF */
@@ -402,7 +410,7 @@ input[type="file"]::file-selector-button {
 
 /* Efecto hover */
 .boton-descarga:hover {
-    background-color: #45a049; /* Color de hover para Excel */
+    background-color: #005194; /* Color de hover para Excel */
 }
 
 #botonDescargarPDF:hover {
@@ -412,4 +420,5 @@ input[type="file"]::file-selector-button {
 .contenedor-botones-descarga {
     margin-top: 10px;
     padding-right: 15px; /* Agrega padding derecho */
+    padding-left: 20px;
 }
