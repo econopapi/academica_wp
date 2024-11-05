@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const botonIzquierdo = document.createElement("button");
         botonIzquierdo.id = "botonIzquierdo";
         botonIzquierdo.className = "boton-descarga";
-        botonIzquierdo.innerHTML = '<i class="fa-solid fa-circle-chevron-left"></i> Regresar a Programación docente';
+        botonIzquierdo.innerHTML = '<i class="fa-solid fa-circle-chevron-left"></i> Programación docente';
         botonIzquierdo.addEventListener("click", function(event) {  
             window.open('/academica-docentes-asignacion-global/', '_self'); 
         }); // Función personalizada para este botón
@@ -225,14 +225,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const botonDescargarPDF = document.createElement("button");
         botonDescargarPDF.id = "botonDescargarPDF";
         botonDescargarPDF.className = "boton-descarga";
-        botonDescargarPDF.innerHTML = '<i class="fas fa-file-pdf"></i> Descargar PDF';
+        botonDescargarPDF.innerHTML = '<i class="fa-solid fa-circle-down"></i><i class="fas fa-file-pdf"></i> PDF';
         botonDescargarPDF.addEventListener("click", exportPDF);
     
         // Crea el botón de descarga Excel
         const botonDescargarExcel = document.createElement("button");
         botonDescargarExcel.id = "botonDescargarExcel";
         botonDescargarExcel.className = "boton-descarga";
-        botonDescargarExcel.innerHTML = '<i class="fas fa-file-excel"></i> Descargar Excel';
+        botonDescargarExcel.innerHTML = '<i class="fa-solid fa-circle-down"></i><i class="fas fa-file-excel"></i> Excel';
         botonDescargarExcel.addEventListener("click", exportExcel);
     
         // Agrega los botones de descarga al contenedor de descargas
@@ -476,8 +476,6 @@ document.addEventListener('DOMContentLoaded', function() {
         var div = document.createElement('div');
         div.className = 'notification-orange';
         div.textContent = "Evaluación completa. Pendiente de confirmación.";
-    
-
 
         if (docente_id == coordinador) {
             var form = document.createElement('form');
@@ -518,10 +516,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 apiRequest('POST', endpoint, params)
                     .then(data => {
                         if (data.status === 200) {
-                            alert('Evaluación ponderada y confirmada con éxito!');
+                            
                             window.location.reload(); // reload de current page
                         } else {
-                            alert('Error al firmar el acta');
+                            alert('Error al finalizar evaluación');
                             window.location.reload();
                         }
                     })
@@ -533,13 +531,9 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         document.getElementById('estatus_firma').appendChild(div);
-        
-        
-    
-
     }
     
-    function evaluacionFirmada(id_seguimiento_global, docente_id) {
+    function evaluacionFirmada(id_evaluacion, docente_id, coordinador) {
         var div = document.createElement('div');
         div.className = 'notification-green';
         div.textContent = "Evaluación finalizada.";
@@ -547,17 +541,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var reminderDiv = document.createElement('div');
         //reminderDiv.textContent = "Recuerde que ésto es sólo un seguimiento interno de la Coordinación. Las califiaciones oficiales deben ser cargadas y firmadas en el Sistema Integral de Información Académica de la UAM, como siempre se ha hecho.";
         reminderDiv.innerHTML = 'Recuerde que ésto es sólo un seguimiento interno de la Coordinación de Economía.<br />Las califiaciones oficiales deben ser cargadas y firmadas en el <a href="#" onclick=\'window.open("https://sae.uam.mx/siae/acceso_siia.html");return false;\'>Sistema Integral de Información Académica de la UAM</a>, como siempre se ha hecho.';
-        // crear boton para volver a la pagina de asignacion docente con el estilo de boton
-        // var button = document.createElement('button');
-        // button.className = 'firmar-button';
-        // button.textContent = 'Volver a asignación docente';
-        // button.addEventListener('click', function(event) {
-        //     window.open('/academica-docentes-asignacion-global/', '_self');
-        // });
+        if (docente_id == coordinador) {
+            // botón para revertir evaluación.
+            var button = document.createElement('button');
+            button.className = 'firmar-button';
+            button.textContent = 'Revertir evaluación';
+            document.getElementById('notification').appendChild(button);
+            button.addEventListener('click', function(event) {
+                data = { 'docente_email': docente_id }
+                apiRequest('POST', `/evaluaciones/${id_evaluacion}/desbloquear`, data).then(data => {
+                    if (data.status === 200) {
+                        window.location.reload()
+                    } else {
+                        alert('Error revirtiendo evaluación.')
+                        window.location.reload()
+                    }
+                })
+            })      
+        }
     
         document.getElementById('estatus_firma').appendChild(div);
         document.getElementById('notification').appendChild(reminderDiv);
-        // document.getElementById('notification').appendChild(button);
+        
     }
     
     function evaluacionIncompleta() {
@@ -614,10 +619,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (data.payload.informacion_general[0].evaluacion_completada === false) {
                         evaluacionIncompleta();
                     } else {
+                        var emailCoordinador = document.getElementById('coordinador_email').value;
                         if (data.payload.informacion_general[0].evaluacion_finalizada === true) {
-                            evaluacionFirmada();
+                            evaluacionFirmada(id_evaluacion, docente, emailCoordinador);
                         } else {
-                            var emailCoordinador = document.getElementById('coordinador_email').value;
                             evaluacionPendienteDeFirma(id_evaluacion, docente, emailCoordinador);
                         }
                     }

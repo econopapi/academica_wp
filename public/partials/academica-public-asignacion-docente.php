@@ -69,7 +69,7 @@ if ($current_user->ID != 0) {
     <?php
     $args = [
         'headers' => [
-            'X-ACADEMICA-API-KEY' => $academica_api_key
+            'X-ACADEMICA-API-KEY' => $api_key
         ]
     ];
     $docente_request = $api_url . '/docentes?email=' . $user_email;
@@ -123,7 +123,6 @@ if ($current_user->ID != 0) {
     }
     // get body
     $asignacion_body = wp_remote_retrieve_body($asignacion_response);
-    //echo $asignacion_body;
     
     //print_r($asignacion_body);
     

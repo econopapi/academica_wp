@@ -21,7 +21,7 @@ $api_url = get_option('academica_api_url');
 $api_key = get_option('academica_api_key');
 $args = [
     'headers' => [
-        'X-ACADEMICA-API-KEY' => $academica_api_key
+        'X-ACADEMICA-API-KEY' => $api_key
     ]
 ];
 
@@ -156,8 +156,8 @@ $lista_alumnos = $lista_json['payload']['lista_alumnos'];
         <input type="hidden" id="docente_id" value="<?php echo $docente; ?>">
         <input type="hidden" id="docente_email" value="<?php echo $user_email; ?>">
         <input type="hidden" id="componente_id" value="<?php echo $componente; ?>">
-        <input type="hidden" id="trimestre" value="<?php echo $informacion_general['trimestre']['trimestre']; ?>">
-        <input type="hidden" id="grupo" value="<?php echo $informacion_general['grupo']['grupo']; ?>">
+        <input type="hidden" id="trimestre" value="<?php echo $informacion_general[0]['trimestre']['trimestre']; ?>">
+        <input type="hidden" id="grupo" value="<?php echo $informacion_general[0]['grupo']['grupo']; ?>">
         
         <input type="submit" value="Enviar evaluación">
     </form>

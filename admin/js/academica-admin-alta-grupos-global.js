@@ -17,32 +17,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     selectGrupo.disabled = true;
 
-    // fetch(`${academicaApiConfig.apiUrl}/modulos/`)
-    // .then(response => response.json())
-    // .then(data => {
-    //     if (data.status === 200) {
-    //         data.payload.data.forEach(modulo => {
-    //             // Crear la primera opción para selectModulo
-    //             const option1 = document.createElement('option');
-    //             option1.value = modulo.clave_uea;
-    //             option1.text = `${modulo.modulo}. ${modulo.nombre_uea}`;
-    //             selectModulo.appendChild(option1);
-
-    //             // Crear una segunda opción para moduloCatalogoSelect
-    //             const option2 = document.createElement('option');
-    //             option2.value = modulo.clave_uea;
-    //             option2.text = `${modulo.modulo}. ${modulo.nombre_uea}`;
-    //             moduloCatalogoSelect.appendChild(option2);
-
-    //             // Crear y agregar input hidden
-    //             const claveUeaHidden = document.createElement('input');
-    //             claveUeaHidden.type = 'hidden';
-    //             claveUeaHidden.name = `clave_uea_${modulo.modulo}`;
-    //             claveUeaHidden.value = modulo.clave_uea;
-    //             selectModulo.appendChild(claveUeaHidden);
-    //         });
-    //     }
-    // });
     apiRequest('GET', '/modulos/')
     .then(data => {
         if (data.status === 200) {
@@ -86,25 +60,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         loadingOption.text = 'Cargando...';
         selectGrupo.appendChild(loadingOption);
 
-        // fetch(`${academicaApiConfig.apiUrl}/coordinacion/global/grupos?modulo=${moduloSeleccionado}`)
-        //     .then(response => response.json())
-        //     .then(data => {
-
-        //         selectGrupo.disabled = false;
-        //         selectGrupo.innerHTML = '';
-
-        //         var option = document.createElement('option');
-        //         option.value = '';
-        //         option.text = 'Seleccione un grupo';
-        //         selectGrupo.appendChild(option);
-
-        //         data.data.forEach(grupo => {
-        //             var option = document.createElement('option');
-        //             option.value = grupo;
-        //             option.text = grupo.toUpperCase();
-        //             selectGrupo.appendChild(option);
-        //         });
-        //     });
         try {
             const data = await apiRequest('GET', `/modulos/${hiddenClaveUea}/grupos`);
         
@@ -167,25 +122,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     }
 
-    // async function fetchGrupos(trimestre) {
-    //     try {
-    //         document.getElementById('loading-screen').style.display = 'block'; 
-    //         const response = await fetch(`${academicaApiConfig.apiUrl}/historial_academico/grupos_por_trimestre?trimestre=${trimestre}`);
-    //         const data = await response.json();
-
-    //         if (data.status === 'success' && data.payload) {
-    //             populateTable(data.payload);
-    //             document.querySelector('.table-2 thead').style.display = 'table-header-group';
-    //             document.getElementById('loading-screen').style.display = 'none';
-    //         } else {
-    //             console.error('Failed to fetch data:', data);
-    //             document.getElementById('loading-screen').style.display = 'none';
-    //         }
-    //     } catch (error) {
-    //         console.error('Error fetching data:', error);
-    //         document.getElementById('loading-screen').style.display = 'none';
-    //     }
-    // }
     async function fetchGrupos(trimestre) {
         try {
             document.getElementById('loading-screen').style.display = 'block';
@@ -230,13 +166,21 @@ document.addEventListener('DOMContentLoaded', (event) => {
             row.appendChild(moduloCell);
 
             const accionesCell = document.createElement('td');
+            // Botón "Detalles"
             const detallesButton = document.createElement('button');
             detallesButton.textContent = 'Detalles';
             detallesButton.className = 'detallesButton';
             detallesButton.setAttribute('id-evaluacion', grupo.id);
             accionesCell.appendChild(detallesButton);
-            row.appendChild(accionesCell);
+            
 
+            // Botón "Evaluación por ausencia"
+            const evaluacionButton = document.createElement('button')
+            evaluacionButton.textContent = 'Evaluar por ausencia'
+            evaluacionButton.className = 'evaluacionAusenciaButton'
+            evaluacionButton.setAttribute('id-evaluacion', grupo.id);
+            accionesCell.appendChild(evaluacionButton);
+            row.appendChild(accionesCell);
             tableBody.appendChild(row);
         });
 
@@ -251,147 +195,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 document.getElementById('loading-screen').style.display = 'block';
                 const idEvaluacion = this.getAttribute('id-evaluacion');
                 const grupo = this.getAttribute('data-grupo');
-        
-                // try {
-                //     const data = apiRequest('GET', `/evaluaciones/${idEvaluacion}?detalle=true`);
-
-                    
-                //     console.log(JSON.stringify(data))
-                //     if (data.status === 200) {
-                        
-                //         const { informacion_general, calificaciones_alumnos } = data.payload;
-        
-                //         // Clear previous content
-                //         document.getElementById('grupoInfoGeneral').innerHTML = '';
-                //         document.getElementById('grupoInfoDocentes').innerHTML = '';
-                //         document.getElementById('grupoInfoAlumnos').innerHTML = '';
-        
-                //         // Display general information
-                //         const generalInfoHtml = `
-                //             <h3>Información General</h3>
-                //             <table>
-                //                 <thead>
-                //                     <tr>
-                //                         <th>Grupo</th>
-                //                         <th>Trimestre</th>
-                //                         <th>Módulo</th>
-                //                         <th>UEA</th>
-                //                         <th>Clave UEA</th>
-                //                     </tr>
-                //                 </thead>
-                //                 <tbody>
-                //                     <tr>
-                //                         <td>${informacion_general.grupo}</td>
-                //                         <td>${informacion_general.trimestre}</td>
-                //                         <td>${informacion_general.modulo}</td>
-                //                         <td>${informacion_general.uea}</td>
-                //                         <td>${informacion_general.clave_uea}</td>
-                //                     </tr>
-                //                 </tbody>
-                //             </table>
-                //         `;
-                //         document.getElementById('grupoInfoGeneral').insertAdjacentHTML('beforeend', generalInfoHtml);
-
-                //             const docentesInfoHtml = `
-                //             <h4>Docentes</h4>
-                //             <table>
-                //                 <tbody>
-                //                     <tr>
-                //                         <td><strong>Nombre</strong></td>
-                //                         ${informacion_general.docentes.map(docente => `<td>${docente.nombre}</td>`).join('')}
-                //                     </tr>
-                //                     <tr>
-                //                         <td><strong>Componente</strong></td>
-                //                         ${informacion_general.docentes.map(docente => `<td>${docente.componente}</td>`).join('')}
-                //                     </tr>
-                //                     <tr>
-                //                         <td><strong>Coordinación</strong></td>
-                //                         ${informacion_general.docentes.map(docente => `<td>${docente.coordinacion ? 'Sí' : 'No'}</td>`).join('')}
-                //                     </tr>
-                //                 </tbody>
-                //             </table>
-                //         `;
-                //         document.getElementById('grupoInfoDocentes').insertAdjacentHTML('beforeend', docentesInfoHtml);
-        
-                //         // Display student grades
-                //         const studentGradesHtml = `
-                //             <h3>Lista de Alumnos</h3>
-                //             <table>
-                //                 <thead>
-                //                     <tr>
-                //                         <th>Número de Lista</th>
-                //                         <th>Nombre</th>
-                //                         <th>Matrícula</th>
-                //                     </tr>
-                //                 </thead>
-                //                 <tbody>
-                //                     ${calificaciones_alumnos.map(alumno => `
-                //                         <tr>
-                //                             <td>${alumno.numero_lista}</td>
-                //                             <td>${alumno.nombre_alumno}</td>
-                //                             <td>${alumno.matricula}</td>
-                //                         </tr>
-                //                     `).join('')}
-                //                 </tbody>
-                //             </table>
-                //         `;
-                //         document.getElementById('grupoInfoAlumnos').insertAdjacentHTML('beforeend', studentGradesHtml);
-
-                // // Add delete button
-                // const deleteButtonHtml = `
-                //     <button id="delete-group-button" data-id="${informacion_general.id_seguimiento_global}">Eliminar Grupo</button>
-                // `;
-                // document.getElementById('grupoInfoAlumnos').insertAdjacentHTML('beforeend', deleteButtonHtml);
-
-                // // Add event listener to the delete button
-                // document.getElementById('delete-group-button').addEventListener('click', async function() {
-                //     document.getElementById('loading-screen').style.display = 'block';
-                //     const idSeguimientoGlobal = this.getAttribute('data-id');
-                //     if (confirm('¿Estás seguro de que deseas eliminar este grupo?')) {
-                //         try {
-                            
-                //             const deleteResponse = await fetch(`${academicaApiConfig.apiUrl}/coordinacion/global/grupos`, {
-                //                 method: 'DELETE',
-                //                 headers: {
-                //                     'Content-Type': 'application/json'
-                //                 },
-                //                 body: JSON.stringify({
-                //                     id_seguimiento_global: parseInt(idSeguimientoGlobal, 10)
-                //                 })
-                //             });
-
-                //             if (deleteResponse.ok) {
-                //                 alert('Grupo eliminado exitosamente.');
-                //                 // Optionally, hide the popup or refresh the content
-                //                 popupGrupoDetalle.style.display = 'none';
-                //                 window.location.reload();
-                //             } else {
-                //                 alert('Error al eliminar el grupo.');
-                //                 window.location.reload();
-                //             }
-                //         } catch (error) {
-                //             console.error('Error deleting group:', error);
-                //             alert('Error al eliminar el grupo.');
-                //             window.location.reload();
-                //         }
-                //     }
-                // });                                                
-
-                //         // Show the popup
-                //         popupGrupoDetalle.style.display = 'block';
-                //         // hide the loading screen
-                //         document.getElementById('loading-screen').style.display = 'none';
-                //     } else {
-                //         alert('Error al obtener los detalles del grupo.');
-                //         //hide the loading screen
-                //         document.getElementById('loading-screen').style.display = 'none';
-                //     }
-                // } catch (error) {
-                //     console.error('Error fetching group details:', error);
-                //     alert('Error al obtener los detalles del grupo.');
-                //     // hide the loading screen
-                //     document.getElementById('loading-screen').style.display = 'none';
-                // }
                 try {
                     const data = await apiRequest('GET', `/evaluaciones/${idEvaluacion}?detalle=true`);
                 
@@ -520,6 +323,86 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 }
             });
         });
+
+        // Event listener for "Evaluación por ausencia" buttons
+        const evaluacionAusenciaButtons = document.querySelectorAll('.evaluacionAusenciaButton');
+        const popupEvaluacionAusencia = document.getElementById('popupEvaluacionAusencia')
+        evaluacionAusenciaButtons.forEach(button => {
+            button.addEventListener('click', async function () {
+                document.getElementById('loading-screen').style.display = 'block';
+                const idEvaluacion = this.getAttribute('id-evaluacion');
+                apiRequest('GET', `/evaluaciones/${idEvaluacion}?detalle=true`).then(data => {
+                    if (data.status === 200) {
+                        // Show the popup
+                        const informacion_general = data.payload.informacion_general[0];
+                        document.getElementById('evaluacionAusenciaComponentes').innerHTML = ''
+                        document.getElementById('estatusEvaluacion').innerHTML = ''
+                        popupEvaluacionAusencia.style.display = 'block';
+                        document.getElementById('loading-screen').style.display = 'none';  
+                        
+                        if (informacion_general.evaluacion_finalizada == true) {
+                            estatusEvaluacionHtml = `
+                            <button class="revertirEvaluacionButton" id-evaluacion="${idEvaluacion}">Revertir evaluación</button>
+                            `;
+                            document.getElementById('estatusEvaluacion').insertAdjacentHTML('beforeend', estatusEvaluacionHtml);
+
+                            evaluacionComponentesInfoHtml = `
+                            <h4>Evaluación finalizada. Se debe revertir la evaluación para evaluar componentes.`
+                            document.getElementById('evaluacionAusenciaComponentes').insertAdjacentHTML('beforeend', evaluacionComponentesInfoHtml);
+                        } else if (informacion_general.evaluacion_finalizada == false && informacion_general.evaluacion_completada == true) {
+                            estatusEvaluacionHtml = `
+                            <h4>Evaluación Completada. Pendiente de finalización</h4>
+                            <button class="revertirEvaluacionButton" id-evaluacion="${idEvaluacion}">Finalizar evaluación</button>
+                            `;
+                            document.getElementById('estatusEvaluacion').insertAdjacentHTML('beforeend', estatusEvaluacionHtml);
+                            evaluarComponentesInfoHtml = `
+                            <h4>Grupo: ${informacion_general.grupo.grupo.toUpperCase()}</h4>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Nombre</strong></td>
+                                        ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.docente.nombre}</td>`).join('')}
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Componente</strong></td>
+                                        ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.componente.nombre_extenso}</td>`).join('')}
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Evaluar</strong></td>
+                                        ${informacion_general.programacion_docente_global.map(docente => `<td><button class="evaluarComponenteButton" id-componente="${docente.componente.nombre_extenso}" id-evaluacion="${idEvaluacion}">Evaluar</button></td>`).join('')}
+                                    </tr>                                    
+                                </tbody>
+                            </table>`;
+                            document.getElementById('evaluacionAusenciaComponentes').insertAdjacentHTML('beforeend', evaluarComponentesInfoHtml);                            
+                        } else {
+                            estatusEvaluacionHtml = `
+                            <h4>Evaluación Incompleta. Faltan componentes por evaluar</h4>`;
+                            document.getElementById('estatusEvaluacion').insertAdjacentHTML('beforeend', estatusEvaluacionHtml);
+                            
+                            evaluarComponentesInfoHtml = `
+                            <h4>Grupo: ${informacion_general.grupo.grupo.toUpperCase()}</h4>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Nombre</strong></td>
+                                        ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.docente.nombre}</td>`).join('')}
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Componente</strong></td>
+                                        ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.componente.nombre_extenso}</td>`).join('')}
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Evaluar</strong></td>
+                                        ${informacion_general.programacion_docente_global.map(docente => `<td><button class="evaluarComponenteButton" id-componente="${docente.componente.nombre_extenso}" id-evaluacion="${idEvaluacion}">Evaluar</button></td>`).join('')}
+                                    </tr>                                    
+                                </tbody>
+                            </table>`;
+                            document.getElementById('evaluacionAusenciaComponentes').insertAdjacentHTML('beforeend', evaluarComponentesInfoHtml);  
+                        }
+                    }
+                })
+            })
+        })
     }
 
     function renderGruposCatalogoTable(grupos) {
@@ -596,6 +479,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     document.querySelector('.closeCatalogoGrupos').addEventListener('click', function() {
         popupCatalogoGrupos.style.display = 'none';
+    })
+
+
+    document.querySelector('.closeEvaluacionAusencia').addEventListener('click', function() {
+        popupEvaluacionAusencia.style.display = 'none';
     })
 
 

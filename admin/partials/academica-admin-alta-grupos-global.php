@@ -67,6 +67,22 @@
     </div>
 </div>
 
+<div id="popupEvaluacionAusencia" class="popup">
+    <div class="popup-content">
+        <span class="closeBtn closeEvaluacionAusencia">&times;</span>
+        <h3>Evaluacíon por ausencia</h3>
+        <p>La coordinación puede evaluar componentes por ausencia del docente asignado, así como finalizar una evaluación completa, en nombre del coordinador/a de módulo.</p>
+        
+        <div class="table-2" id="evaluacionAusenciaComponentes">
+            <!--Mostrar componentes del módulo-->
+        </div>
+        
+        <div id="estatusEvaluacion">
+            <!-- Botón para finalizar evaluación-->
+        </div>
+    </div>
+</div>
+
 <div class="popup" id="popupCatalogoGrupos">
     <div class="popup-content">
         <span class="closeBtn closeCatalogoGrupos">&times;</span>
