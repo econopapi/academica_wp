@@ -158,6 +158,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .api-form input[type="text"],
 .api-form input[type="password"],
+.api-form input[type="email"],
 .api-form select,
 .api-form option {
     width: 100%;

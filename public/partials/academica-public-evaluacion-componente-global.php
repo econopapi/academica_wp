@@ -19,6 +19,8 @@
 
 $api_url = get_option('academica_api_url');
 $api_key = get_option('academica_api_key');
+$academica_coordinador = get_option('academica_coordinador');
+
 $args = [
     'headers' => [
         'X-ACADEMICA-API-KEY' => $api_key
@@ -43,15 +45,16 @@ if ($current_user->ID != 0) {
     wp_redirect(home_url());
 }
 
+// Obtener parámetros de URL
 $grupo = $_GET['grupo'];
 $componente = $_GET['componente'];
 $trimestre = $_GET['trimestre'];
 $docente = $_GET['docente'];
 $id_evaluacion = $_GET['evaluacion'];
 
+// Solicitudes GET a API
 $docente_request = $api_url . '/docentes?email=' . $user_email;
 $docente_response = wp_remote_get($docente_request, $args);
-
 $trimestre_request = $api_url . '/trimestres/actual';
 $trimestre_response = wp_remote_get($trimestre_request, $args);
 
@@ -65,24 +68,26 @@ $docente_response_json = json_decode($docente_response_body, true);
 $trimestre_response_body = wp_remote_retrieve_body($trimestre_response);
 $trimestre_response_json = json_decode($trimestre_response_body, true);
 
+// Obtener número económico y trimestre actual
+$numero_economico = $docente_response_json['payload']['data'][0]['numero_economico'] ?? null;
+$trimestre_actual = $trimestre_response_json['payload']['data'][0]['trimestre'] ?? null;
 
+// if (!empty($docente_response_json['payload']['data'][0]['numero_economico'])) {
+//     $numero_economico = $docente_response_json['payload']['data'][0]['numero_economico'];
+// } else {
+//     echo 'No se pudo obtener el número económico en la API.';
+// }
 
-if (!empty($docente_response_json['payload']['data'][0]['numero_economico'])) {
-    $numero_economico = $docente_response_json['payload']['data'][0]['numero_economico'];
-} else {
-    echo 'No se pudo obtener el número económico en la API.';
-}
+// if (!empty($trimestre_response_json['payload']['data'][0]['trimestre'])) {
+//     $trimestre = $trimestre_response_json['payload']['data'][0]['trimestre'];
+// } else {
+//     echo 'No se pudo obtener el trimestre en la API.';
+// }
 
-if (!empty($trimestre_response_json['payload']['data'][0]['trimestre'])) {
-    $trimestre = $trimestre_response_json['payload']['data'][0]['trimestre'];
-} else {
-    echo 'No se pudo obtener el trimestre en la API.';
-}
-
-if ($docente != $docente_response_json['payload']['data'][0]['numero_economico']
-    || $trimestre != $trimestre_response_json['payload']['data'][0]['trimestre']) {
-    echo 'No tienes permiso para ver estos datos ;).';
-    return false;
+// Validación: Permitir acceso si el docente y trimestre coinciden o si es el usuario administrador
+if (!(($docente == $numero_economico && $trimestre == $trimestre_actual) || $user_email === $academica_coordinador)) {
+    wp_redirect(home_url());
+    exit;
 }
 
 //$lista_request = $api_url . '/historial_academico/lista_alumnos_componente_global?trimestre='.$trimestre.'&grupo='.$grupo.'&componente='.$componente;
@@ -103,7 +108,11 @@ $lista_alumnos = $lista_json['payload']['lista_alumnos'];
 
 <div class="evaluacion-componente-head">
     <div class="table-1">
-                
+        <?php if ($user_email == $academica_coordinador) { ?>
+            <div class="notification-orange">
+                <p>Aviso: Este componente está siendo evaluado por la Coordinación de estudios por ausencia de la persona docente asignada</p>
+            </div>
+        <?php } ?>
         <table>
             <tbody>
                 <tr>

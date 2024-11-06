@@ -17,6 +17,124 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     selectGrupo.disabled = true;
 
+    // Función para cargar y mostrar el popup de evaluación
+    function cargarPopupEvaluacion(idEvaluacion) {
+        document.getElementById('loading-screen').style.display = 'block';
+        
+        apiRequest('GET', `/evaluaciones/${idEvaluacion}?detalle=true`).then(data => {
+            if (data.status === 200) {
+                const informacion_general = data.payload.informacion_general[0];
+                let emailCoordinador = null;
+
+                // Obtener el email del coordinador
+                
+                for (const programacion of informacion_general.programacion_docente_global) {
+                    if (programacion.coordinacion) {
+                        emailCoordinador = programacion.docente.email;
+                        break;
+                    }
+                }
+                    
+                
+
+                // Limpia contenido anterior del popup
+                document.getElementById('evaluacionAusenciaComponentes').innerHTML = '';
+                document.getElementById('estatusEvaluacion').innerHTML = '';
+                popupEvaluacionAusencia.style.display = 'block';
+                document.getElementById('loading-screen').style.display = 'none';
+
+                // Lógica para mostrar interfaces según el estado de la evaluación
+                if (informacion_general.evaluacion_finalizada === true) {
+                    // Evaluación finalizada: mostrar botón para revertir
+                    const estatusEvaluacionHtml = `
+                        <button class="revertirEvaluacionButton" id="revertirEvaluacionButton" id-evaluacion="${idEvaluacion}">Revertir evaluación</button>
+                    `;
+                    document.getElementById('estatusEvaluacion').insertAdjacentHTML('beforeend', estatusEvaluacionHtml);
+
+                    const evaluacionComponentesInfoHtml = `
+                        <h4>Grupo: ${informacion_general.grupo.grupo.toUpperCase()}</h4>
+                        <h4>Evaluación finalizada. Se debe revertir la evaluación para evaluar componentes.</h4>
+                    `;
+                    document.getElementById('evaluacionAusenciaComponentes').insertAdjacentHTML('beforeend', evaluacionComponentesInfoHtml);
+
+                    // Event listener para el botón de revertir
+                    document.getElementById('revertirEvaluacionButton').addEventListener('click', function() {
+                        const data = { 'docente_email': emailCoordinador };
+                        apiRequest('POST', `/evaluaciones/${idEvaluacion}/desbloquear`, data).then(response => {
+                            if (response.status === 200) {
+                                alert('Evaluación revertida con éxito.');
+                                cargarPopupEvaluacion(idEvaluacion); // Recarga el popup
+                            }
+                        });
+                    });
+                } else if (informacion_general.evaluacion_finalizada === false && informacion_general.evaluacion_completada === true) {
+                    // Evaluación completada, pendiente de finalización
+                    const estatusEvaluacionHtml = `
+                        <h4>Evaluación Completada. Pendiente de finalización</h4>
+                        <button class="revertirEvaluacionButton" id="finalizarEvaluacionButton" id-evaluacion="${idEvaluacion}">Finalizar evaluación</button>
+                    `;
+                    document.getElementById('estatusEvaluacion').insertAdjacentHTML('beforeend', estatusEvaluacionHtml);
+
+                    document.getElementById('finalizarEvaluacionButton').addEventListener('click', function() {
+                        const data = { 'docente_email': emailCoordinador }
+                        apiRequest('POST', `/evaluaciones/${idEvaluacion}/firma`, data).then(data => {
+                            if (data.status === 200) {
+                                alert('Evaluación finalizada con éxito.')
+                                cargarPopupEvaluacion(idEvaluacion)
+                            }
+                        })
+                    })
+
+                    const evaluarComponentesInfoHtml = `
+                        <h4>Grupo: ${informacion_general.grupo.grupo.toUpperCase()}</h4>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Nombre</strong></td>
+                                    ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.docente.nombre}</td>`).join('')}
+                                </tr>
+                                <tr>
+                                    <td><strong>Componente</strong></td>
+                                    ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.componente.nombre_extenso}</td>`).join('')}
+                                </tr>
+                                <tr>
+                                    <td><strong>Evaluar</strong></td>
+                                    ${informacion_general.programacion_docente_global.map(docente => `<td><button class="evaluarComponenteButton" id-componente="${docente.componente.nombre_extenso}" id-evaluacion="${idEvaluacion}">Evaluar</button></td>`).join('')}
+                                </tr>                                    
+                            </tbody>
+                        </table>
+                    `;
+                    document.getElementById('evaluacionAusenciaComponentes').insertAdjacentHTML('beforeend', evaluarComponentesInfoHtml);                            
+                } else {
+                    // Evaluación incompleta, faltan componentes
+                    const estatusEvaluacionHtml = `<h4>Evaluación Incompleta. Faltan componentes por evaluar</h4>`;
+                    document.getElementById('estatusEvaluacion').insertAdjacentHTML('beforeend', estatusEvaluacionHtml);
+
+                    const evaluarComponentesInfoHtml = `
+                        <h4>Grupo: ${informacion_general.grupo.grupo.toUpperCase()}</h4>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Nombre</strong></td>
+                                    ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.docente.nombre}</td>`).join('')}
+                                </tr>
+                                <tr>
+                                    <td><strong>Componente</strong></td>
+                                    ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.componente.nombre_extenso}</td>`).join('')}
+                                </tr>
+                                <tr>
+                                    <td><strong>Evaluar</strong></td>
+                                    ${informacion_general.programacion_docente_global.map(docente => `<td><button class="evaluarComponenteButton" id-componente="${docente.componente.nombre_extenso}" id-evaluacion="${idEvaluacion}">Evaluar</button></td>`).join('')}
+                                </tr>                                    
+                            </tbody>
+                        </table>
+                    `;
+                    document.getElementById('evaluacionAusenciaComponentes').insertAdjacentHTML('beforeend', evaluarComponentesInfoHtml);  
+                }
+            }
+        });
+    }
+
     apiRequest('GET', '/modulos/')
     .then(data => {
         if (data.status === 200) {
@@ -329,78 +447,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         const popupEvaluacionAusencia = document.getElementById('popupEvaluacionAusencia')
         evaluacionAusenciaButtons.forEach(button => {
             button.addEventListener('click', async function () {
-                document.getElementById('loading-screen').style.display = 'block';
                 const idEvaluacion = this.getAttribute('id-evaluacion');
-                apiRequest('GET', `/evaluaciones/${idEvaluacion}?detalle=true`).then(data => {
-                    if (data.status === 200) {
-                        // Show the popup
-                        const informacion_general = data.payload.informacion_general[0];
-                        document.getElementById('evaluacionAusenciaComponentes').innerHTML = ''
-                        document.getElementById('estatusEvaluacion').innerHTML = ''
-                        popupEvaluacionAusencia.style.display = 'block';
-                        document.getElementById('loading-screen').style.display = 'none';  
-                        
-                        if (informacion_general.evaluacion_finalizada == true) {
-                            estatusEvaluacionHtml = `
-                            <button class="revertirEvaluacionButton" id-evaluacion="${idEvaluacion}">Revertir evaluación</button>
-                            `;
-                            document.getElementById('estatusEvaluacion').insertAdjacentHTML('beforeend', estatusEvaluacionHtml);
-
-                            evaluacionComponentesInfoHtml = `
-                            <h4>Evaluación finalizada. Se debe revertir la evaluación para evaluar componentes.`
-                            document.getElementById('evaluacionAusenciaComponentes').insertAdjacentHTML('beforeend', evaluacionComponentesInfoHtml);
-                        } else if (informacion_general.evaluacion_finalizada == false && informacion_general.evaluacion_completada == true) {
-                            estatusEvaluacionHtml = `
-                            <h4>Evaluación Completada. Pendiente de finalización</h4>
-                            <button class="revertirEvaluacionButton" id-evaluacion="${idEvaluacion}">Finalizar evaluación</button>
-                            `;
-                            document.getElementById('estatusEvaluacion').insertAdjacentHTML('beforeend', estatusEvaluacionHtml);
-                            evaluarComponentesInfoHtml = `
-                            <h4>Grupo: ${informacion_general.grupo.grupo.toUpperCase()}</h4>
-                            <table>
-                                <tbody>
-                                    <tr>
-                                        <td><strong>Nombre</strong></td>
-                                        ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.docente.nombre}</td>`).join('')}
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Componente</strong></td>
-                                        ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.componente.nombre_extenso}</td>`).join('')}
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Evaluar</strong></td>
-                                        ${informacion_general.programacion_docente_global.map(docente => `<td><button class="evaluarComponenteButton" id-componente="${docente.componente.nombre_extenso}" id-evaluacion="${idEvaluacion}">Evaluar</button></td>`).join('')}
-                                    </tr>                                    
-                                </tbody>
-                            </table>`;
-                            document.getElementById('evaluacionAusenciaComponentes').insertAdjacentHTML('beforeend', evaluarComponentesInfoHtml);                            
-                        } else {
-                            estatusEvaluacionHtml = `
-                            <h4>Evaluación Incompleta. Faltan componentes por evaluar</h4>`;
-                            document.getElementById('estatusEvaluacion').insertAdjacentHTML('beforeend', estatusEvaluacionHtml);
-                            
-                            evaluarComponentesInfoHtml = `
-                            <h4>Grupo: ${informacion_general.grupo.grupo.toUpperCase()}</h4>
-                            <table>
-                                <tbody>
-                                    <tr>
-                                        <td><strong>Nombre</strong></td>
-                                        ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.docente.nombre}</td>`).join('')}
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Componente</strong></td>
-                                        ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.componente.nombre_extenso}</td>`).join('')}
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Evaluar</strong></td>
-                                        ${informacion_general.programacion_docente_global.map(docente => `<td><button class="evaluarComponenteButton" id-componente="${docente.componente.nombre_extenso}" id-evaluacion="${idEvaluacion}">Evaluar</button></td>`).join('')}
-                                    </tr>                                    
-                                </tbody>
-                            </table>`;
-                            document.getElementById('evaluacionAusenciaComponentes').insertAdjacentHTML('beforeend', evaluarComponentesInfoHtml);  
-                        }
-                    }
-                })
+                cargarPopupEvaluacion(idEvaluacion); // Llama a la función para cargar el popup inicialmente
             })
         })
     }
