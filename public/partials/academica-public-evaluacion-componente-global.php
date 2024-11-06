@@ -46,9 +46,9 @@ if ($current_user->ID != 0) {
 }
 
 // Obtener parámetros de URL
-$grupo = $_GET['grupo'];
+//$grupo = $_GET['grupo'];
 $componente = $_GET['componente'];
-$trimestre = $_GET['trimestre'];
+//$trimestre = $_GET['trimestre'];
 $docente = $_GET['docente'];
 $id_evaluacion = $_GET['evaluacion'];
 
@@ -85,7 +85,12 @@ $trimestre_actual = $trimestre_response_json['payload']['data'][0]['trimestre'] 
 // }
 
 // Validación: Permitir acceso si el docente y trimestre coinciden o si es el usuario administrador
-if (!(($docente == $numero_economico && $trimestre == $trimestre_actual) || $user_email === $academica_coordinador)) {
+// if (!(($docente == $numero_economico && $trimestre == $trimestre_actual) || $user_email === $academica_coordinador)) {
+//     wp_redirect(home_url());
+//     exit;
+// }
+
+if (!(($docente == $numero_economico) || $user_email === $academica_coordinador)) {
     wp_redirect(home_url());
     exit;
 }

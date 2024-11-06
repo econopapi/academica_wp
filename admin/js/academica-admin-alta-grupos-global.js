@@ -33,9 +33,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         emailCoordinador = programacion.docente.email;
                         break;
                     }
-                }
-                    
-                
+                }       
 
                 // Limpia contenido anterior del popup
                 document.getElementById('evaluacionAusenciaComponentes').innerHTML = '';
@@ -99,12 +97,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
                                 </tr>
                                 <tr>
                                     <td><strong>Evaluar</strong></td>
-                                    ${informacion_general.programacion_docente_global.map(docente => `<td><button class="evaluarComponenteButton" id-componente="${docente.componente.nombre_extenso}" id-evaluacion="${idEvaluacion}">Evaluar</button></td>`).join('')}
+                                    ${informacion_general.programacion_docente_global.map(docente => `<td><button class="evaluarComponenteButton" id-componente="${docente.componente.nombre_componente}" id-evaluacion="${idEvaluacion}" docente="${docente.docente.numero_economico}">Evaluar</button></td>`).join('')}
                                 </tr>                                    
                             </tbody>
                         </table>
                     `;
-                    document.getElementById('evaluacionAusenciaComponentes').insertAdjacentHTML('beforeend', evaluarComponentesInfoHtml);                            
+                    document.getElementById('evaluacionAusenciaComponentes').insertAdjacentHTML('beforeend', evaluarComponentesInfoHtml);                      
                 } else {
                     // Evaluación incompleta, faltan componentes
                     const estatusEvaluacionHtml = `<h4>Evaluación Incompleta. Faltan componentes por evaluar</h4>`;
@@ -131,6 +129,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     `;
                     document.getElementById('evaluacionAusenciaComponentes').insertAdjacentHTML('beforeend', evaluarComponentesInfoHtml);  
                 }
+
+                const evaluarComponenteButtons = document.querySelectorAll('.evaluarComponenteButton')
+                evaluarComponenteButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        
+                        const idEvaluacion = this.getAttribute('id-evaluacion')
+                        const componente = this.getAttribute('id-componente')
+                        const docente = this.getAttribute('docente')
+                        window.open(`/academica-docentes-evaluacion-componente-global/?evaluacion=${idEvaluacion}&componente=${componente}&docente=${docente}`, '_blank')
+                    })
+                })
             }
         });
     }
@@ -497,15 +506,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
         console.log("Valor seleccionado:", selectedValue); // Solo para ver en la consola
         
-        // fetch(`${academicaApiConfig.apiUrl}/historial_academico/grupos_por_modulo?modulo=${selectedValue}`)
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         if (data.code === 200) {
-        //             renderGruposCatalogoTable(data.data);
-        //         } else {
-        //             alert('Error al obtener datos');
-        //         }
-        //     })
         const data = await apiRequest('GET', `/modulos/${selectedValue}/grupos`);
         console.log(data)
         if (data.status === 200) {
@@ -555,40 +555,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
             const hiddenInput = document.querySelector(`input[name="clave_uea_${claveUea}"]`);
             const hiddenClaveUea = hiddenInput ? hiddenInput.value : '';
-            // fetch(`${academicaApiConfig.apiUrl}/modulos/${hiddenClaveUea}`)
-            //     .then(response => response.json())
-            //     .then(data => {
-            //         if (data.status === 200) {
-            //             const componentes = data.data.mapeo;
-            //             componentesTbody.innerHTML = '';
-
-            //             componentes.forEach(componente => {
-            //                 const tr = document.createElement('tr');
-            //                 const tdNombre = document.createElement('td');
-            //                 tdNombre.textContent = componente.nombre_componente;
-            //                 tr.appendChild(tdNombre);
-
-            //                 const tdInput = document.createElement('td');
-            //                 const input = document.createElement('input');
-            //                 input.className='padding-input';
-            //                 input.type = 'number';
-            //                 input.name = componente.nombre_componente;
-            //                 input.placeholder = 'Número económico';
-            //                 tdInput.appendChild(input);
-            //                 tr.appendChild(tdInput);
-
-            //                 const tdRadio = document.createElement('td');
-            //                 const radio = document.createElement('input');
-            //                 radio.type = 'radio';
-            //                 radio.name = 'coordinacion';
-            //                 radio.value = componente.nombre_componente;
-            //                 tdRadio.appendChild(radio);
-            //                 tr.appendChild(tdRadio);
-
-            //                 componentesTbody.appendChild(tr);
-            //             });
-            //         }
-            //     });
             try {
                 const data = await apiRequest('GET', `/modulos/${hiddenClaveUea}`);
             
@@ -683,54 +649,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
             return;
         }
     
-        // Serialización de archivos XLSX de listas de alumnos
-        
-        // var reader = new FileReader();
-        // reader.onload = function(e) {
-        //     var data = new Uint8Array(e.target.result);
-        //     var workbook = XLSX.read(data, {type: 'array'});
-    
-        //     var result = [];
-        //     workbook.SheetNames.forEach(sheetName => {
-        //         var rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-        //         if (rows.length) {
-        //             rows = rows.map(row => {
-        //                 return {
-        //                     numero_lista: row['numero_lista'],
-        //                     matricula: row['matricula'],
-        //                     nombre: row['nombre_alumno'],
-        //                 };
-        //             });
-        //             result = result.concat(rows);
-        //         }
-        //     });
-    
-        //     var data = {
-        //         uea: modulo,
-        //         grupo: grupo,
-        //         trimestre: trimestre,
-        //         docentes: componentes,
-        //         alumnos: result,
-        //         coordinacion: docentesCoordinadores.size > 0 // Aquí se marca como true si hay coordinadores
-        //     };
-    
-        //     console.log(JSON.stringify(data, 2, 2));
-            
-            
-    
-        //     fetch(`${academicaApiConfig.apiUrl}/coordinacion/global/grupos`, {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify(data)
-        //     }).then(response => response.json())
-        //       .then(data => {
-        //         console.log(data);
-        //         alert('Grupo registrado con éxito!');
-        //         window.location.reload();
-        //       });
-        // };
 
         var reader = new FileReader();
         reader.onload = function(e) {
@@ -783,38 +701,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
     
             console.log(JSON.stringify(data, null, 2));
 
-            //return;
-    
-            // fetch(`${academicaApiConfig.apiUrl}/coordinacion/global/grupos`, {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     },
-            //     body: JSON.stringify(data)
-            // })
-            // .then(response => {
-            //     if (response.status === 404) {
-            //         return response.json().then(data => {
-            //             // Manejo del error 404
-            //             alert(`Error: ${data.message}`);
-            //             document.getElementById('loading-screen').style.display = 'none';
-            //             return Promise.reject('Error 404');
-            //         });
-            //     } else if (response.ok) {
-            //         return response.json();
-            //     } else {
-            //         throw new Error('Error al registrar el grupo');
-            //     }
-            // })
-            // .then(data => {
-            //     alert('Grupo registrado con éxito!');
-            //     window.location.reload();
-            // })
-            // .catch(error => {
-            //     console.error('Error:', error);
-            //     alert('Error al registrar el grupo');
-            //     document.getElementById('loading-screen').style.display = 'none';
-            // });
             apiRequest('POST', '/evaluaciones', data)
             .then(response => {
                 if (response.status === 404) {
