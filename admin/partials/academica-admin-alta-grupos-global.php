@@ -1,25 +1,33 @@
 <?php
 
 /**
- * Provide a admin area view for the plugin
+ * Interfaz para gestionar grupos en evaluación global y de
+ * recuperación para el trimestre actual.
  *
- * This file is used to markup the admin-facing aspects of the plugin.
- *
- * @link       http://example.com
+ * @link       http://academica.dlimon.net/docs/devs
  * @since      0.1
  *
  * @package    academica_wp
  * @subpackage academica_wp/admin/partials
  */
-?>
+
+if(isset($_GET['tipo'])){
+    $tipo = $_GET['tipo'];
+    if ($tipo === 'recuperacion'){
+        $tipo_evaluacion = 'recuperacion';
+    } else {
+        $tipo_evaluacion = 'global';
+    }
+}else{
+    $tipo_evaluacion = 'global';
+}?>
+<script>var tipoEvaluacion = "<?php echo $tipo_evaluacion; ?>"</script>
 <div class="header-container">
     <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Logo Académica UAM" class="logo">
-    <h1 class="title">Grupos Global</h1>
+    <h1 class="title">Grupos</h1>
 </div>
 
-<p>Alta y gestión de grupos para la evaluación global en el trimestre actual.</p>
-
-
+<p>Gestión de grupos para evaluaciones globales y de recuperación en el trimestre actual.</p>
 <div id="trimestreActual"></div>
 <!-- Pantalla de carga -->
 <div id="loading-screen" style="display:block">
@@ -29,10 +37,15 @@
     </div>
 </div>
 
-<div>
+<div class="buttonGroup">
+    <div class="toggle-container" id="toggleButton">
+        <div class="toggle-option selected" data-value="global">Global</div>
+        <div class="toggle-option" data-value="recuperacion">Recuperación</div>
+    </div>
     <button id="addGrupoBtn">Alta de grupo</button>
     <button id="catalogoGruposBtn">Configuración</button>
 </div>
+
 
 <h2>Grupos registrados</h2>
 <table class="table-2" style="margin:0!important;">
@@ -159,30 +172,6 @@
                         </tr>
                     </thead>
                     <tbody id="componentes-tbody">
-
-                    <!-- <tr>
-                        <td>Teoría</td>
-                        <td><input type="text" name="teoria" placeholder="Número económico" style="width: 100%!important; padding: 2px!important;"></td>
-                        <td><input type="radio" name ="coordinacion" value="teoria"></td>
-                    </tr>
-
-                    <tr>
-                        <td>Matemáticas</td>
-                        <td><input type="text" name="matematicas" placeholder="Número económico" style="width: 100%!important; padding: 2px!important;"></td>
-                        <td><input type="radio" name ="coordinacion" value="matematicas"></td>
-                    </tr>
-
-                    <tr>
-                        <td>Taller</td>
-                        <td><input type="text" name="taller" placeholder="Número económico" style="width: 100%!important; padding: 2px!important;"></td>
-                        <td><input type="radio" name ="coordinacion" value="taller"></td>
-                    </tr>   
-                    
-                    <tr>
-                        <td>Investigación</td>
-                        <td><input type="text" name="investigacion" placeholder="Número económico" style="width: 100%!important; padding: 2px!important;"></td>
-                        <td><input type="radio" name ="coordinacion" value="investigacion"></td>
-                    </tr>  -->
                     </tbody>
                 </table>
 

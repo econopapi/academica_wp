@@ -1,6 +1,7 @@
 var selectTrimestre = document.getElementById('trimestre');
 var selectGrupo = document.getElementById('grupo');
 var hiddenDocente = document.getElementById('docente');
+document.getElementById('seguimiento_global_grupo_form').style.display = 'none';
 
 function loadTrimestres() {
     apiRequest('GET', '/trimestres/')
@@ -211,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const botonIzquierdo = document.createElement("button");
         botonIzquierdo.id = "botonIzquierdo";
         botonIzquierdo.className = "boton-descarga";
-        botonIzquierdo.innerHTML = '<i class="fa-solid fa-circle-chevron-left"></i> Programación docente';
+        botonIzquierdo.innerHTML = '<i class="fa-solid fa-circle-chevron-left"></i> Programación trimestral';
         botonIzquierdo.addEventListener("click", function(event) {  
             window.open('/academica-docentes-asignacion-global/', '_self'); 
         }); // Función personalizada para este botón
@@ -540,7 +541,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
         var reminderDiv = document.createElement('div');
         //reminderDiv.textContent = "Recuerde que ésto es sólo un seguimiento interno de la Coordinación. Las califiaciones oficiales deben ser cargadas y firmadas en el Sistema Integral de Información Académica de la UAM, como siempre se ha hecho.";
-        reminderDiv.innerHTML = 'Recuerde que ésto es sólo un seguimiento interno de la Coordinación de Economía.<br />Las califiaciones oficiales deben ser cargadas y firmadas en el <a href="#" onclick=\'window.open("https://sae.uam.mx/siae/acceso_siia.html");return false;\'>Sistema Integral de Información Académica de la UAM</a>, como siempre se ha hecho.';
+        reminderDiv.innerHTML = 'Recuerde que esta evaluación es sólo un seguimiento interno de la Coordinación de estudios.<br />Las califiaciones oficiales deben ser cargadas y firmadas en el <a href="#" onclick=\'window.open("https://sae.uam.mx/siae/acceso_siia.html");return false;\'>Sistema Integral de Información Académica de la UAM</a>.';
         if (docente_id == coordinador) {
             // botón para revertir evaluación.
             var button = document.createElement('button');

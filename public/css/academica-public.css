@@ -2,6 +2,36 @@
     font-family: Helvetica!important;
 }*/
 
+a {
+    color: #0072CE; /* Color principal */
+    text-decoration: none; /* Sin subrayado por defecto */
+    font-weight: 500; /* Peso de la fuente un poco más destacado */
+    position: relative;
+    transition: color 0.3s ease; /* Transición de color */
+}
+
+a::after {
+    content: ""; /* Línea decorativa */
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: #0072CE;
+    left: 0;
+    bottom: -3px;
+    transform: scaleX(0); /* Empieza oculta */
+    transition: transform 0.3s ease; /* Transición de subrayado */
+    transform-origin: bottom right; /* Punto de partida de la animación */
+}
+
+a:hover {
+    color: #005194; /* Color de hover más oscuro */
+}
+
+a:hover::after {
+    transform: scaleX(1); /* Muestra la línea de subrayado */
+    transform-origin: bottom left; /* Dirección de expansión de la línea */
+}
+
 div {
     font-family: Helvetica, sans-serif!important;
 }
@@ -16,10 +46,37 @@ input[type="number"]::-webkit-outer-spin-button {
     margin: 0;
 }
 
+.title {
+    display: inline;
+}
+
+.logo {
+    margin-right: 10px;
+    width: 40px;
+    height: 40px;
+}
+
+.header-container {
+    display: flex;
+    width: 80%; /* Ajusta el ancho según lo necesario */
+    margin: 0 auto;
+    align-items: center;
+    justify-content: center; /* Opcional, para centrar los elementos dentro */
+    text-align: center; /* Alinea el texto en el centro */
+}
+
+.centered-container {
+    margin: 20px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+}
 
 .asignacion-docente-head {
     margin: 0 auto;
-    width: 85%; 
+    width: 100%; 
 }
 
 #seguimiento_global_grupo_table {
@@ -34,7 +91,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
 #head {
     margin: 0 auto;
-    width: 80%;
+    width: 95%;
 }
 
 #seguimiento_global_grupo_table table,
@@ -137,8 +194,8 @@ input[type="number"]::-webkit-outer-spin-button {
     cursor: pointer;
 }
 
-.firmar-button {
-    width: 40vh;
+button, .firmar-button {
+    
     background-color: #0072CE;
     color: white;
     padding: 12px 20px;
@@ -146,17 +203,27 @@ input[type="number"]::-webkit-outer-spin-button {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.5s ease;
+}
+
+.portada-button {
+    width: 40vh;
+}
+
+button:hover {
+    background-color: #005194;
 }
 
 
 /* table-1 specific style for #info docente id*/
 #info_docente {
-    margin: 0 auto;
+    margin-left: 3vh;
+    width: 50%;
 }
 
 .table-1 th,
 .table-1 td{
-    font-size: 20px;
+    font-size: 17px;
     padding-left: 20px;
     padding-right: 20px;
     padding-top: 0px;
@@ -199,7 +266,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .notification-area {
     margin: 0 auto;
-    width: 85%;
+    width: 100%;
 }
 
 .notification-red {

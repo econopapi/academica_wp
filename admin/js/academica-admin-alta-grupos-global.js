@@ -1,6 +1,7 @@
 
 
 document.addEventListener('DOMContentLoaded', (event) => {
+    //alert(tipoEvaluacion)
     var trimestreActual = document.getElementById('trimestreActual');
     var selectTrimestre = document.getElementById('trimestre');
     var selectModulo = document.getElementById('modulo');
@@ -11,6 +12,29 @@ document.addEventListener('DOMContentLoaded', (event) => {
     var inputGrupoCatalogoDiv = document.getElementById('inputGrupoCatalogoDiv');
     var buttonGrupoCatalogoDiv = document.getElementById('buttonGrupoCatalogoDiv');
     var componentesTbody = document.getElementById('componentes-tbody');
+    const toggleButton = document.getElementById('toggleButton');
+    const toggleOptions = toggleButton.querySelectorAll('.toggle-option');
+    
+    // Asegúrate de que 'tipoEvaluacion' esté definido y contenga el valor adecuado
+    // Selecciona la opción correspondiente al valor de tipoEvaluacion
+    toggleOptions.forEach(option => {
+        const tipoOption = option.getAttribute('data-value');
+        if (tipoOption === tipoEvaluacion) {
+            option.classList.add('selected');
+        } else {
+            option.classList.remove('selected');
+        }
+    });
+    
+    toggleOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            toggleOptions.forEach(opt => opt.classList.remove('selected'));
+            option.classList.add('selected');
+    
+            const tipo = option.getAttribute('data-value');
+            window.location.href = `${window.location.pathname}?page=academica_grupos_global&tipo=${tipo}`;
+        });
+    });
 
     inputGrupoCatalogoDiv.style.display = 'none';
     buttonGrupoCatalogoDiv.style.display = 'none';
@@ -20,20 +44,33 @@ document.addEventListener('DOMContentLoaded', (event) => {
     // Función para cargar y mostrar el popup de evaluación
     function cargarPopupEvaluacion(idEvaluacion) {
         document.getElementById('loading-screen').style.display = 'block';
+
+        if (tipoEvaluacion == 'recuperacion'){
+            endpoint = `/evaluaciones/${idEvaluacion}?detalle=true&recuperacion=true`
+        } else {
+            endpoint = `/evaluaciones/${idEvaluacion}?detalle=true`
+        }
         
-        apiRequest('GET', `/evaluaciones/${idEvaluacion}?detalle=true`).then(data => {
+        apiRequest('GET', endpoint).then(data => {
             if (data.status === 200) {
                 const informacion_general = data.payload.informacion_general[0];
                 let emailCoordinador = null;
 
                 // Obtener el email del coordinador
                 
-                for (const programacion of informacion_general.programacion_docente_global) {
+                // for (const programacion of informacion_general.programacion_docente_global) {
+                //     if (programacion.coordinacion) {
+                //         emailCoordinador = programacion.docente.email;
+                //         break;
+                //     }
+                // }     
+                for (const programacion of informacion_general[`programacion_docente_${tipoEvaluacion}`]) {
                     if (programacion.coordinacion) {
                         emailCoordinador = programacion.docente.email;
                         break;
                     }
-                }       
+                }
+                  
 
                 // Limpia contenido anterior del popup
                 document.getElementById('evaluacionAusenciaComponentes').innerHTML = '';
@@ -83,50 +120,90 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         })
                     })
 
-                    const evaluarComponentesInfoHtml = `
+                    // const evaluarComponentesInfoHtml = `
+                    //     <h4>Grupo: ${informacion_general.grupo.grupo.toUpperCase()}</h4>
+                    //     <table>
+                    //         <tbody>
+                    //             <tr>
+                    //                 <td><strong>Nombre</strong></td>
+                    //                 ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.docente.nombre}</td>`).join('')}
+                    //             </tr>
+                    //             <tr>
+                    //                 <td><strong>Componente</strong></td>
+                    //                 ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.componente.nombre_extenso}</td>`).join('')}
+                    //             </tr>
+                    //             <tr>
+                    //                 <td><strong>Evaluar</strong></td>
+                    //                 ${informacion_general.programacion_docente_global.map(docente => `<td><button class="evaluarComponenteButton" id-componente="${docente.componente.nombre_componente}" id-evaluacion="${idEvaluacion}" docente="${docente.docente.numero_economico}">Evaluar</button></td>`).join('')}
+                    //             </tr>                                    
+                    //         </tbody>
+                    //     </table>
+                    // `;
+                        const evaluarComponentesInfoHtml = `
                         <h4>Grupo: ${informacion_general.grupo.grupo.toUpperCase()}</h4>
                         <table>
                             <tbody>
                                 <tr>
                                     <td><strong>Nombre</strong></td>
-                                    ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.docente.nombre}</td>`).join('')}
+                                    ${informacion_general[`programacion_docente_${tipoEvaluacion}`].map(docente => `<td>${docente.docente.nombre}</td>`).join('')}
                                 </tr>
                                 <tr>
                                     <td><strong>Componente</strong></td>
-                                    ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.componente.nombre_extenso}</td>`).join('')}
+                                    ${informacion_general[`programacion_docente_${tipoEvaluacion}`].map(docente => `<td>${docente.componente.nombre_extenso}</td>`).join('')}
                                 </tr>
                                 <tr>
                                     <td><strong>Evaluar</strong></td>
-                                    ${informacion_general.programacion_docente_global.map(docente => `<td><button class="evaluarComponenteButton" id-componente="${docente.componente.nombre_componente}" id-evaluacion="${idEvaluacion}" docente="${docente.docente.numero_economico}">Evaluar</button></td>`).join('')}
+                                    ${informacion_general[`programacion_docente_${tipoEvaluacion}`].map(docente => `<td><button class="evaluarComponenteButton" id-componente="${docente.componente.nombre_componente}" id-evaluacion="${idEvaluacion}" docente="${docente.docente.numero_economico}">Evaluar</button></td>`).join('')}
                                 </tr>                                    
                             </tbody>
                         </table>
                     `;
+                
                     document.getElementById('evaluacionAusenciaComponentes').insertAdjacentHTML('beforeend', evaluarComponentesInfoHtml);                      
                 } else {
                     // Evaluación incompleta, faltan componentes
                     const estatusEvaluacionHtml = `<h4>Evaluación Incompleta. Faltan componentes por evaluar</h4>`;
                     document.getElementById('estatusEvaluacion').insertAdjacentHTML('beforeend', estatusEvaluacionHtml);
 
+                    // const evaluarComponentesInfoHtml = `
+                    //     <h4>Grupo: ${informacion_general.grupo.grupo.toUpperCase()}</h4>
+                    //     <table>
+                    //         <tbody>
+                    //             <tr>
+                    //                 <td><strong>Nombre</strong></td>
+                    //                 ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.docente.nombre}</td>`).join('')}
+                    //             </tr>
+                    //             <tr>
+                    //                 <td><strong>Componente</strong></td>
+                    //                 ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.componente.nombre_extenso}</td>`).join('')}
+                    //             </tr>
+                    //             <tr>
+                    //                 <td><strong>Evaluar</strong></td>
+                    //                 ${informacion_general.programacion_docente_global.map(docente => `<td><button class="evaluarComponenteButton" id-componente="${docente.componente.nombre_extenso}" id-evaluacion="${idEvaluacion}">Evaluar</button></td>`).join('')}
+                    //             </tr>                                    
+                    //         </tbody>
+                    //     </table>
+                    // `;
                     const evaluarComponentesInfoHtml = `
-                        <h4>Grupo: ${informacion_general.grupo.grupo.toUpperCase()}</h4>
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td><strong>Nombre</strong></td>
-                                    ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.docente.nombre}</td>`).join('')}
-                                </tr>
-                                <tr>
-                                    <td><strong>Componente</strong></td>
-                                    ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.componente.nombre_extenso}</td>`).join('')}
-                                </tr>
-                                <tr>
-                                    <td><strong>Evaluar</strong></td>
-                                    ${informacion_general.programacion_docente_global.map(docente => `<td><button class="evaluarComponenteButton" id-componente="${docente.componente.nombre_extenso}" id-evaluacion="${idEvaluacion}">Evaluar</button></td>`).join('')}
-                                </tr>                                    
-                            </tbody>
-                        </table>
-                    `;
+                    <h4>Grupo: ${informacion_general.grupo.grupo.toUpperCase()}</h4>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td><strong>Nombre</strong></td>
+                                ${informacion_general[`programacion_docente_${tipoEvaluacion}`].map(docente => `<td>${docente.docente.nombre}</td>`).join('')}
+                            </tr>
+                            <tr>
+                                <td><strong>Componente</strong></td>
+                                ${informacion_general[`programacion_docente_${tipoEvaluacion}`].map(docente => `<td>${docente.componente.nombre_extenso}</td>`).join('')}
+                            </tr>
+                            <tr>
+                                <td><strong>Evaluar</strong></td>
+                                ${informacion_general[`programacion_docente_${tipoEvaluacion}`].map(docente => `<td><button class="evaluarComponenteButton" id-componente="${docente.componente.nombre_extenso}" id-evaluacion="${idEvaluacion}">Evaluar</button></td>`).join('')}
+                            </tr>                                    
+                        </tbody>
+                    </table>
+                `;
+                
                     document.getElementById('evaluacionAusenciaComponentes').insertAdjacentHTML('beforeend', evaluarComponentesInfoHtml);  
                 }
 
@@ -188,7 +265,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
         selectGrupo.appendChild(loadingOption);
 
         try {
-            const data = await apiRequest('GET', `/modulos/${hiddenClaveUea}/grupos`);
+            if (tipoEvaluacion == 'recuperacion') {
+                endpoint = `/modulos/0/grupos?recuperacion=true`
+            } else {
+                endpoint = `/modulos/${hiddenClaveUea}/grupos`
+            }
+            const data = await apiRequest('GET', endpoint);
         
             selectGrupo.disabled = false;
             selectGrupo.innerHTML = '';
@@ -197,13 +279,24 @@ document.addEventListener('DOMContentLoaded', (event) => {
             option.value = '';
             option.text = 'Seleccione un grupo';
             selectGrupo.appendChild(option);
-        
-            data.payload.data.forEach(grupo => {
-                const option = document.createElement('option');
-                option.value = grupo.grupo;
-                option.text = grupo.grupo.toUpperCase();
-                selectGrupo.appendChild(option);
-            });
+
+            console.log(data)
+            if (tipoEvaluacion == 'recuperacion'){
+                data.payload.forEach(grupo => {
+                    const option = document.createElement('option');
+                    option.value = grupo.grupo;
+                    option.text = grupo.grupo.toUpperCase();
+                    selectGrupo.appendChild(option);                    
+                })
+            } else {
+                data.payload.data.forEach(grupo => {
+                    const option = document.createElement('option');
+                    option.value = grupo.grupo;
+                    option.text = grupo.grupo.toUpperCase();
+                    selectGrupo.appendChild(option);
+                });
+            }
+
         } catch (error) {
             console.error('Error al obtener grupos:', error);
         }
@@ -251,11 +344,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     async function fetchGrupos(trimestre) {
         try {
+            console.log(tipoEvaluacion)
             document.getElementById('loading-screen').style.display = 'block';
-            
-            // Utiliza apiRequest en lugar de fetch
-            const data = await apiRequest('GET', `/evaluaciones/?trimestre=${trimestre}`);
-    
+            if (tipoEvaluacion == 'recuperacion'){
+                endpoint = `/evaluaciones/?trimestre=${trimestre}&recuperacion=true`
+            } else {
+                endpoint = `/evaluaciones/?trimestre=${trimestre}`
+            }
+            const data = await apiRequest('GET', endpoint);
             if (data.status === 200) {
                 populateTable(data.payload.data);
                 document.querySelector('.table-2 thead').style.display = 'table-header-group';
@@ -265,7 +361,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
-            document.getElementById('loading-screen').style.display = 'none'; // Asegúrate de ocultar la pantalla de carga en cualquier caso
+            document.getElementById('loading-screen').style.display = 'none';
         }
     }
 
@@ -359,26 +455,46 @@ document.addEventListener('DOMContentLoaded', (event) => {
                             </table>
                         `;
                         document.getElementById('grupoInfoGeneral').insertAdjacentHTML('beforeend', generalInfoHtml);
-                
-                        const docentesInfoHtml = `
+                        
+                        // const docentesInfoHtml = `
+                        //     <h4>Docentes</h4>
+                        //     <table>
+                        //         <tbody>
+                        //             <tr>
+                        //                 <td><strong>Nombre</strong></td>
+                        //                 ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.docente.nombre}</td>`).join('')}
+                        //             </tr>
+                        //             <tr>
+                        //                 <td><strong>Componente</strong></td>
+                        //                 ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.componente.nombre_extenso}</td>`).join('')}
+                        //             </tr>
+                        //             <tr>
+                        //                 <td><strong>Coordinación</strong></td>
+                        //                 ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.coordinacion ? 'Sí' : 'No'}</td>`).join('')}
+                        //             </tr>
+                        //         </tbody>
+                        //     </table>
+                        // `;
+                            const docentesInfoHtml = `
                             <h4>Docentes</h4>
                             <table>
                                 <tbody>
                                     <tr>
                                         <td><strong>Nombre</strong></td>
-                                        ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.docente.nombre}</td>`).join('')}
+                                        ${informacion_general[`programacion_docente_${tipoEvaluacion}`].map(docente => `<td>${docente.docente.nombre}</td>`).join('')}
                                     </tr>
                                     <tr>
                                         <td><strong>Componente</strong></td>
-                                        ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.componente.nombre_extenso}</td>`).join('')}
+                                        ${informacion_general[`programacion_docente_${tipoEvaluacion}`].map(docente => `<td>${docente.componente.nombre_extenso}</td>`).join('')}
                                     </tr>
                                     <tr>
                                         <td><strong>Coordinación</strong></td>
-                                        ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.coordinacion ? 'Sí' : 'No'}</td>`).join('')}
+                                        ${informacion_general[`programacion_docente_${tipoEvaluacion}`].map(docente => `<td>${docente.coordinacion ? 'Sí' : 'No'}</td>`).join('')}
                                     </tr>
                                 </tbody>
                             </table>
                         `;
+                    
                         document.getElementById('grupoInfoDocentes').insertAdjacentHTML('beforeend', docentesInfoHtml);
                 
                         // Display student grades
@@ -505,8 +621,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
         const selectedValue = moduloCatalogoSelect.options[moduloCatalogoSelect.selectedIndex].value;
 
         console.log("Valor seleccionado:", selectedValue); // Solo para ver en la consola
-        
-        const data = await apiRequest('GET', `/modulos/${selectedValue}/grupos`);
+        if (tipoEvaluacion == 'recuperacion') {
+            endoint = `/modulos/${hiddenClaveUea}/grupos&recuperacion=true`
+        } else {
+            endpoint = `/modulos/${hiddenClaveUea}/grupos`
+        }        
+        const data = await apiRequest('GET', endpoint);
         console.log(data)
         if (data.status === 200) {
             renderGruposCatalogoTable(data.payload.data);
@@ -688,9 +808,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 document.getElementById('loading-screen').style.display = 'none';
                 return;
             }
-    
+
+            if (tipoEvaluacion == 'recuperacion') {
+                tipo_evaluacion = 'recuperacion'
+            } else {
+                tipo_evaluacion = 'global'
+            }
             var data = {
-                tipo: 'global',
+                tipo: tipo_evaluacion,
                 uea: modulo,
                 grupo: grupo,
                 trimestre: trimestre,

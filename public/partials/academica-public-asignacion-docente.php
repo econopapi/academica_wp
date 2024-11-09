@@ -3,11 +3,10 @@
 <?php
 
 /**
- * Provide a public-facing view for the plugin
+ * Interfaz para mostrar la asignación docente trimestral.
+ * Tanto en evaluación global como de recuperación.
  *
- * This file is used to markup the public-facing aspects of the plugin.
- *
- * @link       https://dlimon.net/
+ * @link       https://academica.dlimon.net/docs/devs/
  * @since      0.1
  *
  * @package    Academica
@@ -35,10 +34,18 @@ if ($current_user->ID != 0) {
 } else {
     // redirect to homepage
     wp_redirect(home_url());
+    exit;
+}
+
+$tipo_evaluacion = isset($_GET['tipo']) ? $_GET['tipo'] : ' global';
+if ($tipo_evaluacion == 'recuperacion') {
+    $title = 'Programación docente: Evaluación de recuperación';
+} else {
+    $title = 'Programación docente: Evaluación global';
 }
 ?>
 
-<h2>Asignación docente - Evaluación global</h2>
+<h2><?php echo $title; ?></h2>
 
 <!-- Render para Coordinación (usuarios administradores) -->
 <?php if ($user_role == 'administrator') { ?>
@@ -63,10 +70,7 @@ if ($current_user->ID != 0) {
 <script src="<?php echo plugins_url('/js/academica-coord-asignacion-docente.js', dirname(__FILE__)); ?>"></script>
 
 <!-- Render para usuarios UAM. Se valida con sistema académico si el correo institucional del usuario está en la lista docente activa -->
-<?php } else if (strpos($user_email, 'xoc.uam.mx') !== false || strpos($user_email, 'azc.uam.mx') !== false) { ?>
-
-    <!-- get trimestre actual y detalles de docente -->
-    <?php
+<?php } else if (strpos($user_email, 'xoc.uam.mx') !== false || strpos($user_email, 'azc.uam.mx') !== false) { 
     $args = [
         'headers' => [
             'X-ACADEMICA-API-KEY' => $api_key
@@ -109,12 +113,20 @@ if ($current_user->ID != 0) {
     } else {
         echo 'No se pudo obtener el trimestre en la API.';
     }
+
+    switch ($tipo_evaluacion) {
+        case 'recuperacion':
+            $asignacion_request = $api_url . '/evaluaciones?docente='.$numero_economico.'&trimestre='.$trimestre.'&recuperacion=true';
+            break;
+        default:
+            $asignacion_request = $api_url . '/evaluaciones?docente='.$numero_economico.'&trimestre='.$trimestre;
+    }
     
-    $asignacion_request = $api_url . '/evaluaciones?docente='.$numero_economico.'&trimestre='.$trimestre;
+    //$asignacion_request = $api_url . '/evaluaciones?docente='.$numero_economico.'&trimestre='.$trimestre;
     
     $asignacion_response = wp_remote_get($asignacion_request, $args);
-
-    
+    //echo $asignacion_request;
+//    echo wp_remote_retrieve_body($asignacion_response);
     
     // check for error
     if (is_wp_error($asignacion_response)) {
@@ -135,7 +147,7 @@ if ($current_user->ID != 0) {
         $asignacion = $asignacion_json['payload'];
         
     } else {
-        echo 'No se pudo obtener la asignación de la API.';
+        echo 'No existe ninguna asignación.';
     }
 
     
@@ -182,7 +194,11 @@ if ($current_user->ID != 0) {
                         continue;
                     } ?>
                     <tr>
-                        <td><?php echo strtoupper($asignacion['asignacion'][$i]['grupo']); ?></td>
+                        <td>
+                            <?php echo '<a href="/academica-historial-academico-evaluacion-global-grupo/'
+                            . '?evaluacion=' . urlencode($asignacion['asignacion'][$i]['id'])
+                            . '&docente=' . urlencode($docente_response_json['payload']['data'][0]['email']) .'">'.strtoupper($asignacion["asignacion"][$i]["grupo"]);'</a>'; ?>
+                        </td>
                         <td><?php echo $asignacion['asignacion'][$i]['modulo']; ?></td>
                         <td><?php echo $asignacion['asignacion'][$i]['uea']; ?></td>
                         <td><?php echo ucfirst($asignacion['asignacion'][$i]['componente']); ?></td>
@@ -191,10 +207,10 @@ if ($current_user->ID != 0) {
                                 continue;
                             } else {
                                 if ($asignacion['asignacion'][$i]['evaluacion_finalizada'] == True) {
-                                    echo '☑️ Finalizada ';
+                                    echo '☑️ ';
                                     echo '<a href="/academica-historial-academico-evaluacion-global-grupo/'
                                         . '?evaluacion=' . urlencode($asignacion['asignacion'][$i]['id'])
-                                        . '&docente=' . urlencode($docente_response_json['payload']['data'][0]['email']) .'">[Ver evaluación]</a>';
+                                        . '&docente=' . urlencode($docente_response_json['payload']['data'][0]['email']) .'">Finalizada</a>';
                                 } else {
                                     if ($asignacion['asignacion'][$i]['evaluacion_completada'] == True) {
                                         echo '✅ Completada ';

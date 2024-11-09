@@ -150,6 +150,10 @@ class Academica_Public {
 		echo print_r($data);
 	}
 
+	public function portada() {
+		include 'partials/academica-public-portada.php';
+	}
+
 	public function seguimiento_global_grupo() {
 		include 'partials/academica-public-seguimiento-global-grupo.php';
 	}

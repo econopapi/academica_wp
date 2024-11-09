@@ -45,6 +45,14 @@ class Academica_Activator {
 			// Page data
 			$pages = array(
 				array(
+					'post_title'    => 'Académica UAM',
+					'post_content'  => '[portada]',
+					'post_status'   => 'publish',
+					'post_author'   => $user_id,
+					'post_type'     => 'page',
+					'post_name'          => 'academica',
+				),
+				array(
 					'post_title'    => 'Seguimiento Global',
 					'post_content'  => '[seguimiento_global_grupo]',
 					'post_status'   => 'publish',
