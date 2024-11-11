@@ -152,6 +152,7 @@ $lista_alumnos = $lista_json['payload']['lista_alumnos'];
                 </tr>
             </thead>
             <tbody>
+                
             <?php for ($i = 0; $i < count($lista_alumnos); $i++) { ?>
                 <tr>
                     <td><?php echo $lista_alumnos[$i]['numero_lista']; ?></td>
@@ -159,7 +160,8 @@ $lista_alumnos = $lista_json['payload']['lista_alumnos'];
                     <input type="hidden" name="matriculas[<?php echo $i; ?>]" value="<?php echo $lista_alumnos[$i]['matricula']; ?>">
                     <td><?php echo $lista_alumnos[$i]['nombre_alumno']; ?></td>
                     <td>
-                        <input type="number" step="0.01" name="calificacion[<?php echo $i; ?>]" value="<?php echo $lista_alumnos[$i][$componente]; ?>">
+                    
+                        <input type="number" step="0.01" name="calificacion[<?php echo $i; ?>]" value="<?php echo !empty($lista_alumnos[$i][$componente]) ? $lista_alumnos[$i][$componente] : ''; ?>">
                     </td>
                 </tr>
             <?php } ?>

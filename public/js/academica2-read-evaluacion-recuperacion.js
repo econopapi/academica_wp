@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // Crear un objeto que mapee los valores de "componente" a "componente_extenso"
         var componenteMap = mapeo.reduce((acc, docente) => {
-            acc[docente.componente] = docente.componente_extenso;
+            acc[docente.componente] = docente.nombre_extenso;
             return acc;
         }, {});
     

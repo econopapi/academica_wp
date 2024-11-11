@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => {
                 if (response.status === 200) {
                     alert('Evaluación enviada con éxito');
-                    window.open(`/academica-historial-academico-evaluacion-global-grupo?evaluacion=${id_evaluacion}&docente=${docente_email}`, '_self');
+                    window.open(`/academica-evaluacion?evaluacion=${id_evaluacion}&docente=${docente_email}`, '_self');
                 } else {
                     alert('Error al enviar la evaluación');
                     window.location.reload();

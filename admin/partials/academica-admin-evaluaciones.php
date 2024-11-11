@@ -24,7 +24,7 @@ if(isset($_GET['tipo'])){
 <script>var tipoEvaluacion = "<?php echo $tipo_evaluacion; ?>"</script>
 <div class="header-container">
     <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Logo Académica UAM" class="logo">
-    <h1 class="title">Grupos</h1>
+    <h1 class="title">Evaluaciones</h1>
 </div>
 
 <p>Gestión de grupos para evaluaciones globales y de recuperación en el trimestre actual.</p>

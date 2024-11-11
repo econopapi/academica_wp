@@ -35,8 +35,8 @@ if (is_wp_error($response)) {
     <p>Seleccione el tipo de evaluación que desea administrar:</p>
     <!-- Sección de acceso a tipos de evaluaciones -->
     <div class="evaluation-access">
-        <button class="portada-button" onclick="window.location.href='/academica-docentes-asignacion-global/'">Evaluación Global</button>
-        <button lcass="protada-button" onclick="window.location.href='/academica-docentes-asignacion-recuperacion/'">Evaluación de Recuperación</button>
+        <button class="portada-button" onclick="window.location.href='/academica-docentes-programacion/'">Evaluación Global</button>
+        <button lcass="protada-button" onclick="window.location.href='/academica-docentes-programacion/?tipo=recuperacion'">Evaluación de Recuperación</button>
     </div>
 
     <!-- Tabla con el trimestre actual y otros datos -->

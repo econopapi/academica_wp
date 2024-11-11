@@ -29,7 +29,8 @@ document.addEventListener('DOMContentLoaded', function() {
         'recuperacion': 'true', // This is the only difference between this file and academica-public-evaluacion-componente-global.js
         'calificaciones': []
     };
-    
+    var id_evaluacion = document.getElementById('id_evaluacion').value;
+    var docente_email = document.getElementById('docente_email').value;
     var url_params = {
         'trimestre': document.getElementById('trimestre').value,
         'grupo': document.getElementById('grupo').value,
@@ -58,20 +59,37 @@ document.addEventListener('DOMContentLoaded', function() {
     
         console.log(data)
     
-        var xhr = new XMLHttpRequest();
-        var requestSuccessful = false; // Variable para almacenar el estado de la solicitud
-        xhr.open('POST', `${academicaApiConfig.apiUrl}/evaluacion_academica/componente`, true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify(data));
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                alert('Evaluación enviada con éxito');
-                window.open('/academica-historial-academico-evaluacion-recuperacion-grupo?trimestre=' + url_params.trimestre + '&grupo=' + url_params.grupo + '&modulo=' + url_params.modulo, '_self');
+        // var xhr = new XMLHttpRequest();
+        // var requestSuccessful = false; // Variable para almacenar el estado de la solicitud
+        // xhr.open('POST', `${academicaApiConfig.apiUrl}/evaluacion_academica/componente`, true);
+        // xhr.setRequestHeader('Content-Type', 'application/json');
+        // xhr.send(JSON.stringify(data));
+        // xhr.onload = function () {
+        //     if (xhr.status === 200) {
+        //         alert('Evaluación enviada con éxito');
+        //         window.open('/academica-historial-academico-evaluacion-recuperacion-grupo?trimestre=' + url_params.trimestre + '&grupo=' + url_params.grupo + '&modulo=' + url_params.modulo, '_self');
+        //     } else {
+        //         alert('Error al enviar la evaluación');
+        //         window.location.reload();
+        //     }
+        // };
+
+        // Realizar la solicitud POST usando apiRequest
+        apiRequest('POST', `/evaluaciones/${id_evaluacion}/componente`, data)
+        .then(response => {
+            if (response.status === 200) {
+                //alert('Evaluación enviada con éxito');
+                window.open(`/academica-evaluacion/?evaluacion=${id_evaluacion}&docente=${docente_email}`, '_self');
             } else {
                 alert('Error al enviar la evaluación');
                 window.location.reload();
             }
-        };
+        })
+        .catch(error => {
+            console.error('Error en la solicitud:', error);
+            alert('Error al enviar la evaluación!');
+            document.getElementById('loading-screen').style.display = 'none';
+        });
         
     }
     

@@ -30,7 +30,7 @@ if ($current_user->ID != 0) {
     $user_roles = $current_user->roles;
     $user_role = !empty($user_roles) ? $user_roles[0] : 'Sin Rol';
 
-    echo "<p style='margin: 25px;'><strong>Usuario activo: $user_email</strong></p>";
+    //echo "<p><strong>Usuario activo: $user_email</strong></p>";
 } else {
     // redirect to homepage
     wp_redirect(home_url());
@@ -67,7 +67,7 @@ if ($tipo_evaluacion == 'recuperacion') {
     <div id="asignacion_docente" class="table-2"></div>
 </div>
 
-<script src="<?php echo plugins_url('/js/academica-coord-asignacion-docente.js', dirname(__FILE__)); ?>"></script>
+
 
 <!-- Render para usuarios UAM. Se valida con sistema académico si el correo institucional del usuario está en la lista docente activa -->
 <?php } else if (strpos($user_email, 'xoc.uam.mx') !== false || strpos($user_email, 'azc.uam.mx') !== false) { 
@@ -195,7 +195,7 @@ if ($tipo_evaluacion == 'recuperacion') {
                     } ?>
                     <tr>
                         <td>
-                            <?php echo '<a href="/academica-historial-academico-evaluacion-global-grupo/'
+                            <?php echo '<a href="/academica-evaluacion/'
                             . '?evaluacion=' . urlencode($asignacion['asignacion'][$i]['id'])
                             . '&docente=' . urlencode($docente_response_json['payload']['data'][0]['email']) .'">'.strtoupper($asignacion["asignacion"][$i]["grupo"]);'</a>'; ?>
                         </td>
@@ -208,26 +208,26 @@ if ($tipo_evaluacion == 'recuperacion') {
                             } else {
                                 if ($asignacion['asignacion'][$i]['evaluacion_finalizada'] == True) {
                                     echo '☑️ ';
-                                    echo '<a href="/academica-historial-academico-evaluacion-global-grupo/'
+                                    echo '<a href="/academica-evaluacion/'
                                         . '?evaluacion=' . urlencode($asignacion['asignacion'][$i]['id'])
                                         . '&docente=' . urlencode($docente_response_json['payload']['data'][0]['email']) .'">Finalizada</a>';
                                 } else {
                                     if ($asignacion['asignacion'][$i]['evaluacion_completada'] == True) {
-                                        echo '✅ Completada ';
-                                        echo '<a href="/academica-docentes-evaluacion-componente-global?grupo='
+                                        echo '✅ ';
+                                        echo '<a href="/academica-docentes-evaluacion-componente-'.$tipo_evaluacion.'?grupo='
                                             . urlencode($asignacion['asignacion'][$i]['grupo'])
                                             . '&evaluacion=' . urlencode($asignacion['asignacion'][$i]['id'])
                                             . '&componente=' . urlencode($asignacion['asignacion'][$i]['componente_clave'])
                                             . '&trimestre=' . urlencode($trimestre_response_json['payload']['data'][0]['trimestre'])
-                                            . '&docente=' . urlencode($docente_response_json['payload']['data'][0]['numero_economico']) . '">[Editar]</a>';
+                                            . '&docente=' . urlencode($docente_response_json['payload']['data'][0]['numero_economico']) . '">Completada [Editar]</a>';
                                     } else {
-                                        echo '⚠️ Pendiente ';
-                                        echo '<a href="/academica-docentes-evaluacion-componente-global?grupo='
+                                        echo '⚠️ ';
+                                        echo '<a href="/academica-docentes-evaluacion-componente-'.$tipo_evaluacion.'?grupo='
                                             . urlencode($asignacion['asignacion'][$i]['grupo'])
                                             . '&evaluacion=' . urlencode($asignacion['asignacion'][$i]['id'])
                                             . '&componente=' . urlencode($asignacion['asignacion'][$i]['componente_clave'])
                                             . '&trimestre=' . urlencode($trimestre_response_json['payload']['data'][0]['trimestre'])
-                                            . '&docente=' . urlencode($docente_response_json['payload']['data'][0]['numero_economico']) . '">[Evaluar]</a>';
+                                            . '&docente=' . urlencode($docente_response_json['payload']['data'][0]['numero_economico']) . '">Pendiente [Evaluar]</a>';
                                     }
                                 }
                             }

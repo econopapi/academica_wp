@@ -28,11 +28,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
     
     toggleOptions.forEach(option => {
         option.addEventListener('click', () => {
+            document.getElementById('loading-screen').style.display = 'block'
             toggleOptions.forEach(opt => opt.classList.remove('selected'));
             option.classList.add('selected');
     
             const tipo = option.getAttribute('data-value');
-            window.location.href = `${window.location.pathname}?page=academica_grupos_global&tipo=${tipo}`;
+            window.location.href = `${window.location.pathname}?page=evaluaciones&tipo=${tipo}`;
         });
     });
 
@@ -158,7 +159,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                             </tbody>
                         </table>
                     `;
-                
+                    
                     document.getElementById('evaluacionAusenciaComponentes').insertAdjacentHTML('beforeend', evaluarComponentesInfoHtml);                      
                 } else {
                     // Evaluación incompleta, faltan componentes
@@ -198,7 +199,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                             </tr>
                             <tr>
                                 <td><strong>Evaluar</strong></td>
-                                ${informacion_general[`programacion_docente_${tipoEvaluacion}`].map(docente => `<td><button class="evaluarComponenteButton" id-componente="${docente.componente.nombre_extenso}" id-evaluacion="${idEvaluacion}">Evaluar</button></td>`).join('')}
+                                ${informacion_general[`programacion_docente_${tipoEvaluacion}`].map(docente => `<td><button class="evaluarComponenteButton" id-componente="${docente.componente.nombre_componente}" id-evaluacion="${idEvaluacion}" docente="${docente.docente.numero_economico}">Evaluar</button></td>`).join('')}
                             </tr>                                    
                         </tbody>
                     </table>

@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // Añadir el título debajo del logo
         doc.setFontSize(16);
-        doc.text("Evaluación global", 30, 20); // Ajusta la posición según sea necesario
+        doc.text("Evaluación", 30, 20); // Ajusta la posición según sea necesario
     
         // Posición inicial Y
         let currentY = 35; // Establecer una posición arbitraria para el siguiente contenido
@@ -213,8 +213,13 @@ document.addEventListener('DOMContentLoaded', function() {
         botonIzquierdo.id = "botonIzquierdo";
         botonIzquierdo.className = "boton-descarga";
         botonIzquierdo.innerHTML = '<i class="fa-solid fa-circle-chevron-left"></i> Programación trimestral';
-        botonIzquierdo.addEventListener("click", function(event) {  
-            window.open('/academica-docentes-asignacion-global/', '_self'); 
+        botonIzquierdo.addEventListener("click", function(event) {
+            if (tipoEvaluacion == 'global'){
+                window.open('/academica-docentes-programacion/', '_self'); 
+            } else {
+                window.open('/academica-docentes-programacion/?tipo=recuperacion', '_self'); 
+            }
+            
         }); // Función personalizada para este botón
         
         // Crea un contenedor adicional para los botones de descarga en el extremo derecho
@@ -255,6 +260,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var excludeKeys = ['numero_lista', 'nombre_alumno', 'matricula', 'calificacion_numero', 'calificacion_letra'];
     
         var componentes = mapeo.map(item => item.componente.nombre_componente);
+        //var componenteMap = mapeo.map(item => item.componente.nombre_extenso);
         // Filtrar las claves del primer objeto para incluir solo las necesarias
         var titles = Object.keys(data[0]).filter(key => 
             excludeKeys.includes(key) || componentes.includes(key)
@@ -265,14 +271,32 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // Añadir "calificacion_numero" y "calificacion_letra" al final
         titles.push("calificacion_numero", "calificacion_letra");
+
+        // Crear un objeto que mapee los valores de "componente" a "componente_extenso"
+        var componenteMap = mapeo.reduce((acc, docente) => {
+            acc[docente.componente.nombre_componente] = docente.componente.nombre_extenso;
+            return acc;
+        }, {});
+        var fixedColumnTitles = {
+            'numero_lista': 'Lista',
+            'nombre_alumno': 'Nombre',
+            'matricula': 'Matrícula',
+            'calificacion_numero': 'Calificación (Número)',
+            'calificacion_letra': 'Calificación (Letra)'
+        };
     
         // Añadir cabeceras de tabla
         var thead = document.createElement('thead');
         var headerRow = document.createElement('tr');
-    
         titles.forEach(title => {
             var th = document.createElement('th');
-            th.textContent = title.replace(/_/g, ' '); // Reemplaza guiones bajos por espacios
+            th.textContent = fixedColumnTitles[title] || title.replace(/_/g, ' '); // Reemplaza guiones bajos por espacios
+    
+            // Utiliza el objeto "componenteMap" para obtener el título correspondiente
+            if (componenteMap[title]) {
+                th.textContent = componenteMap[title];
+            }
+    
             headerRow.appendChild(th);
         });
         thead.appendChild(headerRow);
@@ -302,16 +326,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // Mapping of current keys to desired names
         var keyMapping = {
-            'grupo': 'Grupo',
             'trimestre': 'Trimestre',
+            'coordinador': 'Coordinador/a',
             'modulo': 'Módulo',
-            'nombre_uea': 'UEA',
-            'clave_uea': 'Clave UEA',
-            'coordinador': 'Coordinador/a'
+            'grupo': 'Grupo'   
         };
 
         var generalInfo = informacion_general[0];
-        console.log(generalInfo);
         var grupo = generalInfo.grupo.grupo || 'No especificado';
         var trimestre = generalInfo.trimestre.trimestre_nombre || "No especificado";
         var modulo = generalInfo.uea.modulo || "No especificado";
@@ -319,7 +340,8 @@ document.addEventListener('DOMContentLoaded', function() {
         var claveUea = generalInfo.uea.clave_uea || "No especificado";        
 
         // Obtener los coordinadores únicos
-        var coordinadores = generalInfo.programacion_docente_global
+        const programacionKey = grupo.startsWith('sr') ? 'programacion_docente_recuperacion' : 'programacion_docente_global';
+        var coordinadores = generalInfo[programacionKey]
             .filter(docente => docente.coordinacion)
             .reduce((unique, docente) => {
                 if (!unique.some(d => d.nombre === docente.docente.nombre)) {
@@ -331,11 +353,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // Agregar cada fila a la tabla
         var rowsData = {
-            'grupo': grupo.toUpperCase(),
             'trimestre': trimestre,
-            'modulo': modulo,
-            'nombre_uea': nombreUea,
-            'clave_uea': claveUea,
+            'modulo': `${modulo}. ${nombreUea}`,
+            'grupo': grupo.toUpperCase(),       
             'coordinador': `⭐ ${coordinadorNames}`
         };
 
@@ -473,7 +493,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     function evaluacionPendienteDeFirma(id_evaluacion, docente_id, coordinador) {
-        console.log(coordinador)
         var div = document.createElement('div');
         div.className = 'notification-orange';
         div.textContent = "Evaluación completa. Pendiente de confirmación.";
@@ -541,7 +560,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
         var reminderDiv = document.createElement('div');
         //reminderDiv.textContent = "Recuerde que ésto es sólo un seguimiento interno de la Coordinación. Las califiaciones oficiales deben ser cargadas y firmadas en el Sistema Integral de Información Académica de la UAM, como siempre se ha hecho.";
-        reminderDiv.innerHTML = 'Recuerde que esta evaluación es sólo un seguimiento interno de la Coordinación de estudios.<br />Las califiaciones oficiales deben ser cargadas y firmadas en el <a href="#" onclick=\'window.open("https://sae.uam.mx/siae/acceso_siia.html");return false;\'>Sistema Integral de Información Académica de la UAM</a>.';
+        reminderDiv.innerHTML = 'Recuerde que esta evaluación es sólo un seguimiento interno de la Coordinación de estudios.<br />Las calificaciones deben ser cargadas y firmadas en el <a href="#" onclick=\'window.open("https://sae.uam.mx/siae/acceso_siia.html");return false;\'>Sistema Integral de Información Académica de la UAM</a>.';
         if (docente_id == coordinador) {
             // botón para revertir evaluación.
             var button = document.createElement('button');
@@ -571,20 +590,11 @@ document.addEventListener('DOMContentLoaded', function() {
         div.className = 'notification-red';
         div.textContent = "Evaluación incompleta. Faltan componentes por evaluar";
     
-        // // crear boton para volver a la pagina de asignacion docente con el estilo de boton
-        // var button = document.createElement('button');
-        // button.className = 'firmar-button';
-        // button.textContent = 'Volver a asignación docente';
-        // button.addEventListener('click', function(event) {
-        //     window.open('/academica-docentes-asignacion-global/', '_self');
-        // });
-    
         document.getElementById('estatus_firma').appendChild(div);
         //document.getElementById('notification').appendChild(button);
     }
     
     function loadDataFromUrlParams() {
-        //console.log('loadDataFromUrlParams');
         document.getElementById('loading-screen').style.display = 'block';
     
         // current url
@@ -606,7 +616,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('loading-screen').style.display = 'block';
                     clearTables();
                     // Crear tabla de calificaciones
-                    var table = createTable(data.payload.lista_alumnos, data.payload.informacion_general[0].programacion_docente_global);
+                    const programacionKey = id_evaluacion.startsWith('g') ? 'programacion_docente_global' : 'programacion_docente_recuperacion';
+                    var table = createTable(data.payload.lista_alumnos, data.payload.informacion_general[0][programacionKey]);
                     document.getElementById('seguimiento_global_grupo_table').appendChild(table);
 
                     // Crear tabla de información general
@@ -614,7 +625,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('info_general').appendChild(infoTable);
 
                     // Crear tabla de asignación docente
-                    var docentesTable = createDocentesTable(data.payload.informacion_general[0].programacion_docente_global);
+                    var docentesTable = createDocentesTable(data.payload.informacion_general[0][programacionKey]);
                     document.getElementById('asignacion_docente').appendChild(docentesTable);
                     // Crear tabla de notificaciones:
                     if (data.payload.informacion_general[0].evaluacion_completada === false) {

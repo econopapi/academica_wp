@@ -3,11 +3,10 @@
 <?php
 
 /**
- * Provide a public-facing view for the plugin
+ * Interfaz para evaluar alumnos de un grupo en un componente 
+ * específico de la evaluación.
  *
- * This file is used to markup the public-facing aspects of the plugin.
- *
- * @link       https://dlimon.net/
+ * @link       https://academica.dlimon.net/docs/devs
  * @since      0.1
  *
  * @package    Academica
@@ -18,6 +17,14 @@
 //require_once("wp-load.php");
 
 $api_url = get_option('academica_api_url');
+$api_key = get_option('academica_api_key');
+$academica_coordinador = get_option('academica_coordinador');
+
+$args = [
+    'headers' => [
+        'X-ACADEMICA-API-KEY' => $api_key
+    ]
+];
 
 $current_user = wp_get_current_user();
 
@@ -36,17 +43,17 @@ if ($current_user->ID != 0) {
     // redirect to homepage
     wp_redirect(home_url());
 }
-
+$id_evaluacion = $_GET['evaluacion'];
 $grupo = $_GET['grupo'];
 $modulo = $_GET['modulo'];
 $componente = $_GET['componente'];
 $trimestre = $_GET['trimestre'];
 $docente = $_GET['docente'];
 
-$docente_request = $api_url . '/historial_academico/docentes?email=' . $user_email;
+$docente_request = $api_url . '/docentes?email=' . $user_email;
 $docente_response = wp_remote_get($docente_request);
 
-$trimestre_request = $api_url . '/historial_academico/trimestre_actual';
+$trimestre_request = $api_url . '/trimestres/actual';
 $trimestre_response = wp_remote_get($trimestre_request);
 
 if (is_wp_error($docente_response) || is_wp_error($trimestre_response)) {
@@ -59,27 +66,36 @@ $docente_response_json = json_decode($docente_response_body, true);
 $trimestre_response_body = wp_remote_retrieve_body($trimestre_response);
 $trimestre_response_json = json_decode($trimestre_response_body, true);
 
+// Obtener número económico y trimestre actual
+$numero_economico = $docente_response_json['payload']['data'][0]['numero_economico'] ?? null;
+$trimestre_actual = $trimestre_response_json['payload']['data'][0]['trimestre'] ?? null;
 
+// if (!empty($docente_response_json['payload']['numero_economico'])) {
+//     $numero_economico = $docente_response_json['payload']['numero_economico'];
+// } else {
+//     echo 'No se pudo obtener el número económico en la API.';
+// }
 
-if (!empty($docente_response_json['payload']['numero_economico'])) {
-    $numero_economico = $docente_response_json['payload']['numero_economico'];
-} else {
-    echo 'No se pudo obtener el número económico en la API.';
+// if (!empty($trimestre_response_json['payload']['trimestre'])) {
+//     $trimestre = $trimestre_response_json['payload']['trimestre'];
+// } else {
+//     echo 'No se pudo obtener el trimestre en la API.';
+// }
+
+// if ($docente != $docente_response_json['payload']['numero_economico']
+//     || $trimestre != $trimestre_response_json['payload']['trimestre']) {
+//     echo 'No tienes permiso para ver estos datos ;).';
+//     return false;
+// }
+
+if (!(($docente == $numero_economico) || $user_email === $academica_coordinador)) {
+    wp_redirect(home_url());
+    exit;
 }
 
-if (!empty($trimestre_response_json['payload']['trimestre'])) {
-    $trimestre = $trimestre_response_json['payload']['trimestre'];
-} else {
-    echo 'No se pudo obtener el trimestre en la API.';
-}
+//$lista_request = $api_url . '/historial_academico/lista_alumnos_componente_recuperacion?trimestre='.$trimestre.'&grupo='.$grupo.'&componente='.$componente . '&modulo=' . $modulo;
 
-if ($docente != $docente_response_json['payload']['numero_economico']
-    || $trimestre != $trimestre_response_json['payload']['trimestre']) {
-    echo 'No tienes permiso para ver estos datos ;).';
-    return false;
-}
-
-$lista_request = $api_url . '/historial_academico/lista_alumnos_componente_recuperacion?trimestre='.$trimestre.'&grupo='.$grupo.'&componente='.$componente . '&modulo=' . $modulo;
+$lista_request = $api_url . '/evaluaciones/'.$id_evaluacion.'?detalle=true';
 $lista_response = wp_remote_get($lista_request);
 // check for error
 if (is_wp_error($lista_response)) {
@@ -89,23 +105,25 @@ if (is_wp_error($lista_response)) {
 $lista_body = wp_remote_retrieve_body($lista_response);
 // decode body
 $lista_json = json_decode($lista_body, true);
-
+$informacion_general = $lista_json['payload']['informacion_general'];
+$lista_alumnos = $lista_json['payload']['lista_alumnos'];
 ?>
 
 <h2>Evaluación de componente - Recuperación</h2>
 
 <div class="evaluacion-componente-head">
     <div class="table-1">
-                
+        <?php if ($user_email == $academica_coordinador) { ?>
+            <div class="notification-orange">
+                <p>Aviso: Este componente está siendo evaluado por la Coordinación de estudios por ausencia de la persona docente asignada</p>
+            </div>
+        <?php } ?>                
         <table>
             <tbody>
                 <tr>
                     <td><strong>Grupo:</strong></td>
                     <td><?php echo strtoupper($grupo); ?></td>
                 </tr>
-                <tr>
-                    <td><strong>Módulo:</strong></td>
-                    <td><?php echo ucfirst($modulo); ?></td>
                 <tr>
                     <td><strong>Componente:</strong></td>
                     <td><?php echo ucfirst($componente); ?></td>
@@ -136,28 +154,30 @@ $lista_json = json_decode($lista_body, true);
             <p class="bold">Nota: Las calificaciones preasignadas corresponden a las notas que la alumna/o obtuvo en la evaluación global. Favor de asignar la calificación sólo en las casillas vacías. </p>
             <tbody>
 
-            <?php for ($i = 0; $i < count($lista_json['payload']['lista_alumnos']); $i++) { ?>
+            <?php for ($i = 0; $i < count($lista_alumnos); $i++) { ?>
                 <tr>
-                    <td><?php echo $lista_json['payload']['lista_alumnos'][$i]['numero_lista']; ?></td>
-                    <td><?php echo $lista_json['payload']['lista_alumnos'][$i]['matricula']; ?>
-                    <input type="hidden" name="matriculas[<?php echo $i; ?>]" value="<?php echo $lista_json['payload']['lista_alumnos'][$i]['matricula']; ?>">
-                    <td><?php echo $lista_json['payload']['lista_alumnos'][$i]['nombre_alumno']; ?></td>
+                    <td><?php echo $lista_alumnos[$i]['numero_lista']; ?></td>
+                    <td><?php echo $lista_alumnos[$i]['matricula']; ?>
+                    <input type="hidden" name="matriculas[<?php echo $i; ?>]" value="<?php echo $lista_alumnos[$i]['matricula']; ?>">
+                    <td><?php echo $lista_alumnos[$i]['nombre_alumno']; ?></td>
                     <td>
                     <input id="input-componente" type="number" 
                             step="0.01" 
                             name="calificacion[<?php echo $i; ?>]" 
-                            value="<?php echo $lista_json['payload']['lista_alumnos'][$i][$componente]; ?>"
-                            data-global="<?php echo $lista_json['payload']['lista_alumnos'][$i]['global_json'][$componente]; ?>">
+                            value="<?php echo $lista_alumnos[$i][$componente]; ?>"
+                            data-global="<?php echo $lista_alumnos[$i]['global_json'][$componente]; ?>">
                     </td>
                 </tr>
             <?php } ?>
             </tbody>
         </table>
-        <input type="hidden" id="id_seguimiento_recuperacion" value="<?php echo $lista_json['payload']['id_seguimiento']; ?>">
+        <input type="hidden" id="id_evaluacion" value="<?php echo $id_evaluacion; ?>">
+        <input type="hidden" id="id_seguimiento_recuperacion" value="<?php echo $informacion_general[0]['id']; ?>">
         <input type="hidden" id="docente_id" value="<?php echo $docente; ?>">
+        <input type="hidden" id="docente_email" value="<?php echo $user_email; ?>">
         <input type="hidden" id="componente_id" value="<?php echo $componente; ?>">
-        <input type="hidden" id="trimestre" value="<?php echo $trimestre; ?>">
-        <input type="hidden" id="grupo" value="<?php echo $grupo; ?>">
+        <input type="hidden" id="trimestre" value="<?php echo $informacion_general[0]['trimestre']['trimestre']; ?>">
+        <input type="hidden" id="grupo" value="<?php echo $informacion_general[0]['grupo']['grupo']; ?>">
         <input type="hidden" id="modulo" value="<?php echo $modulo; ?>">
         
         <input type="submit" value="Enviar evaluación">
