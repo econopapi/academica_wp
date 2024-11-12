@@ -3,6 +3,24 @@
 document.addEventListener('DOMContentLoaded', function() {
     const calificacionInputs = document.querySelectorAll('input[name^="calificacion"]');
 
+    // calificacionInputs.forEach(input => {
+    //     const globalCalificacion = parseFloat(input.getAttribute('data-global'));
+
+    //     // Si el valor de global_json del componente es 6 o más, desactivar el input
+    //     if (!isNaN(globalCalificacion) && globalCalificacion >= 6) {
+    //         input.disabled = true;
+    //         input.title = "Calificación acreditada en evaluación global";
+    //         input.style.backgroundColor = "#d4edda"; // Fondo verde claro
+    //         input.style.color = "#155724"; // Texto verde oscuro
+
+    //         // Agregar texto adicional junto al input
+    //         const acreditadoText = document.createElement('span');
+    //         acreditadoText.innerText = "< Acreditado en Global";
+    //         acreditadoText.style.color = "#155724";
+    //         acreditadoText.style.fontWeight = "bold";
+    //         input.parentNode.appendChild(acreditadoText);
+    //     }
+    // });
     calificacionInputs.forEach(input => {
         const globalCalificacion = parseFloat(input.getAttribute('data-global'));
 
@@ -15,10 +33,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Agregar texto adicional junto al input
             const acreditadoText = document.createElement('span');
-            acreditadoText.innerText = "< Acreditado en Global";
+            acreditadoText.innerText = " Acreditado en global ";
             acreditadoText.style.color = "#155724";
             acreditadoText.style.fontWeight = "bold";
+            
+            // Crear enlace de "Editar"
+            const editarLink = document.createElement('a');
+            editarLink.href = "#";
+            editarLink.innerText = "[Editar]";
+            editarLink.style.color = "#007bff"; // Color de enlace
+            editarLink.style.marginLeft = "5px";
+            editarLink.style.cursor = "pointer";
+
+            // Evento para habilitar el input al hacer clic en "Editar"
+            editarLink.addEventListener('click', function(event) {
+                event.preventDefault(); // Evitar que la página se desplace al inicio
+                input.disabled = false;
+                input.focus(); // Opcional: poner foco en el input
+                editarLink.style.display = 'none'; // Ocultar el enlace después de activarlo
+                acreditadoText.style.display = 'none'; // Ocultar el texto "Acreditado en Global" si prefieres
+            });
+
+            // Agregar los elementos al DOM
             input.parentNode.appendChild(acreditadoText);
+            input.parentNode.appendChild(editarLink);
         }
     });
 
