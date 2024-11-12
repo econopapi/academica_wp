@@ -108,50 +108,54 @@ class Academica_Public {
 
 	}
 
-	public function get_seguimiento_global_grupo($trimestre, $grupo, $detalle) {
+	// public function get_seguimiento_global_grupo($trimestre, $grupo, $detalle) {
 
-		$params = array(
-			'trimestre' => $trimestre,
-			'grupo' => $grupo,
-			'detalle' => $detalle
-		);
+	// 	$params = array(
+	// 		'trimestre' => $trimestre,
+	// 		'grupo' => $grupo,
+	// 		'detalle' => $detalle
+	// 	);
 		
-		$query = http_build_query($params);
+	// 	$query = http_build_query($params);
 
-		$api_url = get_option('academica_api_url', '');
+	// 	$api_url = get_option('academica_api_url', '');
 
-		$url = $api_url . '/historial_academico/seguimiento_global_grupo' . $query;
+	// 	$url = $api_url . '/historial_academico/seguimiento_global_grupo' . $query;
 
-		$response = wp_remote_get($url);
+	// 	$response = wp_remote_get($url);
 	
-		if (is_wp_error($response)) {
-			return false;
-		}
+	// 	if (is_wp_error($response)) {
+	// 		return false;
+	// 	}
 	
-		$body = wp_remote_retrieve_body($response);
-		$data = json_decode($body);
+	// 	$body = wp_remote_retrieve_body($response);
+	// 	$data = json_decode($body);
 	
-		return $data;
+	// 	return $data;
+	// }
+
+	// public function render_seguimiento_global_grupo() {
+
+	// 	$trimestre = $_GET['trimestre'];
+	// 	$grupo = $_GET['grupo'];
+	// 	$detalle = $_GET['detalle'];
+
+	// 	$data = $this->get_seguimiento_global_grupo($trimestre, $grupo, $detalle);
+	
+	// 	if (!$data) {
+	// 		echo 'No se pudo obtener los datos de la API.';
+	// 		return;
+	// 	}
+	
+	// 	echo print_r($data);
+	// }
+
+	public function portada() {
+		include 'partials/academica-public-portada.php';
 	}
 
-	public function render_seguimiento_global_grupo() {
-
-		$trimestre = $_GET['trimestre'];
-		$grupo = $_GET['grupo'];
-		$detalle = $_GET['detalle'];
-
-		$data = $this->get_seguimiento_global_grupo($trimestre, $grupo, $detalle);
-	
-		if (!$data) {
-			echo 'No se pudo obtener los datos de la API.';
-			return;
-		}
-	
-		echo print_r($data);
-	}
-
-	public function seguimiento_global_grupo() {
-		include 'partials/academica-public-seguimiento-global-grupo.php';
+	public function evaluacion_grupo() {
+		include 'partials/academica-public-evaluacion.php';
 	}
 
 	public function seguimiento_recuperacion_grupo() {

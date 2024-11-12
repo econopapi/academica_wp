@@ -217,7 +217,7 @@ class Academica {
 
 		// Verifica si el correo pertenece a @correo.xoc.uam.mx
 		if (strpos($user->user_email, '@correo.xoc.uam.mx') !== false && !in_array('administrator', $user->roles)) {
-			wp_redirect(home_url('academica-docentes-asignacion-recuperacion/'));
+			wp_redirect(home_url('academica/'));
 			exit;
 		} 
 		// Verifica si el usuario tiene el rol de administrador

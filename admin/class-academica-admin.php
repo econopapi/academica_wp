@@ -146,18 +146,11 @@ class Academica_Admin {
 						array($this, 'academica_admin_docentes_page'));
 
 		add_submenu_page('academica',
-						'Grupos Global',
-						'Grupos Global',
+						'Evaluaciones',
+						'Evaluaciones',
 						'manage_options',
-						'academica_grupos_global',
-						array($this, 'academica_admin_alta_grupos_global_page'));
-
-		add_submenu_page('academica',
-						'Grupos Recuperación',
-						'Grupos Recuperación',
-						'manage_options',
-						'academica_grupos_recuperacion',
-						array($this, 'academica_admin_alta_grupos_recuperacion_page'));
+						'evaluaciones',
+						array($this, 'academica_admin_evaluaciones_page'));
 
 		add_submenu_page('academica',
 						'Academica UAM - Configuración de API',
@@ -182,8 +175,8 @@ class Academica_Admin {
 		include 'partials/academica-admin-trimestre.php';
 	}
 
-	public function academica_admin_alta_grupos_global_page() {
-		include 'partials/academica-admin-alta-grupos-global.php';
+	public function academica_admin_evaluaciones_page() {
+		include 'partials/academica-admin-evaluaciones.php';
 	}
 
 	public function academica_admin_alta_grupos_recuperacion_page() {

@@ -1,40 +1,33 @@
 var selectTrimestre = document.getElementById('trimestre');
-var selectModulo = document.getElementById('modulo');
 var selectGrupo = document.getElementById('grupo');
 var hiddenDocente = document.getElementById('docente');
-
-//selectModulo.disabled = true;
+document.getElementById('seguimiento_global_grupo_form').style.display = 'none';
 
 function loadTrimestres() {
-    fetch(`${academicaApiConfig.apiUrl}/trimestres/`)
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 200) {
-            const trimestres = data.payload.data;
+    apiRequest('GET', '/trimestres/')
+        .then(data => {
+            if (data.status === 200) {
+                const trimestres = data.payload.data;
 
-            trimestres.forEach(trimestre => {
-                const option = document.createElement('option');
-                option.value = trimestre.trimestre;
-                option.textContent = trimestre.trimestre_nombre;
-                selectTrimestre.appendChild(option)
-            });
-            
-        } else {
-            console.error('Error al obtener trimestres;', data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error en la solicitud', error);
-    })
+                trimestres.forEach(trimestre => {
+                    const option = document.createElement('option');
+                    option.value = trimestre.trimestre;
+                    option.textContent = trimestre.trimestre_nombre;
+                    selectTrimestre.appendChild(option);
+                });
+            } else {
+                console.error('Error al obtener trimestres;', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error en la solicitud', error);
+        });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
 
     // disable the select "grupo" by default
     selectGrupo.disabled = true;
-    selectModulo.style.display = 'none';
-    
-    
 
     loadTrimestres();
 
@@ -42,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Captura las tablas HTML
         const infoGeneralTable = document.querySelector("#info_general table");
         const asignacionDocenteTable = document.querySelector("#asignacion_docente table");
-        const calificacionesTable = document.querySelector("#seguimiento_recuperacion_grupo_table table");
+        const calificacionesTable = document.querySelector("#seguimiento_global_grupo_table table");
     
         // Convierte las tablas en hojas de Excel usando SheetJS
         const workbook = XLSX.utils.book_new();
@@ -99,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // Añadir el título debajo del logo
         doc.setFontSize(16);
-        doc.text("Evaluación de recuperación", 30, 20); // Ajusta la posición según sea necesario
+        doc.text("Evaluación", 30, 20); // Ajusta la posición según sea necesario
     
         // Posición inicial Y
         let currentY = 35; // Establecer una posición arbitraria para el siguiente contenido
@@ -186,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
         doc.text("Calificaciones", 10, currentY);
         currentY += 10; // Incrementa la posición para el siguiente contenido
     
-        const calificacionesData = getTableData("seguimiento_recuperacion_grupo_table");
+        const calificacionesData = getTableData("seguimiento_global_grupo_table");
     
         // Crea la tabla de calificaciones
         doc.autoTable({
@@ -206,35 +199,58 @@ document.addEventListener('DOMContentLoaded', function() {
         
     function createTable(data, mapeo) {
         if (data.length === 0) return null; // Si no hay datos, no se crea la tabla
-        parentDiv = document.getElementById('seguimiento_recuperacion_grupo_table')
+        const parentDiv = document.getElementById('seguimiento_global_grupo_table');
+        
         // Crea un div contenedor para los botones
         const contenedorBotones = document.createElement("div");
         contenedorBotones.style.display = "flex";
-        contenedorBotones.style.justifyContent = "flex-end"; // Alineación a la derecha
+        contenedorBotones.style.justifyContent = "space-between";
         contenedorBotones.style.gap = "10px"; // Espacio entre botones
         contenedorBotones.className = "contenedor-botones-descarga";
-
+        
+        // Crea el botón en el extremo izquierdo
+        const botonIzquierdo = document.createElement("button");
+        botonIzquierdo.id = "botonIzquierdo";
+        botonIzquierdo.className = "boton-descarga";
+        botonIzquierdo.innerHTML = '<i class="fa-solid fa-circle-chevron-left"></i> Programación trimestral';
+        botonIzquierdo.addEventListener("click", function(event) {
+            if (tipoEvaluacion == 'global'){
+                window.open('/academica-docentes-programacion/', '_self'); 
+            } else {
+                window.open('/academica-docentes-programacion/?tipo=recuperacion', '_self'); 
+            }
+            
+        }); // Función personalizada para este botón
+        
+        // Crea un contenedor adicional para los botones de descarga en el extremo derecho
+        const contenedorDescargas = document.createElement("div");
+        contenedorDescargas.style.display = "flex";
+        contenedorDescargas.style.gap = "10px";
+        
         // Crea el botón de descarga PDF
         const botonDescargarPDF = document.createElement("button");
         botonDescargarPDF.id = "botonDescargarPDF";
         botonDescargarPDF.className = "boton-descarga";
-        botonDescargarPDF.innerHTML = '<i class="fas fa-file-pdf"></i> Descargar PDF';
+        botonDescargarPDF.innerHTML = '<i class="fa-solid fa-circle-down"></i><i class="fas fa-file-pdf"></i> PDF';
         botonDescargarPDF.addEventListener("click", exportPDF);
-
+    
         // Crea el botón de descarga Excel
         const botonDescargarExcel = document.createElement("button");
         botonDescargarExcel.id = "botonDescargarExcel";
         botonDescargarExcel.className = "boton-descarga";
-        botonDescargarExcel.innerHTML = '<i class="fas fa-file-excel"></i> Descargar Excel';
+        botonDescargarExcel.innerHTML = '<i class="fa-solid fa-circle-down"></i><i class="fas fa-file-excel"></i> Excel';
         botonDescargarExcel.addEventListener("click", exportExcel);
-
-        // Agrega los botones al contenedor de botones
-        contenedorBotones.appendChild(botonDescargarPDF);
-        contenedorBotones.appendChild(botonDescargarExcel);
-
-        // Agrega el contenedor de botones al contenedor principal
-        parentDiv.appendChild(contenedorBotones);
-
+    
+        // Agrega los botones de descarga al contenedor de descargas
+        contenedorDescargas.appendChild(botonDescargarPDF);
+        contenedorDescargas.appendChild(botonDescargarExcel);
+    
+        // Agrega el botón izquierdo y el contenedor de descargas al contenedor principal de botones
+        contenedorBotones.appendChild(botonIzquierdo);
+        contenedorBotones.appendChild(contenedorDescargas);
+    
+        // Agrega el contenedor de botones al elemento padre
+        parentDiv.appendChild(contenedorBotones);   
         var table = document.createElement('table');
         var caption = table.createCaption();
         caption.textContent = 'Calificaciones';
@@ -243,7 +259,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Claves que no se deben exluir:
         var excludeKeys = ['numero_lista', 'nombre_alumno', 'matricula', 'calificacion_numero', 'calificacion_letra'];
     
-        var componentes = mapeo.map(docente => docente.componente);
+        var componentes = mapeo.map(item => item.componente.nombre_componente);
+        //var componenteMap = mapeo.map(item => item.componente.nombre_extenso);
         // Filtrar las claves del primer objeto para incluir solo las necesarias
         var titles = Object.keys(data[0]).filter(key => 
             excludeKeys.includes(key) || componentes.includes(key)
@@ -254,14 +271,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // Añadir "calificacion_numero" y "calificacion_letra" al final
         titles.push("calificacion_numero", "calificacion_letra");
-    
+
         // Crear un objeto que mapee los valores de "componente" a "componente_extenso"
         var componenteMap = mapeo.reduce((acc, docente) => {
-            acc[docente.componente] = docente.nombre_extenso;
+            acc[docente.componente.nombre_componente] = docente.componente.nombre_extenso;
             return acc;
         }, {});
-    
-        // Agregar un objeto para mapear los títulos de las columnas fijas
         var fixedColumnTitles = {
             'numero_lista': 'Lista',
             'nombre_alumno': 'Nombre',
@@ -273,7 +288,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Añadir cabeceras de tabla
         var thead = document.createElement('thead');
         var headerRow = document.createElement('tr');
-    
         titles.forEach(title => {
             var th = document.createElement('th');
             th.textContent = fixedColumnTitles[title] || title.replace(/_/g, ' '); // Reemplaza guiones bajos por espacios
@@ -312,56 +326,66 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // Mapping of current keys to desired names
         var keyMapping = {
-            'grupo': 'Grupo',
             'trimestre': 'Trimestre',
+            'coordinador': 'Coordinador/a',
             'modulo': 'Módulo',
-            'uea': 'UEA',
-            'clave_uea': 'Clave UEA',
-            'coordinador': 'Coordinador/a'
+            'grupo': 'Grupo'   
         };
-    
-        // Get unique coordinators
-        var coordinadores = informacion_general.docentes
+
+        var generalInfo = informacion_general[0];
+        var grupo = generalInfo.grupo.grupo || 'No especificado';
+        var trimestre = generalInfo.trimestre.trimestre_nombre || "No especificado";
+        var modulo = generalInfo.uea.modulo || "No especificado";
+        var nombreUea = generalInfo.uea.nombre_uea || "No especificado";
+        var claveUea = generalInfo.uea.clave_uea || "No especificado";        
+
+        // Obtener los coordinadores únicos
+        const programacionKey = grupo.startsWith('sr') ? 'programacion_docente_recuperacion' : 'programacion_docente_global';
+        var coordinadores = generalInfo[programacionKey]
             .filter(docente => docente.coordinacion)
             .reduce((unique, docente) => {
-                if (!unique.some(d => d.nombre === docente.nombre)) {
-                    unique.push(docente);
+                if (!unique.some(d => d.nombre === docente.docente.nombre)) {
+                    unique.push(docente.docente);
                 }
                 return unique;
             }, []);
-    
-        // Combine coordinator names into a single string
         var coordinadorNames = coordinadores.map(coordinador => coordinador.nombre).join(', ');
     
-        // Add each property from "informacion_general" except "docentes"
-        for (var key in informacion_general) {
-            if (key === 'docentes') continue;
-    
+        // Agregar cada fila a la tabla
+        var rowsData = {
+            'trimestre': trimestre,
+            'modulo': `${modulo}. ${nombreUea}`,
+            'grupo': grupo.toUpperCase(),       
+            'coordinador': `⭐ ${coordinadorNames}`
+        };
+
+        for (var key in rowsData) {
             var infoTableRow = document.createElement('tr');
-    
+
+            // Crear una celda de encabezado para la propiedad
             var infoTableHeaderCell = document.createElement('th');
             infoTableHeaderCell.textContent = keyMapping[key] || key;
             infoTableRow.appendChild(infoTableHeaderCell);
-    
+
+            // Crear una celda para el valor de la propiedad
             var infoTableCell = document.createElement('td');
-            infoTableCell.textContent = informacion_general[key];
+            infoTableCell.textContent = rowsData[key];
             infoTableRow.appendChild(infoTableCell);
-    
+
+            // Agregar la fila a la tabla
             infoTable.appendChild(infoTableRow);
         }
-    
-        // Add a row for the coordinator(s)
-        var coordinatorRow = document.createElement('tr');
-        var coordinatorHeaderCell = document.createElement('th');
-        coordinatorHeaderCell.textContent = keyMapping['coordinador'];
-        coordinatorRow.appendChild(coordinatorHeaderCell);
-    
-        var coordinatorCell = document.createElement('td');
-        coordinatorCell.textContent = `⭐ ${coordinadorNames}`;
-        coordinatorRow.appendChild(coordinatorCell);
-    
-        infoTable.appendChild(coordinatorRow);
-    
+
+                // Crear el input hidden para almacenar el email del coordinador
+        if (coordinadores.length > 0) {
+            var emailInput = document.createElement('input');
+            emailInput.type = 'hidden';
+            emailInput.id = 'coordinador_email';
+            emailInput.name = 'coordinador_email';
+            emailInput.value = coordinadores[0].email;
+            infoTable.appendChild(emailInput); // Añadir el input a la tabla (o al DOM según necesites)
+        }
+
         return infoTable;
     }
     
@@ -374,44 +398,54 @@ document.addEventListener('DOMContentLoaded', function() {
         // Crear la fila de encabezado
         var headerRow = document.createElement('tr');
     
-        // Crear celdas para las columnas "nombre" y "componente_extenso"
-        var headerCell1 = document.createElement('th');
-        headerCell1.textContent = 'Nombre';
-        var headerCell2 = document.createElement('th');
-        headerCell2.textContent = 'Componente';
+        // Crear encabezado para el nombre del docente
+        var nombreHeaderCell = document.createElement('th');
+        nombreHeaderCell.textContent = 'Nombre';
+        headerRow.appendChild(nombreHeaderCell);
     
-        // Agregar las celdas al encabezado
-        headerRow.appendChild(headerCell1);
-        headerRow.appendChild(headerCell2);
+        // Crear encabezado para el nombre del componente
+        var componenteHeaderCell = document.createElement('th');
+        componenteHeaderCell.textContent = 'Componente';
+        headerRow.appendChild(componenteHeaderCell);
+    
+        // Crear celda de encabezado vacía para la columna de evaluación completada
+        var evaluacionHeaderCell = document.createElement('th');
+        headerRow.appendChild(evaluacionHeaderCell);
     
         // Agregar la fila de encabezado a la tabla
         docentesTable.appendChild(headerRow);
     
         // Para cada objeto en "docentes"
-        docentes.forEach(function(docente) {
-            console.log(docente);
+        docentes.forEach(function(item) {
+            var docente = item.docente;
+            var componente = item.componente;
+    
             // Crear una nueva fila
             var docenteRow = document.createElement('tr');
     
-            // Crear celdas para las columnas "nombre" y "componente_extenso"
-            var docenteCell1 = document.createElement('td');
-            docenteCell1.textContent = docente.nombre;
-            var docenteCell2 = document.createElement('td');
-            docenteCell2.textContent = docente.componente_extenso;
+            // Crear celda para el nombre del docente
+            var nombreCell = document.createElement('td');
+            nombreCell.textContent = docente.nombre;
+            docenteRow.appendChild(nombreCell);
     
-            // Agregar las celdas a la fila
-            docenteRow.appendChild(docenteCell1);
-            docenteRow.appendChild(docenteCell2);
+            // Crear celda para el nombre del componente
+            var componenteCell = document.createElement('td');
+            componenteCell.textContent = componente.nombre_extenso;
+            docenteRow.appendChild(componenteCell);
+    
+            // Crear celda para el estado de evaluación completada
+            var evaluacionCell = document.createElement('td');
+            evaluacionCell.textContent = item.evaluacion_completada ? '✅' : '⚠️';
+            docenteRow.appendChild(evaluacionCell);
     
             // Agregar la fila a la tabla
             docentesTable.appendChild(docenteRow);
         });
-    
         return docentesTable;
     }
     
     function clearTables() {
-        document.getElementById('seguimiento_recuperacion_grupo_table').innerHTML = '';
+        document.getElementById('seguimiento_global_grupo_table').innerHTML = '';
         document.getElementById('asignacion_docente').innerHTML = '';
         document.getElementById('info_general').innerHTML = '';
         document.getElementById('estatus_firma').innerHTML = '';
@@ -429,24 +463,22 @@ document.addEventListener('DOMContentLoaded', function() {
         
     
     
-    // API GET request with selected data
-    fetch(`${academicaApiConfig.apiUrl}/historial_academico/grupos_por_trimestre?recuperacion=true&trimestre=${trimestreSeleccionado}&docente=${docente}`)
-        .then(response => response.json())
-        .then(data => {
-            // Habilita el select "grupo" y llena sus opciones con la respuesta de la API
-            selectGrupo.disabled = false;
-            var seen = {};
-            var options = data['payload'].reduce(function(acc, item) {
-                const grupo = item.grupo.grupo; // Accede a "grupo.grupo"
-                const modulo = item.uea.modulo;
-                if (!seen[grupo]) {
-                    acc.push('<option value="'+ grupo +'" modulo="'+modulo+'">' + grupo.toUpperCase() + '</option>');
-                    seen[grupo] = true;
-                }
-                return acc;
-            }, []);
-            selectGrupo.innerHTML = '<option value="">Grupo</option>' + options.join('');
-        });
+        // api GET request with selected data
+        fetch(`${academicaApiConfig.apiUrl}/historial_academico/grupos_por_trimestre?trimestre=${trimestreSeleccionado}&docente=${docente}`)
+            .then(response => response.json())
+            .then(data => {
+                // Habilita el select "grupo" y llena sus opciones con la respuesta de la API
+                selectGrupo.disabled = false;
+                var seen = {};
+                var options = data['payload'].reduce(function(acc, grupo) {
+                    if (!seen[grupo.grupo]) {
+                        acc.push('<option value="'+ grupo.grupo +'">' + grupo.grupo.toUpperCase() + '</option>');
+                        seen[grupo.grupo] = true;
+                    }
+                    return acc;
+                }, []);
+                selectGrupo.innerHTML = '<option value="">Grupo</option>' + options.join('');
+            });
     });
     
     document.getElementById('grupo').addEventListener('change', function(event) {
@@ -455,107 +487,102 @@ document.addEventListener('DOMContentLoaded', function() {
         // Obtener los valores de trimestre y grupo seleccionados
         var trimestre = document.getElementById('trimestre').value;
         var grupo = document.getElementById('grupo').value;
-        var modulo = document.getElementById('grupo').selectedOptions[0].getAttribute('modulo');
-        //alert(modulo);
     
         // Redirigir a la misma página con los parámetros de URL
-        window.location.href = `${window.location.pathname}?trimestre=${trimestre}&grupo=${grupo}&modulo=${modulo}`;
+        window.location.href = `${window.location.pathname}?trimestre=${trimestre}&grupo=${grupo}`;
     });
     
-    function evaluacionPendienteDeFirma(id_seguimiento_recuperacion, docente_id, trimestre, grupo) {
+    function evaluacionPendienteDeFirma(id_evaluacion, docente_id, coordinador) {
         var div = document.createElement('div');
         div.className = 'notification-orange';
         div.textContent = "Evaluación completa. Pendiente de confirmación.";
-    
-        var form = document.createElement('form');
-        form.id = 'firma_form';
-    
-        var hiddenSeguimientoRecuperacion = document.createElement('input');
-        hiddenSeguimientoRecuperacion.type = 'hidden';
-        hiddenSeguimientoRecuperacion.name = 'id_seguimiento_recuperacion';
-        hiddenSeguimientoRecuperacion.value = id_seguimiento_recuperacion;
-    
-        var hiddenDocenteId = document.createElement('input');
-        hiddenDocenteId.type = 'hidden';
-        hiddenDocenteId.name = 'docente_id';
-        hiddenDocenteId.value = docente_id;
-    
-        var submitButton = document.createElement('input');
-        submitButton.type = 'submit';
-        submitButton.className = 'firmar-button';
-        submitButton.value = 'Ponderar y confirmar';
-    
-        form.appendChild(hiddenSeguimientoRecuperacion);
-        form.appendChild(hiddenDocenteId);
-        form.appendChild(submitButton);
-    
-        // crear boton para volver a la pagina de asignacion docente con el estilo de boton
-        var button = document.createElement('button');
-        button.className = 'firmar-button';
-        button.textContent = 'Volver a asignación docente';
-        button.addEventListener('click', function(event) {  
-            window.open('/academica-docentes-asignacion-recuperacion/', '_self'); 
-        });
-    
+
+        if (docente_id == coordinador) {
+            var form = document.createElement('form');
+            form.id = 'firma_form';
+            var hiddenSeguimientoGlobal = document.createElement('input');
+            hiddenSeguimientoGlobal.type = 'hidden';
+            hiddenSeguimientoGlobal.name = 'id_seguimiento_global';
+            hiddenSeguimientoGlobal.value = id_evaluacion;
+        
+            var hiddenDocenteId = document.createElement('input');
+            hiddenDocenteId.type = 'hidden';
+            hiddenDocenteId.name = 'docente_id';
+            hiddenDocenteId.value = docente_id;
+        
+            var submitButton = document.createElement('input');
+            submitButton.type = 'submit';
+            submitButton.className = 'firmar-button';
+            submitButton.value = 'Ponderar y confirmar';
+        
+            form.appendChild(hiddenSeguimientoGlobal);
+            form.appendChild(hiddenDocenteId);
+            form.appendChild(submitButton);
+            document.getElementById('notification').appendChild(form);
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                document.getElementById('loading-screen').style.display = 'block';
+                
+                var docente_id = hiddenDocente.value;
+                var id_evaluacion = hiddenSeguimientoGlobal.value;
+            
+                let endpoint = `/evaluaciones/${id_evaluacion}/firma`;
+                let params = {
+                    
+                    docente_email: docente_id
+                };
+            
+                apiRequest('POST', endpoint, params)
+                    .then(data => {
+                        if (data.status === 200) {
+                            
+                            window.location.reload(); // reload de current page
+                        } else {
+                            alert('Error al finalizar evaluación');
+                            window.location.reload();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud', error);
+                        alert('Error en la solicitud');
+                        window.location.reload();
+                    });
+            });
+        }
         document.getElementById('estatus_firma').appendChild(div);
-        document.getElementById('notification').appendChild(form);
-        document.getElementById('notification').appendChild(button);
-    
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-            document.getElementById('loading-screen').style.display = 'block';
-            var id_seguimiento_recuperacion = hiddenSeguimientoRecuperacion.value;
-            var docente_id = hiddenDocente.value;
-    
-            let url = `${academicaApiConfig.apiUrl}/evaluacion_academica/firma_evaluacion`;
-            let params = {
-                id_seguimiento: id_seguimiento_recuperacion,
-                docente_email: docente_id,
-                recuperacion: true
-            };   
-    
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(params)
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                if (data.code === 200) {
-                    alert('Evaluación ponderada y confirmada con éxito!');
-                    //window.location.href = '/academica-historial-academico-evaluacion-recuperacion-grupo?trimestre=' + trimestre.value + '&grupo=' + grupo.value;
-                    // reload de current page
-                    window.location.reload();
-                } else {
-                    alert('Error al firmar evaluación');
-                    window.location.reload();
-                }
-            })
-        });
     }
     
-    function evaluacionFirmada(id_seguimiento_recuperacion, docente_id) {
+    function evaluacionFirmada(id_evaluacion, docente_id, coordinador) {
         var div = document.createElement('div');
         div.className = 'notification-green';
         div.textContent = "Evaluación finalizada.";
     
         var reminderDiv = document.createElement('div');
         //reminderDiv.textContent = "Recuerde que ésto es sólo un seguimiento interno de la Coordinación. Las califiaciones oficiales deben ser cargadas y firmadas en el Sistema Integral de Información Académica de la UAM, como siempre se ha hecho.";
-        reminderDiv.innerHTML = 'Recuerde que ésto es sólo un seguimiento interno de la Coordinación de Economía.<br />Las califiaciones oficiales deben ser cargadas y firmadas en el <a href="#" onclick=\'window.open("https://sae.uam.mx/siae/acceso_siia.html");return false;\'>Sistema Integral de Información Académica de la UAM</a>, como siempre se ha hecho.';
-        // crear boton para volver a la pagina de asignacion docente con el estilo de boton
-        var button = document.createElement('button');
-        button.className = 'firmar-button';
-        button.textContent = 'Volver a asignación docente';
-        button.addEventListener('click', function(event) {
-            window.open('/academica-docentes-asignacion-recuperacion/', '_self');
-        });
+        reminderDiv.innerHTML = 'Recuerde que esta evaluación es sólo un seguimiento interno de la Coordinación de estudios.<br />Las calificaciones deben ser cargadas y firmadas en el <a href="#" onclick=\'window.open("https://sae.uam.mx/siae/acceso_siia.html");return false;\'>Sistema Integral de Información Académica de la UAM</a>.';
+        if (docente_id == coordinador) {
+            // botón para revertir evaluación.
+            var button = document.createElement('button');
+            button.className = 'firmar-button';
+            button.textContent = 'Revertir evaluación';
+            document.getElementById('notification').appendChild(button);
+            button.addEventListener('click', function(event) {
+                data = { 'docente_email': docente_id }
+                apiRequest('POST', `/evaluaciones/${id_evaluacion}/desbloquear`, data).then(data => {
+                    if (data.status === 200) {
+                        window.location.reload()
+                    } else {
+                        alert('Error revirtiendo evaluación.')
+                        window.location.reload()
+                    }
+                })
+            })      
+        }
     
         document.getElementById('estatus_firma').appendChild(div);
         document.getElementById('notification').appendChild(reminderDiv);
-        document.getElementById('notification').appendChild(button);
+        
     }
     
     function evaluacionIncompleta() {
@@ -563,137 +590,65 @@ document.addEventListener('DOMContentLoaded', function() {
         div.className = 'notification-red';
         div.textContent = "Evaluación incompleta. Faltan componentes por evaluar";
     
-        // crear boton para volver a la pagina de asignacion docente con el estilo de boton
-        var button = document.createElement('button');
-        button.className = 'firmar-button';
-        button.textContent = 'Volver a asignación docente';
-        button.addEventListener('click', function(event) {
-            window.open('/academica-docentes-asignacion-global/', '_self');
-        });
-    
         document.getElementById('estatus_firma').appendChild(div);
-        document.getElementById('notification').appendChild(button);
-    
-    
+        //document.getElementById('notification').appendChild(button);
     }
     
     function loadDataFromUrlParams() {
-    
-        console.log('loadDataFromUrlParams');
         document.getElementById('loading-screen').style.display = 'block';
     
         // current url
         var url = new URL(window.location.href);
     
         // get url params
-        var trimestre = url.searchParams.get('trimestre');
-        var grupo = url.searchParams.get('grupo');
-        var modulo = url.searchParams.get('modulo')
+        // var trimestre = url.searchParams.get('trimestre');
+        // var grupo = url.searchParams.get('grupo');
+        var id_evaluacion = url.searchParams.get('evaluacion');
+        var docente = url.searchParams.get('docente');
     
         // verify if the url has the params
-        if (trimestre && grupo) {
-    
-            fetch(`${academicaApiConfig.apiUrl}/evaluacion_academica/get_seguimiento_id?recuperacion=true&modulo=${modulo}&trimestre=${trimestre}&grupo=${grupo}&docente_email=${hiddenDocente.value}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                // fill the div with id "estatus_firma" with the data obtained
-                var id_seguimiento_recuperacion = data.metadata.id_seguimiento_recuperacion; // Store the id_seguimiento_recuperacion
-                var docente_id = data.metadata.docente_id;
-                if (data.code === 200) {
-                    fetch(`${academicaApiConfig.apiUrl}/evaluacion_academica/verificar_estado_evaluacion?recuperacion=true&id_seguimiento=${data.metadata.id_seguimiento_recuperacion}&docente_id=${data.metadata.docente_id}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data);
-    
-                        if (data.code === 200) {
-    
-                            fetch(`${academicaApiConfig.apiUrl}/evaluacion_academica/verificar_firma_seguimiento?recuperacion=true&id_seguimiento=${id_seguimiento_recuperacion}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                console.log(data);
-                                if (data.code === 200) {
-                                // evaluacion completa y firmada
-                                    document.getElementById('loading-screen').style.display = 'none';
-                                    evaluacionFirmada(id_seguimiento_recuperacion, docente_id);
-                                } else if (data.code === 422) {
-                                    console.log(trimestre, grupo);
-                                    document.getElementById('loading-screen').style.display = 'none';
-                                    evaluacionPendienteDeFirma(id_seguimiento_recuperacion, docente_id, trimestre, grupo);
-                                }
-                            })
-                            .catch(error => console.error('Error:', error));
-    
-                        } else if (data.code === 422) {
-                        // evaluacion incompleta. falta evaluar componentes
-                            document.getElementById('loading-screen').style.display = 'none';
-                            evaluacionIncompleta();
-                        }
-    
-                        //document.getElementById('estatus_firma').textContent = data.payload.estado_evaluacion;
-                    })
-                    .catch(error => console.error('Error:', error));
-                }
-    
-                
-            })
-            .catch(error => console.error('Error:', error));
-            
-            
-            fetch(`${academicaApiConfig.apiUrl}/historial_academico/seguimiento_recuperacion?recuperacion=true&modulo=${modulo}&trimestre=${trimestre}&grupo=${grupo}&detalle=true`)
-                .then(response => response.json())
+        if (id_evaluacion) {
+            // Preparar los parámetros para la solicitud
+            const endpoint = `/evaluaciones/${id_evaluacion}?detalle=true`;
+            // Realizar la solicitud usando apiRequest
+            apiRequest('GET', endpoint)
                 .then(data => {
-                    //console.log(data);
                     document.getElementById('loading-screen').style.display = 'block';
                     clearTables();
-    
                     // Crear tabla de calificaciones
-                    var table = createTable(data.payload.calificaciones_alumnos, data.payload.informacion_general.docentes);
-                    document.getElementById('seguimiento_recuperacion_grupo_table').appendChild(table);
-    
+                    const programacionKey = id_evaluacion.startsWith('g') ? 'programacion_docente_global' : 'programacion_docente_recuperacion';
+                    var table = createTable(data.payload.lista_alumnos, data.payload.informacion_general[0][programacionKey]);
+                    document.getElementById('seguimiento_global_grupo_table').appendChild(table);
+
                     // Crear tabla de información general
                     var infoTable = createInfoTable(data.payload.informacion_general);
                     document.getElementById('info_general').appendChild(infoTable);
-    
+
                     // Crear tabla de asignación docente
-                    var docentesTable = createDocentesTable(data.payload.informacion_general.docentes);
+                    var docentesTable = createDocentesTable(data.payload.informacion_general[0][programacionKey]);
                     document.getElementById('asignacion_docente').appendChild(docentesTable);
+                    // Crear tabla de notificaciones:
+                    if (data.payload.informacion_general[0].evaluacion_completada === false) {
+                        evaluacionIncompleta();
+                    } else {
+                        var emailCoordinador = document.getElementById('coordinador_email').value;
+                        if (data.payload.informacion_general[0].evaluacion_finalizada === true) {
+                            evaluacionFirmada(id_evaluacion, docente, emailCoordinador);
+                        } else {
+                            evaluacionPendienteDeFirma(id_evaluacion, docente, emailCoordinador);
+                        }
+                    }
                     document.getElementById('loading-screen').style.display = 'none';
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('loading-screen').style.display = 'none'; // Ocultar la pantalla de carga en caso de error
+                });
         } else {
-            // fetch(`${academicaApiConfig.apiUrl}/trimestres/`)
-            // .then(response => response.json())
-            // .then(data => {
-            //     if (data.status === 200) {
-            //         const trimestres = data.data;
-
-            //         trimestres.forEach(trimestre => {
-            //             const option = document.createElement('option');
-            //             option.value = trimestre.trimestre;
-            //             option.textContent = trimestre.trimestre_nombre;
-            //             selectTrimestre.appendChild(option);
-                        
-            //         });
-            //         document.getElementById('loading-screen').style.display = 'none';
-            //         selectGrupo.disabled = true;  // Mantener deshabilitado el grupo hasta que se seleccione un trimestre
-            //     } else {
-            //         console.error('Error al obtener trimestres:', data.message);
-            //     }
-            // })
-            // .catch(error => console.error('Error en la solicitud', error));
-            //loadTrimestres();
             document.getElementById('loading-screen').style.display = 'none';
         }
-    
-    }
-    
-    window.onload = function(){
-        console.log('window.onload');
+    }  
+    window.onload = function(){   
         loadDataFromUrlParams();
     }
-    
 })
-
-
-

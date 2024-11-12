@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Hacer la solicitud para obtener el trimestre actual
     var trimestreActual = document.getElementById('trimestreActual');
-    fetch(`${academicaApiConfig.apiUrl}/historial_academico/trimestre_actual`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success' && data.code === 200) {
-                var trimestre = data.payload.trimestre_nombre;
+
+    apiRequest('GET', '/trimestres/actual').then(data => {
+        if (data.status === 200) {
+            if (data.payload.count > 0 && data.payload.data.length > 0) {
+                var trimestre = data.payload.data[0].trimestre_nombre;
                 // Mostrar el trimestre en el DOM
                 var trimestreDiv = document.createElement('div');
                 trimestreDiv.id = 'trimestre-actual';
@@ -15,36 +15,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 trimestreDiv.innerText = '⭐ Trimestre Actual: ' + trimestre;
                 trimestreActual.appendChild(trimestreDiv);
             } else {
-                trimestreActual.innerText = 'Error al obtener el trimestre actual';
-                console.error('Error al obtener el trimestre actual');
-            }
-        })
-        .catch(error => console.error('Error en la solicitud:', error));
+                trimestreActual.innerText = 'No se encontraron trimestres';
+            }       
+        } else {
+            trimestreActual.innerText = 'Error al obtener el trimestre actual';
+            console.error('Error al obtener el trimestre actual');            
+        }
+    }).catch(error => console.error('Error en la solicitud: ', error));
 
-        if (document.getElementById('download-form')) {
-            // Hacer la segunda solicitud fetch solo si "download-form" existe
-            fetch(`${academicaApiConfig.apiUrl}/trimestres`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 200 && data.message === 'success') {
-                        var trimestres = data.data; // Accedemos a "data.data"
-                        var trimestreSelect = document.getElementById('trimestre');
-    
-                        // Limpiar las opciones actuales del select
-                        trimestreSelect.innerHTML = '';
-    
-                        // Agregar las nuevas opciones al select
-                        trimestres.forEach(function(trimestre) {
-                            var option = document.createElement('option');
-                            option.value = trimestre.trimestre; // ID del trimestre
-                            option.textContent = trimestre.trimestre_nombre; // Nombre del trimestre
-                            trimestreSelect.appendChild(option);
-                        });
-                    } else {
-                        console.error('Error al obtener los trimestres');
-                    }
-                })
-                .catch(error => console.error('Error en la segunda solicitud:', error));
+
+    if (document.getElementById('download-form')) {
+            apiRequest('GET', '/trimestres/').then(data => {
+                if (data.status === 200) {
+                    var trimestres = data.payload.data; // Asegúrate de acceder correctamente al payload
+                    var trimestreSelect = document.getElementById('trimestre');
+
+                    // Limpiar las opciones actuales del select
+                    trimestreSelect.innerHTML = '';
+
+                    // Agregar las nuevas opciones al select
+                    trimestres.forEach(function(trimestre) {
+                        var option = document.createElement('option');
+                        option.value = trimestre.trimestre; // ID del trimestre
+                        option.textContent = trimestre.trimestre_nombre; // Nombre del trimestre
+                        trimestreSelect.appendChild(option);
+                    });
+                } else {
+                    console.error('Error al obtener los trimestres');
+                }
+            }).catch(error => console.error('Error en la segunda solicitud:', error));        
         }
 });
 
@@ -62,31 +61,22 @@ async function addTrimestre() {
     };
 
     try {
-        // Send a POST request to the specified endpoint
-        const response = await fetch(`${academicaApiConfig.apiUrl}/historial_academico/trimestre_actual`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        });
+        // Enviar la solicitud POST utilizando apiRequest
+        const response = await apiRequest('POST', '/trimestres', payload);
 
-        // Handle the response
-        if (response.ok) {
-            const data = await response.json();
+        // Manejar la respuesta
+        if (response.status === 200) {
             alert('Trimestre añadido exitosamente');
-            // reload the page
+            // Recargar la página
             location.reload();
         } else {
-            const errorData = await response.json();
-            alert('Error al añadir el trimestre: ' + errorData.message);
-            // hide the loading screen
-            document.getElementById('loading-screen').style.display = 'none';
+            alert('Error al añadir el trimestre: ' + (response.message || 'Error desconocido'));
         }
     } catch (error) {
-        // Handle any potential errors
+        // Manejar cualquier error potencial
         alert('Error al añadir el trimestre: ' + error.message);
-        // hide the loading screen
+    } finally {
+        // Ocultar la pantalla de carga
         document.getElementById('loading-screen').style.display = 'none';
     }
 }

@@ -85,7 +85,8 @@ function run_academica() {
 	add_filter('wp_nav_menu_items', array($plugin, 'academica_login_menu'), 10, 2);
 
 	$academica_public = new Academica_Public('academica', '0.1');
-	add_shortcode( 'seguimiento_global_grupo', array( $academica_public, 'seguimiento_global_grupo' ) );
+	add_shortcode( 'portada', array( $academica_public, 'portada'));
+	add_shortcode( 'evaluacion_grupo', array( $academica_public, 'evaluacion_grupo' ) );
 	add_shortcode( 'seguimiento_recuperacion_grupo', array( $academica_public, 'seguimiento_recuperacion_grupo' ) );
 	add_shortcode( 'asignacion_docente', array( $academica_public, 'asignacion_docente' ) );
 	add_shortcode( 'asignacion_docente_recuperacion', array( $academica_public, 'asignacion_docente_recuperacion' ) );
