@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var url_params = {
         'trimestre': document.getElementById('trimestre').value,
         'grupo': document.getElementById('grupo').value,
-        'modulo': document.getElementById('modulo').value
+        //'modulo': document.getElementById('modulo').value
     };
     
     function submitForm(event) {

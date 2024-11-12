@@ -45,7 +45,7 @@ if ($current_user->ID != 0) {
 }
 $id_evaluacion = $_GET['evaluacion'];
 $grupo = $_GET['grupo'];
-$modulo = $_GET['modulo'];
+//$modulo = $_GET['modulo'];
 $componente = $_GET['componente'];
 $trimestre = $_GET['trimestre'];
 $docente = $_GET['docente'];
@@ -178,7 +178,7 @@ $lista_alumnos = $lista_json['payload']['lista_alumnos'];
         <input type="hidden" id="componente_id" value="<?php echo $componente; ?>">
         <input type="hidden" id="trimestre" value="<?php echo $informacion_general[0]['trimestre']['trimestre']; ?>">
         <input type="hidden" id="grupo" value="<?php echo $informacion_general[0]['grupo']['grupo']; ?>">
-        <input type="hidden" id="modulo" value="<?php echo $modulo; ?>">
+        
         
         <input type="submit" value="Enviar evaluación">
     </form>
