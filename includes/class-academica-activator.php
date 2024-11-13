@@ -30,12 +30,18 @@ class Academica_Activator {
 	 * @since    0.1
 	 */
 	public static function activate() {
+
+		if(get_option('academica_hide_menus') === false) {
+			update_option('academica_hide_menus', true);
+		}
 		// Academica Manager User
 		$user_data = array(
 			'user_login' => 'academica_manager',
 			'user_pass'  => wp_generate_password(), // Generate a random password
 			'role'       => 'editor', // Set the role to 'editor' or any other role you want
 		);
+
+		
 
 		// Insert the user
 		$user_id = wp_insert_user($user_data);

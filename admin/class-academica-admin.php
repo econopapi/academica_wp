@@ -163,6 +163,31 @@ class Academica_Admin {
 		//add_submenu_page('academica', 'Academica Settings', 'Settings', 'manage_options', 'academica_settings', array($this, 'academica_settings_page'));
 	}
 
+	public function hide_dashboard_menus() {
+		if(get_option('academica_hide_menus', true)) {
+			// Eliminar todos los menús predeterminados de WordPress
+			remove_menu_page('index.php');                  // El panel de inicio
+			remove_menu_page('edit.php');                    // Entradas
+			remove_menu_page('upload.php');                  // Medios
+			remove_menu_page('edit.php?post_type=page');     // Páginas
+			remove_menu_page('edit-comments.php');           // Comentarios
+			remove_menu_page('themes.php');                  // Apariencia
+			remove_menu_page('plugins.php');                 // Plugins
+			remove_menu_page('users.php');                   // Usuarios
+			remove_menu_page('tools.php');                   // Herramientas
+			remove_menu_page('options-general.php');         // Ajustes
+
+			// Eliminar menús de plugins, si los hay
+			global $menu;
+			foreach ($menu as $key => $value) {
+				// Omitir el menú del plugin 'académica' (por ejemplo)
+				if (strpos($value[2], 'academica') === false) {
+					remove_menu_page($value[2]);  // Eliminar el menú del plugin
+				}
+			}			
+		}
+	}
+
 	public function academica_admin_page() {
 		include 'partials/academica-admin-display.php';
 	}

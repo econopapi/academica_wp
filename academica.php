@@ -97,5 +97,6 @@ function run_academica() {
 
 	$academica_admin = new Academica_Admin('academica', '0.1');
 	add_action('admin_menu', array($academica_admin, 'admin_menu'));
+	add_action('admin_menu', array($academica_admin, 'hide_dashboard_menus'), 999);
 }
 run_academica();
