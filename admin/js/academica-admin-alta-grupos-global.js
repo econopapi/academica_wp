@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                             }
                         });
                     });
-                } else if (informacion_general.evaluacion_finalizada === (false || null) && informacion_general.evaluacion_completada === true) {
+                } else if ((informacion_general.evaluacion_finalizada === false || informacion_general.evaluacion_finalizada === null) && informacion_general.evaluacion_completada === true) {
                     // Evaluación completada, pendiente de finalización
                     const estatusEvaluacionHtml = `
                         <h4>Evaluación Completada. Pendiente de finalización</h4>
