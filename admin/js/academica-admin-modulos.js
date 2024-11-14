@@ -4,7 +4,6 @@ academicaApiConfig.apiUrl,
 academicaApiConfig.apiKey
 */
 
-
 document.addEventListener('DOMContentLoaded', function() {
 
     
@@ -360,15 +359,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             // Enviar la solicitud POST usando apiRequest
-            const data = await apiRequest('POST', '/componentes/', payload);
-
-            if (data.status === 201) {
-                alert('Componente registrado correctamente');
-                registrarComponenteForm.reset();
-                fetchComponentes(); // Asumimos que esta función ya está definida
-            } else {
-                alert('Error al registrar el componente');
-            }
+            console.log('Payload enviado a API', payload)
+            apiRequest('POST', '/componentes/', payload).then(data => {
+                if (data.status === 201) {
+                    registrarComponenteForm.reset();
+                    fetchComponentes(); // Asumimos que esta función ya está definida                    
+                } else {
+                    alert('Error al regsitrar componente')
+                }
+            })
         } catch (error) {
             console.error('Error:', error);
             alert('Error al registrar el componente: ' + error.message);
@@ -568,15 +567,15 @@ document.addEventListener('DOMContentLoaded', function() {
             };
     
             // Llamada a la función apiRequest para agregar un módulo
-            const data = apiRequest('/modulos/', 'POST', payload);
+            const data = apiRequest('POST', '/modulos/', payload).then(data => {
+                if (data && data.status == 200) {
+                    window.location.reload()
+                } else {
+                    alert ('Error al agregar módulo')
+                    window.location.reload()
+                }
+            })
     
-            if (data && data.status === 200) {
-                alert('Módulo agregado exitosamente');
-                window.location.reload();
-            } else {
-                alert('Error al agregar el módulo');
-                window.location.reload();
-            }
         } catch (error) {
             console.error('Error agregando el módulo:', error);
             alert('Error al agregar el módulo');
@@ -586,50 +585,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
     });
-
-    // function fetchModulos() {
-    //     // Mostrar la pantalla de carga
-    //     document.getElementById('loading-screen').style.display = 'block';       
-    //     fetch(`${academicaApiConfig.apiUrl}/modulos/`, {
-    //         headers: {
-    //             'ngrok-skip-browser-warning': 'true'
-    //         }
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         if (data.status === 200 && Array.isArray(data.data)) {
-    //             modulosList.innerHTML = '';
-    //             data.data.forEach(modulo => {
-    //                 const moduloItem = document.createElement('div');
-    //                 moduloItem.innerHTML = `
-    //                     <div class="modulo-item">
-    //                     <span class="modulo-text">${modulo.nombre_uea} (Clave: ${modulo.clave_uea})</span>
-    //                     <button type="button" class="deleteModuloBtn" data-clave="${modulo.clave_uea}">Eliminar</button>
-    //                     </div>
-    //                 `;
-    //                 modulosList.appendChild(moduloItem);
-    //                         // Ocultar la pantalla de carga
-    //                 document.getElementById('loading-screen').style.display = 'none'; 
-    //             });
-
-    //             document.querySelectorAll('.deleteModuloBtn').forEach(btn => {
-    //                 btn.addEventListener('click', function() {
-    //                     const claveUea = this.getAttribute('data-clave');
-    //                     deleteModulo(claveUea);
-    //                 });
-    //             });
-    //         } else {
-    //             console.error('La respuesta de la API no es válida:', data);
-    //             alert('Error al obtener los módulos');
-    //             location.reload();
-    //         }
-    //     })
-    //     .catch(error => {
-    //         console.error('Error al obtener los módulos:', error);
-    //         alert('Error al obtener los módulos');
-    //         location.reload();
-    //     });
-    // }
 
     async function fetchModulos() {
         // Mostrar la pantalla de carga
