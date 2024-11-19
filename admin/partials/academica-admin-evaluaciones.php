@@ -113,7 +113,7 @@ if(isset($_GET['tipo'])){
                 <input type="text" id="grupoCatalogo" name="grupoCatalogo" placeholder="Grupo">                
             </div>
             <div id="buttonGrupoCatalogoDiv">
-                <button id="registarGrupoCatalogo">Registrar grupo</button>
+                <button id="registarGrupoCatalogo" type="button">Registrar grupo</button>
             </div>
             <div>
                 <p>Use esta interfaz para gestionar y mapear los grupos que cada módulo puede tener y su respectiva nomenclatura. Se sugiere registrar más grupos para tener holgura al momento de dar de alta seguimientos.</p>

@@ -1,5 +1,3 @@
-
-
 document.addEventListener('DOMContentLoaded', (event) => {
     //alert(tipoEvaluacion)
     var trimestreActual = document.getElementById('trimestreActual');
@@ -14,6 +12,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
     var componentesTbody = document.getElementById('componentes-tbody');
     const toggleButton = document.getElementById('toggleButton');
     const toggleOptions = toggleButton.querySelectorAll('.toggle-option');
+    var registrarGrupoCatalogo = document.getElementById('registarGrupoCatalogo');
+    var grupoCatalogoInput = document.getElementById('grupoCatalogo');
+
     
     // Asegúrate de que 'tipoEvaluacion' esté definido y contenga el valor adecuado
     // Selecciona la opción correspondiente al valor de tipoEvaluacion
@@ -165,26 +166,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     // Evaluación incompleta, faltan componentes
                     const estatusEvaluacionHtml = `<h4>Evaluación Incompleta. Faltan componentes por evaluar</h4>`;
                     document.getElementById('estatusEvaluacion').insertAdjacentHTML('beforeend', estatusEvaluacionHtml);
-
-                    // const evaluarComponentesInfoHtml = `
-                    //     <h4>Grupo: ${informacion_general.grupo.grupo.toUpperCase()}</h4>
-                    //     <table>
-                    //         <tbody>
-                    //             <tr>
-                    //                 <td><strong>Nombre</strong></td>
-                    //                 ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.docente.nombre}</td>`).join('')}
-                    //             </tr>
-                    //             <tr>
-                    //                 <td><strong>Componente</strong></td>
-                    //                 ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.componente.nombre_extenso}</td>`).join('')}
-                    //             </tr>
-                    //             <tr>
-                    //                 <td><strong>Evaluar</strong></td>
-                    //                 ${informacion_general.programacion_docente_global.map(docente => `<td><button class="evaluarComponenteButton" id-componente="${docente.componente.nombre_extenso}" id-evaluacion="${idEvaluacion}">Evaluar</button></td>`).join('')}
-                    //             </tr>                                    
-                    //         </tbody>
-                    //     </table>
-                    // `;
                     const evaluarComponentesInfoHtml = `
                     <h4>Grupo: ${informacion_general.grupo.grupo.toUpperCase()}</h4>
                     <table>
@@ -234,7 +215,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
                 // Crear una segunda opción para moduloCatalogoSelect
                 const option2 = document.createElement('option');
-                option2.value = modulo.clave_uea;
+                option2.value = modulo.modulo;
                 option2.text = `${modulo.modulo}. ${modulo.nombre_uea}`;
                 moduloCatalogoSelect.appendChild(option2);
 
@@ -456,26 +437,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
                             </table>
                         `;
                         document.getElementById('grupoInfoGeneral').insertAdjacentHTML('beforeend', generalInfoHtml);
-                        
-                        // const docentesInfoHtml = `
-                        //     <h4>Docentes</h4>
-                        //     <table>
-                        //         <tbody>
-                        //             <tr>
-                        //                 <td><strong>Nombre</strong></td>
-                        //                 ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.docente.nombre}</td>`).join('')}
-                        //             </tr>
-                        //             <tr>
-                        //                 <td><strong>Componente</strong></td>
-                        //                 ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.componente.nombre_extenso}</td>`).join('')}
-                        //             </tr>
-                        //             <tr>
-                        //                 <td><strong>Coordinación</strong></td>
-                        //                 ${informacion_general.programacion_docente_global.map(docente => `<td>${docente.coordinacion ? 'Sí' : 'No'}</td>`).join('')}
-                        //             </tr>
-                        //         </tbody>
-                        //     </table>
-                        // `;
                             const docentesInfoHtml = `
                             <h4>Docentes</h4>
                             <table>
@@ -676,6 +637,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
             const hiddenInput = document.querySelector(`input[name="clave_uea_${claveUea}"]`);
             const hiddenClaveUea = hiddenInput ? hiddenInput.value : '';
+            console.log(hiddenInput)
             try {
                 const data = await apiRequest('GET', `/modulos/${hiddenClaveUea}`);
             
@@ -849,5 +811,20 @@ document.addEventListener('DOMContentLoaded', (event) => {
         };     
         reader.readAsArrayBuffer(excelFile.files[0]);
     });
+
+    registrarGrupoCatalogo.addEventListener('click', function() {
+        event.preventDefault()
+        moduloSelect = document.getElementById('moduloCatalogoSelect')
+        grupo = grupoCatalogoInput.value;
+
+        selectedModulo = moduloSelect.options[moduloSelect.selectedIndex].value
+        console.log('selectedModulo:', selectedModulo);
+        payload = {
+            'grupo': grupo,
+            'modulo': selectedModulo
+        }
+
+        console.log(payload)
+    })
     
 });
