@@ -865,6 +865,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             apiRequest('POST', '/modulos/0/grupos', payload).then(data => {
                 if (data.status === 200) {
                     console.log('Grupo de recuperación registrado correctamente al catálogo de grupos')
+                    moduloSelect.dispatchEvent(new Event('change'))
                 } else {
                     console.log('Error al registrar grupo de recuperación')
                     alert('Error al regsitrar grupo de recuperación')
