@@ -42,12 +42,12 @@ if(isset($_GET['tipo'])){
         <div class="toggle-option selected" data-value="global">Global</div>
         <div class="toggle-option" data-value="recuperacion">Recuperación</div>
     </div>
-    <button id="addGrupoBtn">Alta de grupo</button>
-    <button id="catalogoGruposBtn">Configuración</button>
+    <button id="addGrupoBtn">Registrar evaluación</button>
+    <button id="catalogoGruposBtn">Configuración de grupos</button>
 </div>
 
 
-<h2>Grupos registrados</h2>
+<h2>Evaluaciones registradas</h2>
 <table class="table-2" style="margin:0!important;">
     <thead>
         <tr>
@@ -102,7 +102,7 @@ if(isset($_GET['tipo'])){
         <h2>Catálogo de Grupos</h2>
         <form class="search-form-2" id="catalogoGruposForm">
         <div style="display: flex; align-items: center;">
-            <div>
+            <div id="selectModuloDiv">
 
                 <select name="moduloCatalogoSelect" id="moduloCatalogoSelect">
                     <option value="">Módulo</option>

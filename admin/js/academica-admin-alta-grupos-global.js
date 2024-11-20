@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', (event) => {
     //alert(tipoEvaluacion)
+    var urlParams = new URLSearchParams(window.location.search)
+    var tipoEvaluacion = urlParams.get('tipo')
+    const selectModuloDiv = document.getElementById('selectModuloDiv')
     var trimestreActual = document.getElementById('trimestreActual');
     var selectTrimestre = document.getElementById('trimestre');
     var selectModulo = document.getElementById('modulo');
@@ -15,9 +18,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
     var registrarGrupoCatalogo = document.getElementById('registarGrupoCatalogo');
     var grupoCatalogoInput = document.getElementById('grupoCatalogo');
 
-    
-    // Asegúrate de que 'tipoEvaluacion' esté definido y contenga el valor adecuado
-    // Selecciona la opción correspondiente al valor de tipoEvaluacion
+    if(!tipoEvaluacion) {
+        urlParams.set('tipo', 'global')
+        const newUrl = `${window.location.origin}${window.location.pathname}?${urlParams.toString()}`;
+        window.location.replace(newUrl)
+    }
+
     toggleOptions.forEach(option => {
         const tipoOption = option.getAttribute('data-value');
         if (tipoOption === tipoEvaluacion) {
@@ -56,16 +62,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         apiRequest('GET', endpoint).then(data => {
             if (data.status === 200) {
                 const informacion_general = data.payload.informacion_general[0];
-                let emailCoordinador = null;
-
-                // Obtener el email del coordinador
-                
-                // for (const programacion of informacion_general.programacion_docente_global) {
-                //     if (programacion.coordinacion) {
-                //         emailCoordinador = programacion.docente.email;
-                //         break;
-                //     }
-                // }     
+                let emailCoordinador = null;  
                 for (const programacion of informacion_general[`programacion_docente_${tipoEvaluacion}`]) {
                     if (programacion.coordinacion) {
                         emailCoordinador = programacion.docente.email;
@@ -215,8 +212,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
                 // Crear una segunda opción para moduloCatalogoSelect
                 const option2 = document.createElement('option');
-                option2.value = modulo.modulo;
+                option2.value = modulo.clave_uea;
                 option2.text = `${modulo.modulo}. ${modulo.nombre_uea}`;
+                option2.setAttribute('modulo', modulo.modulo)
                 moduloCatalogoSelect.appendChild(option2);
 
                 // Crear y agregar input hidden
@@ -547,7 +545,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        
                         <th>Grupo</th>
                         
                     </tr>
@@ -560,7 +558,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         grupos.forEach(grupo => {
             tableHTML += `
                 <tr>
-                    <td>${grupo.id}</td>
+                    
                     <td>${grupo.grupo.toUpperCase()}</td>
                 </tr>
             `;
@@ -582,16 +580,24 @@ document.addEventListener('DOMContentLoaded', (event) => {
         buttonGrupoCatalogoDiv.style.display = 'block';
         const selectedValue = moduloCatalogoSelect.options[moduloCatalogoSelect.selectedIndex].value;
 
-        console.log("Valor seleccionado:", selectedValue); // Solo para ver en la consola
+        //console.log("Valor seleccionado:", selectedValue); // Solo para ver en la consola
         if (tipoEvaluacion == 'recuperacion') {
-            endoint = `/modulos/${hiddenClaveUea}/grupos&recuperacion=true`
+            endpoint = `/modulos/0/grupos?recuperacion=true`
+            recu = true
         } else {
-            endpoint = `/modulos/${hiddenClaveUea}/grupos`
-        }        
+            endpoint = `/modulos/${selectedValue}/grupos`
+            recu = false
+        }
+           
         const data = await apiRequest('GET', endpoint);
         console.log(data)
         if (data.status === 200) {
-            renderGruposCatalogoTable(data.payload.data);
+            if (!recu) {
+                renderGruposCatalogoTable(data.payload.data);
+            } else {
+                renderGruposCatalogoTable(data.payload);
+            }
+            
         } else {
             alert('Error al obtener datos');
         }
@@ -617,18 +623,47 @@ document.addEventListener('DOMContentLoaded', (event) => {
     })
 
 
-
     addGrupoBtn.addEventListener('click', function() {
         const popup = document.getElementById('popupAltaGrupo');
         popup.style.display = 'block';
     });
 
+    // catalogoGruposBtn.addEventListener('click', function() {
+    //     const popup = document.getElementById('popupCatalogoGrupos');
+    //     popup.style.display = 'block';
+    // })
     catalogoGruposBtn.addEventListener('click', function() {
+        moduloSelect = document.getElementById('moduloCatalogoSelect')
         const popup = document.getElementById('popupCatalogoGrupos');
         popup.style.display = 'block';
-    })
-
-
+    
+        // Evaluar tipoEvaluacion al momento de mostrar el popup
+        const urlParams = new URLSearchParams(window.location.search);
+        const tipoEvaluacion = urlParams.get('tipo');
+        const selectModuloDiv = document.getElementById('selectModuloDiv');
+        const inputGrupoCatalogoDiv = document.getElementById('inputGrupoCatalogoDiv');
+        const buttonGrupoCatalogoDiv = document.getElementById('buttonGrupoCatalogoDiv');
+        
+        // Asegúrate de que el estilo inline sea removido antes de cambiar
+        selectModuloDiv.style.removeProperty('display');
+        inputGrupoCatalogoDiv.style.removeProperty('display');
+        buttonGrupoCatalogoDiv.style.removeProperty('display');
+        
+        // Dependiendo del tipoEvaluacion, ajustamos la visibilidad de los elementos
+        if (tipoEvaluacion == 'recuperacion') {
+            // Si es recuperación, ocultamos el select y mostramos solo el input y el botón
+            selectModuloDiv.style.display = 'none';
+            inputGrupoCatalogoDiv.style.display = 'block';
+            buttonGrupoCatalogoDiv.style.display = 'block';
+            moduloSelect.dispatchEvent(new Event('change'))
+        } else {
+            // En otro caso, mostramos el select y ocultamos los otros elementos
+            selectModuloDiv.style.display = 'block';
+            inputGrupoCatalogoDiv.style.display = 'none';
+            buttonGrupoCatalogoDiv.style.display = 'none';
+        }
+    });
+    
 
     // Fetch modulo/componentes cuando un módulo es seleccionado:
     selectModulo.addEventListener('change', async function() {
@@ -816,15 +851,39 @@ document.addEventListener('DOMContentLoaded', (event) => {
         event.preventDefault()
         moduloSelect = document.getElementById('moduloCatalogoSelect')
         grupo = grupoCatalogoInput.value;
-
-        selectedModulo = moduloSelect.options[moduloSelect.selectedIndex].value
+        selectedOption = moduloSelect.options[moduloSelect.selectedIndex]
+        selectedModulo = selectedOption.getAttribute('modulo')
         console.log('selectedModulo:', selectedModulo);
         payload = {
-            'grupo': grupo,
-            'modulo': selectedModulo
+            'grupo': grupo }
+
+        urlParams = new URLSearchParams(window.location.search)
+        tipoEvaluacion = urlParams.get('tipo')
+
+        if (tipoEvaluacion === 'recuperacion'){
+            payload.recuperacion = true
+            apiRequest('POST', '/modulos/0/grupos', payload).then(data => {
+                if (data.status === 200) {
+                    console.log('Grupo de recuperación registrado correctamente al catálogo de grupos')
+                } else {
+                    console.log('Error al registrar grupo de recuperación')
+                    alert('Error al regsitrar grupo de recuperación')
+                }
+            })
+        } else {
+            apiRequest('POST', `/modulos/${selectedModulo}/grupos`, payload).then(data => {
+                if (data.status === 200) {
+                    console.log('Grupo registrado correctamente')
+                    moduloSelect.dispatchEvent(new Event('change'))
+                } else {
+                    console.log('Error al registrar el grupo')
+                    alert('Error al registrar el grupo')
+                }
+            })
         }
 
-        console.log(payload)
+        
+
     })
     
 });
