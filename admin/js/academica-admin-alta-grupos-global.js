@@ -482,11 +482,23 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         document.getElementById('grupoInfoAlumnos').insertAdjacentHTML('beforeend', studentGradesHtml);
                 
                         // Add delete button
+                        const verEvaluacionButtonHtml = `
+                            <button id="ver-group-button" data-id="${idEvaluacion}">Ver evaluación</button>
+                        `;
+                        document.getElementById('grupoInfoAlumnos').insertAdjacentHTML('beforeend', verEvaluacionButtonHtml);                    
+
                         const deleteButtonHtml = `
                             <button id="delete-group-button" data-id="${idEvaluacion}">Eliminar Grupo</button>
                         `;
                         document.getElementById('grupoInfoAlumnos').insertAdjacentHTML('beforeend', deleteButtonHtml);
-                
+                        
+                        // Event listener para ver evaluación botón
+                        document.getElementById('ver-group-button').addEventListener('click', function() {
+                            const idEvaluacion = this.getAttribute('data-id')
+                            const url = `/academica-evaluacion?evaluacion=${idEvaluacion}`
+                            window.open(url, '_blank')
+                        })
+
                         // Add event listener to the delete button
                         document.getElementById('delete-group-button').addEventListener('click', async function() {
                             document.getElementById('loading-screen').style.display = 'block';
