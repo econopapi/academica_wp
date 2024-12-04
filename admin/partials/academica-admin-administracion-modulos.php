@@ -12,12 +12,18 @@ https://academica.dlimon.net/modulos
 // Fetch data from /modulos endpoint
 $api_url = get_option('academica_api_url');
 $api_key = get_option('academica_api_key');
-$modulos_json = file_get_contents($api_url . '/modulos');
-$modulos_data = json_decode($modulos_json, true);
+$endpoint = "$api_url/modulos";
+$args = [
+    'headers' => [
+        'X-ACADEMICA-API-KEY' => $api_key
+    ]];
 
+$modulos_response = wp_remote_get($endpoint, $args);
+$modulos_data = wp_remote_retrieve_body($modulos_response);
+$modulos_json = json_decode($modulos_data);
 // Check if the data was fetched successfully
-if ($modulos_data['status'] == 200) {
-    $modulos = $modulos_data['payload']['data'];
+if ($modulos_json->status == 200) {
+    $modulos = $modulos_json->payload->data;
 } else {
     echo "<p>Error fetching modules data.</p>";
     $modulos = [];
@@ -139,10 +145,10 @@ if ($modulos_data['status'] == 200) {
     <tbody>
         <?php foreach ($modulos as $modulo): ?>
             <tr>
-                <td><?php echo htmlspecialchars($modulo['clave_uea']); ?></td>
-                <td><?php echo htmlspecialchars($modulo['nombre_uea']); ?></td>
-                <td><?php echo htmlspecialchars($modulo['modulo']); ?></td>
-                <td><button class="componentesBtn" data-modulo-id="<?php echo htmlspecialchars($modulo['clave_uea']); ?>">Configuración</button></td>
+                <td><?php echo htmlspecialchars($modulo->clave_uea); ?></td>
+                <td><?php echo htmlspecialchars($modulo->nombre_uea); ?></td>
+                <td><?php echo htmlspecialchars($modulo->modulo); ?></td>
+                <td><button class="componentesBtn" data-modulo-id="<?php echo htmlspecialchars($modulo->clave_uea); ?>">Configuración</button></td>
             </tr>
         <?php endforeach; ?>
     </tbody>
