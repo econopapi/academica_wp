@@ -1,26 +1,23 @@
 <?php
 
 /**
- * The plugin bootstrap file
+ * Académica Wordpress: Plugin de Wordpress que ofrece interfaces de usuario
+ * para la API de Académica (Sistema académico) tanto para la Coordinación de
+ * Estudios como para Docentes. 
  *
- * This file is read by WordPress to generate the plugin information in the plugin
- * admin area. This file also includes all of the dependencies used by the plugin,
- * registers the activation and deactivation functions, and defines a function
- * that starts the plugin.
  *
- * @link              http://dlimon.net/
+ * @link              https://academica.dlimon.net
  * @since             0.1
  * @package           Academica
  *
  * @wordpress-plugin
  * Plugin Name:       Académica
- * Plugin URI:        http://dlimon.net
+ * Plugin URI:        https://academica.dlimon.net
  * Description:       Integración de de Académica (gestor académico) con WordPress
  * Version:           2.0
  * Author:            Daniel Limón
- * Author URI:        http://dlimon.net/
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ * Author URI:        https://dlimon.net/
+ * License:           MIT
  * Text Domain:       academica_wp
  * Domain Path:       /languages
  */
@@ -35,7 +32,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'ACADEMICA_VERSION', '0.1' );
+define( 'ACADEMICA_VERSION', '2.0' );
 
 /**
  * The code that runs during plugin activation.
