@@ -45,11 +45,10 @@ if ($current_user->ID != 0) {
 
 <link rel="stylesheet" href="<?php echo plugins_url('/css/academica-public-seguimiento-global-grupo.css', dirname(__FILE__)); ?>">
 <link rel="stylesheet" href="<?php echo plugins_url('/css/academica-public.css', dirname(__FILE__)); ?>">
-<h2><?php if($tipo_evaluacion == 'global'){ ?>
-    Evaluación global
-    <? } else { ?>
-    Evaluación de recuperación
-    <? } ?></h2>
+<h2>
+    <?php echo ($tipo_evaluacion == 'global') ? 'Evaluación global' : 'Evaluación de recuperación'; ?>
+</h2>
+
 <form id="seguimiento_global_grupo_form" class="search-form-1">
     <label for="trimestre">Trimestre:</label>
     <select id="trimestre" name="trimestre">
