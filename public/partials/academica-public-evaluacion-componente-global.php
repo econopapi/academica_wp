@@ -153,7 +153,11 @@ $lista_alumnos = $lista_json['payload']['lista_alumnos'];
             </thead>
             <tbody>
                 
-            <?php for ($i = 0; $i < count($lista_alumnos); $i++) { ?>
+            <?php 
+            if (empty($lista_alumnos)) {
+                echo "<tr><td colspan='4'>No hay alumnos en la lista.</td></tr>"; // Mensaje si no hay alumnos
+            } else {
+                 for ($i = 0; $i < count($lista_alumnos); $i++) { ?>
                 <tr>
                     <td><?php echo $lista_alumnos[$i]['numero_lista']; ?></td>
                     <td><?php echo $lista_alumnos[$i]['matricula']; ?>
@@ -164,7 +168,7 @@ $lista_alumnos = $lista_json['payload']['lista_alumnos'];
                         <input type="number" step="0.01" name="calificacion[<?php echo $i; ?>]" value="<?php echo !empty($lista_alumnos[$i][$componente]) ? $lista_alumnos[$i][$componente] : ''; ?>">
                     </td>
                 </tr>
-            <?php } ?>
+            <?php }} ?>
             </tbody>
         </table>
         <input type="hidden" id="id_evaluacion" value="<?php echo $id_evaluacion; ?>">
