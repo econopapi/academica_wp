@@ -31,6 +31,11 @@ class Academica_Activator {
 	 */
 	public static function activate() {
 
+        // Comienza a registrar errores
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('Activando plugin Académica...');
+        }
+
 		if(get_option('academica_hide_menus') === false) {
 			update_option('academica_hide_menus', true);
 		}
@@ -72,7 +77,7 @@ class Academica_Activator {
 					'post_status'   => 'publish',
 					'post_author'   => $user_id,
 					'post_type'     => 'page',
-					'post_name'          => 'academica/docentes/programacion',
+					'post_name'          => 'academica-docentes-programacion',
 				),
 				array(
 					'post_title'    => 'Evaluación Componente Global',
@@ -80,7 +85,7 @@ class Academica_Activator {
 					'post_status'   => 'publish',
 					'post_author'   => $user_id,
 					'post_type'     => 'page',
-					'post_name'          => 'academica/docentes/evaluacion-componente-global',
+					'post_name'          => 'academica-docentes-evaluacion-componente-global',
 				),
 				array(
 					'post_title'    => 'Evaluación Componente Recuperación',
@@ -88,15 +93,26 @@ class Academica_Activator {
 					'post_status'   => 'publish',
 					'post_author'   => $user_id,
 					'post_type'     => 'page',
-					'post_name'          => 'academica/docentes/evaluacion-componente-recuperacion',
+					'post_name'          => 'academica-docentes-evaluacion-componente-recuperacion',
 				),
 
 				
 			);
 
-			// Loop through the page data and insert each page
+			// Crear páginas
 			foreach ($pages as $page) {
-				wp_insert_post($page);
+				$post_id = wp_insert_post($page);
+
+				// Validar si hubo un error al crear la página
+				if (is_wp_error($post_id)) {
+					error_log("Error al crear la página '{$page['post_title']}': " . $post_id->get_error_message());
+				} else {
+					error_log("Página '{$page['post_title']}' creada con éxito. ID: $post_id");
+				}
+			}
+
+			if (defined('WP_DEBUG') && WP_DEBUG) {
+				error_log('Activación del plugin Académica completada.');
 			}
 		}	
 	}
