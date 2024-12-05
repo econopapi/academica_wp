@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', function() {
         button.className = 'firmar-button';
         button.textContent = 'Volver a asignación docente';
         button.addEventListener('click', function(event) {  
-            window.open('/academica-docentes-asignacion-global/', '_self'); 
+            window.open('/academica-docentes-programacion/', '_self'); 
         });
     
         document.getElementById('estatus_firma').appendChild(div);
@@ -290,9 +290,6 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 console.log(data);
                 if (data.code === 200) {
-                    alert('Evaluación ponderada y confirmada con éxito!');
-                    //window.location.href = '/academica-historial-academico-evaluacion-global-grupo?trimestre=' + trimestre.value + '&grupo=' + grupo.value;
-                    // reload de current page
                     window.location.reload();
                 } else {
                     alert('Error al firmar el acta');
@@ -315,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function() {
         button.className = 'firmar-button';
         button.textContent = 'Volver a asignación docente';
         button.addEventListener('click', function(event) {
-            window.open('/academica-docentes-asignacion-global/', '_self');
+            window.open('/academica-docentes-programacion/', '_self');
         });
     
         document.getElementById('estatus_firma').appendChild(div);
@@ -333,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function() {
         button.className = 'firmar-button';
         button.textContent = 'Volver a asignación docente';
         button.addEventListener('click', function(event) {
-            window.open('/academica-docentes-asignacion-global/', '_self');
+            window.open('/academica-docentes-programacion/', '_self');
         });
     
         document.getElementById('estatus_firma').appendChild(div);

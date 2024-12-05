@@ -14,9 +14,14 @@
 
 // Obtener la URL de la API desde la configuración
 $api_url = get_option('academica_api_url');
+$api_key = get_option('academica_api_key');
+$args = [
+    'headers' => [
+        'X-ACADEMICA-API-KEY' => $api_key
+    ]];
 
 // Hacer la solicitud GET a la API
-$response = wp_remote_get($api_url);
+$response = wp_remote_get($api_url, $args);
 
 // Verificar si la solicitud fue exitosa
 if (is_wp_error($response)) {
@@ -30,7 +35,6 @@ if (is_wp_error($response)) {
         $payload = $data['payload'];
         $system_data = $payload['system_data'];
     } else {
-        
         $payload = null;
     }
 }

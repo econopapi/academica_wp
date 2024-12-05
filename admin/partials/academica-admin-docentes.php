@@ -14,6 +14,7 @@
 
 // get wp options
 $academica_api_url = get_option('academica_api_url');
+$academica_api_key = get_option('academica_api_key');
 ?>
 <div class="header-container">
     <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Logo Académica UAM" class="logo">
@@ -85,20 +86,26 @@ $academica_api_url = get_option('academica_api_url');
 
 <?php
 $api_page = isset($_GET['api_page']) ? $_GET['api_page'] : 1;
-$limit = isset($_GET['limit']) ? $_GET['limit'] : 15;
+$limit = isset($_GET['limit']) ? $_GET['limit'] : 25;
 
-$endpoint = "$academica_api_url/historial_academico/docentes?page=$api_page&limit=$limit";
+$endpoint = "$academica_api_url/docentes?page=$api_page&limit=$limit";
 
-$response = wp_remote_get($endpoint);
+$args = [
+    'headers' => [
+        'X-ACADEMICA-API-KEY' => $academica_api_key
+    ]];
+
+$response = wp_remote_get($endpoint, $args);
 $data = wp_remote_retrieve_body($response);
-
 // Verificar si la respuesta contiene datos
+
 if (empty($data)) {
     echo "<p>No se encontraron datos</p>";
     return;
 } else {
     $docentes = json_decode($data);
-    if ($docentes->status == 'success' && !empty($docentes->payload)) {
+    //print_r($docentes);
+    if ($docentes->status == 200 && !empty($docentes->payload)) {
         echo "<table class='table-2'>";
         echo "<tr>
                 <th>Nombre</th>              
@@ -110,7 +117,7 @@ if (empty($data)) {
                 <th>Acciones</th>
               </tr>";
 
-        foreach ($docentes->payload as $docente) {
+        foreach ($docentes->payload->data as $docente) {
             echo "<tr>
                     <td>{$docente->nombre}</td>                  
                     <td>{$docente->numero_economico}</td>
