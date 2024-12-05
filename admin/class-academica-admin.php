@@ -146,18 +146,11 @@ class Academica_Admin {
 						array($this, 'academica_admin_docentes_page'));
 
 		add_submenu_page('academica',
-						'Grupos Global',
-						'Grupos Global',
+						'Evaluaciones',
+						'Evaluaciones',
 						'manage_options',
-						'academica_grupos_global',
-						array($this, 'academica_admin_alta_grupos_global_page'));
-
-		add_submenu_page('academica',
-						'Grupos Recuperación',
-						'Grupos Recuperación',
-						'manage_options',
-						'academica_grupos_recuperacion',
-						array($this, 'academica_admin_alta_grupos_recuperacion_page'));
+						'evaluaciones',
+						array($this, 'academica_admin_evaluaciones_page'));
 
 		add_submenu_page('academica',
 						'Academica UAM - Configuración de API',
@@ -168,6 +161,31 @@ class Academica_Admin {
 
 
 		//add_submenu_page('academica', 'Academica Settings', 'Settings', 'manage_options', 'academica_settings', array($this, 'academica_settings_page'));
+	}
+
+	public function hide_dashboard_menus() {
+		if(get_option('academica_hide_menus', true)) {
+			// Eliminar todos los menús predeterminados de WordPress
+			remove_menu_page('index.php');                  // El panel de inicio
+			remove_menu_page('edit.php');                    // Entradas
+			remove_menu_page('upload.php');                  // Medios
+			remove_menu_page('edit.php?post_type=page');     // Páginas
+			remove_menu_page('edit-comments.php');           // Comentarios
+			remove_menu_page('themes.php');                  // Apariencia
+			remove_menu_page('plugins.php');                 // Plugins
+			remove_menu_page('users.php');                   // Usuarios
+			remove_menu_page('tools.php');                   // Herramientas
+			remove_menu_page('options-general.php');         // Ajustes
+
+			// Eliminar menús de plugins, si los hay
+			global $menu;
+			foreach ($menu as $key => $value) {
+				// Omitir el menú del plugin 'académica' (por ejemplo)
+				if (strpos($value[2], 'academica') === false) {
+					remove_menu_page($value[2]);  // Eliminar el menú del plugin
+				}
+			}			
+		}
 	}
 
 	public function academica_admin_page() {
@@ -182,8 +200,8 @@ class Academica_Admin {
 		include 'partials/academica-admin-trimestre.php';
 	}
 
-	public function academica_admin_alta_grupos_global_page() {
-		include 'partials/academica-admin-alta-grupos-global.php';
+	public function academica_admin_evaluaciones_page() {
+		include 'partials/academica-admin-evaluaciones.php';
 	}
 
 	public function academica_admin_alta_grupos_recuperacion_page() {

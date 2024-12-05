@@ -35,19 +35,6 @@
         <button type="button" onclick="addTrimestre()">Agregar Nuevo Trimestre</button>
     </form>
 
-
-
-
-
-<!-- Pantalla de carga -->
-<div id="loading-screen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); text-align:center; z-index:1000;">
-    <div style="position:relative; top:50%; transform:translateY(-50%); color:white; font-size:20px;">
-    <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Cargando" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80px; height: 80px; z-index: 10;">
-        <div class="loader" style="border: 16px solid #f3f3f3; border-radius: 50%; border-top: 16px solid #3498db; width: 80px; height: 80px; animation: spin 2s linear infinite; margin: 0 auto;"></div>
-    </div>
-</div>
-
-
 <!-- Pantalla de carga -->
 <div id="loading-screen" style="display:none;">
     <div class="loading-content">

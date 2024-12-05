@@ -39,26 +39,38 @@ document.addEventListener('DOMContentLoaded', function () {
             cubiculo: document.getElementById("cubiculo").value
         };
 
-        fetch(`${academicaApiConfig.apiUrl}/historial_academico/docentes`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        })
-        .then(response => {
-            if (response.status == 200) {
-                alert('Docente registrado correctamente');
-                location.reload();
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Success:', data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+        // fetch(`${academicaApiConfig.apiUrl}/historial_academico/docentes`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify(formData)
+        // })
+        // .then(response => {
+        //     if (response.status == 200) {
+        //         alert('Docente registrado correctamente');
+        //         location.reload();
+        //     }
+        //     return response.json();
+        // })
+        // .then(data => {
+        //     console.log('Success:', data);
+        // })
+        // .catch((error) => {
+        //     console.error('Error:', error);
+        // });
+        
+        apiRequest('POST', '/docentes/', formData)
+            .then(data => {
+                if (data.status === 200) {
+                    alert('Docente registrado correctamente');
+                    location.reload();
+                }
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });  
     });
 
     //editar docente
@@ -98,13 +110,13 @@ document.addEventListener('DOMContentLoaded', function () {
     //         editarDocentePopup.style.display = 'none';
     //     }
     // });
-    let emailOriginal;
+    let numeroEconomicoOriginal;
 
     // Captura el email original cuando el usuario hace foco en el campo de email
-    document.getElementById('editarEmail').addEventListener('focus', function() {
-        if (!emailOriginal) {  // Solo captura si no se ha capturado antes
-            emailOriginal = this.value;
-            console.log('Email Original Capturado:', emailOriginal);
+    document.getElementById('editarNumeroEconomico').addEventListener('focus', function() {
+        if (!numeroEconomicoOriginal) {  // Solo captura si no se ha capturado antes
+            numeroEconomicoOriginal = this.value;
+            console.log('Numero Económico Original Capturado:', numeroEconomicoOriginal);
         }
     });
     
@@ -115,9 +127,9 @@ document.addEventListener('DOMContentLoaded', function () {
     
         const docenteData = {
             numero_economico: document.getElementById('editarNumeroEconomico').value,
+            numero_economico_original: numeroEconomicoOriginal,
             nombre: document.getElementById('editarNombre').value,
-            email_nuevo: document.getElementById('editarEmail').value,  // Email editado
-            email_original: emailOriginal,  // Email original capturado
+            email: document.getElementById('editarEmail').value,
             telefono: document.getElementById('editarTelefono').value,
             extension: document.getElementById('editarExtension').value,
             cubiculo: document.getElementById('editarCubiculo').value,
@@ -125,25 +137,41 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     
     
-        fetch(`${academicaApiConfig.apiUrl}/historial_academico/docentes`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(docenteData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                alert('Docente actualizado exitosamente');
-                location.reload();
-            } else {
+        // fetch(`${academicaApiConfig.apiUrl}/historial_academico/docentes`, {
+        //     method: 'PUT',
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify(docenteData)
+        // })
+        // .then(response => response.json())
+        // .then(data => {
+        //     if (data.status === 'success') {
+        //         alert('Docente actualizado exitosamente');
+        //         location.reload();
+        //     } else {
+        //         alert('Error al actualizar el docente');
+        //     }
+        // })
+        // .catch(error => {
+        //     console.error('Error:', error);
+        //     alert('Error al actualizar el docente');
+        // });
+        const endpoint = numeroEconomicoOriginal ? 
+        `/docentes/${numeroEconomicoOriginal}` : 
+        `/docentes/${docenteData.numero_economico}`;
+        apiRequest('PUT', endpoint, docenteData)
+            .then(data => {
+                if (data.status === 200) {
+                    alert('Docente actualizado exitosamente');
+                    location.reload();
+                } else {
+                    alert('Error al actualizar el docente');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
                 alert('Error al actualizar el docente');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al actualizar el docente');
-        });
+            });
     });
 });

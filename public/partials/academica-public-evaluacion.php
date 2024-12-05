@@ -1,22 +1,24 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <?php
 
 /**
- * Provide a public-facing view for the plugin
+ * Display detallado para evaluaciones globales/recuperación. Muestra
+ * toda la información de la evaluación: datos del grupo, módulo, trimestre,
+ * datos de la asignación docente, lista de grupo y calificaciones desglosadas.
+ * 
+ * Muestra un menú de descarga para obtener la evaluación en PDF o en Excel.
+ * 
+ * También muestra controles sobre la evaluación al coordinador de módulo.
  *
- * This file is used to markup the public-facing aspects of the plugin.
- *
- * @link       https://dlimon.net/
+ * @link       https://academica.dlimon.net/docs
  * @since      0.1
  *
  * @package    Academica
  * @subpackage Academica/public/partials
  */
-//echo plugins_url('/js/academica-read-evaluacion-global.js', dirname(__FILE__));
-//echo plugins_url('/css/academica-public-seguimiento-global-grupo.css', dirname(__FILE__));
-//require_once("wp-load.php");
 
+$tipo_evaluacion = (isset($_GET['evaluacion']) && $_GET['evaluacion'][0] === 'r') ? 'recuperacion' : ((isset($_GET['evaluacion']) && $_GET['evaluacion'][0] === 'g') ? 'global' : 'global');
 $current_user = wp_get_current_user();
-
 
 if ($current_user->ID != 0) {
     // El usuario está logueado
@@ -27,9 +29,7 @@ if ($current_user->ID != 0) {
     $user_roles = $current_user->roles;
     $user_role = !empty($user_roles) ? $user_roles[0] : 'Sin Rol';
     //$user_role = 'editor';
-
     echo "<p style='margin: 25px;'><strong>Usuario activo: $user_email</strong></p>";
-
 } else {
     // Usuario no logueado. Redirección a homepage
     echo $current_user->user_login;
@@ -38,13 +38,18 @@ if ($current_user->ID != 0) {
 }
 
 ?>
+<script>var tipoEvaluacion = "<?php echo $tipo_evaluacion; ?>"</script>
 <div class="overlay">
     <div class="loadingScreen"></div>
 </div>
 
 <link rel="stylesheet" href="<?php echo plugins_url('/css/academica-public-seguimiento-global-grupo.css', dirname(__FILE__)); ?>">
 <link rel="stylesheet" href="<?php echo plugins_url('/css/academica-public.css', dirname(__FILE__)); ?>">
-<h2>Evaluaciones globales</h2>
+<h2><?php if($tipo_evaluacion == 'global'){ ?>
+    Evaluación global
+    <? } else { ?>
+    Evaluación de recuperación
+    <? } ?></h2>
 <form id="seguimiento_global_grupo_form" class="search-form-1">
     <label for="trimestre">Trimestre:</label>
     <select id="trimestre" name="trimestre">
@@ -77,15 +82,16 @@ if ($current_user->ID != 0) {
 </div>
 
 <!-- Pantalla de carga -->
-<div id="loading-screen" style="display:none">
+<div id="loading-screen" style="display:block">
     <div class="loading-content">
         <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Cargando" class="loading-image">
         <div class="loader"></div>
     </div>
 </div>
+<!-- Biblioteca jsPDF para la creación de PDFs -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.14/jspdf.plugin.autotable.min.js"></script>
+<!-- Biblioteca SheetJS para la creación de archivos Excel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
 
-<?php if ($user_role == 'administrator') { ?>
-    <script src="<?php echo plugins_url('/js/academica-coordinacion-read-evaluacion-global.js', dirname(__FILE__)); ?>"></script>
-<?php } else { ?>
-    <script src="<?php echo plugins_url('/js/academica-read-evaluacion-global.js', dirname(__FILE__)); ?>"></script>
-<?php } ?>
+<script src="<?php echo plugins_url('/js/academica-read-evaluacion.js', dirname(__FILE__)); ?>"></script>

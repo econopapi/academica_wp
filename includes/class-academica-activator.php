@@ -30,12 +30,18 @@ class Academica_Activator {
 	 * @since    0.1
 	 */
 	public static function activate() {
+
+		if(get_option('academica_hide_menus') === false) {
+			update_option('academica_hide_menus', true);
+		}
 		// Academica Manager User
 		$user_data = array(
 			'user_login' => 'academica_manager',
 			'user_pass'  => wp_generate_password(), // Generate a random password
 			'role'       => 'editor', // Set the role to 'editor' or any other role you want
 		);
+
+		
 
 		// Insert the user
 		$user_id = wp_insert_user($user_data);
@@ -45,36 +51,28 @@ class Academica_Activator {
 			// Page data
 			$pages = array(
 				array(
-					'post_title'    => 'Seguimiento Global',
-					'post_content'  => '[seguimiento_global_grupo]',
+					'post_title'    => 'Académica UAM',
+					'post_content'  => '[portada]',
 					'post_status'   => 'publish',
 					'post_author'   => $user_id,
 					'post_type'     => 'page',
-					'post_name'          => 'academica/historial-academico/evaluacion-global-grupo',
+					'post_name'          => 'academica',
 				),
 				array(
-					'post_title'    => 'Seguimiento Recuperación',
-					'post_content'  => '[seguimiento_recuperacion_grupo]',
+					'post_title'    => 'Evaluación',
+					'post_content'  => '[evaluacion_grupo]',
 					'post_status'   => 'publish',
 					'post_author'   => $user_id,
 					'post_type'     => 'page',
-					'post_name'          => 'academica/historial-academico/evaluacion-recuperacion-grupo',
+					'post_name'          => 'academica/evaluacion',
 				),
 				array(
-					'post_title'    => 'Asignación Docente Global',
+					'post_title'    => 'Programación docente',
 					'post_content'  => '[asignacion_docente]',
 					'post_status'   => 'publish',
 					'post_author'   => $user_id,
 					'post_type'     => 'page',
-					'post_name'          => 'academica/docentes/asignacion-global',
-				),
-				array(
-					'post_title'    => 'Asignación Docente Recuperación',
-					'post_content'  => '[asignacion_docente_recuperacion]',
-					'post_status'   => 'publish',
-					'post_author'   => $user_id,
-					'post_type'     => 'page',
-					'post_name'          => 'academica/docentes/asignacion-recuperacion',
+					'post_name'          => 'academica/docentes/programacion',
 				),
 				array(
 					'post_title'    => 'Evaluación Componente Global',
@@ -91,14 +89,6 @@ class Academica_Activator {
 					'post_author'   => $user_id,
 					'post_type'     => 'page',
 					'post_name'          => 'academica/docentes/evaluacion-componente-recuperacion',
-				),
-				array(
-					'post_title'    => 'Alta Grupos Global',
-					'post_content'  => '[coord_alta_grupos_global]',
-					'post_status'   => 'publish',
-					'post_author'   => $user_id,
-					'post_type'     => 'page',
-					'post_name'          => 'academica/coordinacion/alta-grupos-global',
 				),
 
 				
