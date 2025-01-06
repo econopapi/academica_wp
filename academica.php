@@ -14,7 +14,7 @@
  * Plugin Name:       Académica
  * Plugin URI:        https://academica.dlimon.net
  * Description:       Integración de sistema Académica con Wordpress.
- * Version:           2.0
+ * Version:           2.0.1
  * Author:            Daniel Limón
  * Author URI:        https://dlimon.net/
  * License:           MIT
