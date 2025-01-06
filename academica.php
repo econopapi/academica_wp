@@ -7,13 +7,13 @@
  *
  *
  * @link              https://academica.dlimon.net
- * @since             0.1
+ * @since             2.0.1
  * @package           Academica
  *
  * @wordpress-plugin
  * Plugin Name:       Académica
  * Plugin URI:        https://academica.dlimon.net
- * Description:       Integración de de Académica (gestor académico) con WordPress
+ * Description:       Integración de sistema Académica con Wordpress.
  * Version:           2.0
  * Author:            Daniel Limón
  * Author URI:        https://dlimon.net/
@@ -32,7 +32,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'ACADEMICA_VERSION', '2.0' );
+define( 'ACADEMICA_VERSION', '2.0.1' );
 
 /**
  * The code that runs during plugin activation.

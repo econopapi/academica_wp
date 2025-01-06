@@ -1,13 +1,6 @@
 <?php
 
 /**
- * Provide a admin area view for the plugin
- *
- * This file is used to markup the admin-facing aspects of the plugin.
- *
- * @link       http://example.com
- * @since      0.1
- *
  * @package    Academica
  * @subpackage Academica/admin/partials
  */
@@ -17,8 +10,7 @@
     <h1 class="title">Trimestres</h1>
 </div>
 
-<p>Administración de Trimestres.</p>
-
+<p>Administración de Trimestres. <a href="https://academica.dlimon.net/docs/coordinaciones/administracion-de-trimestres/" target="_blank">📚 Ver tutorial</a></p>
 
 <div id="trimestreActual"></div>
 

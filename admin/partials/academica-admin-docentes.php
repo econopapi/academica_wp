@@ -20,7 +20,7 @@ $academica_api_key = get_option('academica_api_key');
     <img src="https://economia.xoc.uam.mx/archivos/loading-screen-axolotl.png" alt="Logo Académica UAM" class="logo">
     <h1 class="title">Docentes</h1>
 </div>
-<p>Administración del directorio de docentes.</p>
+<p>Administración del directorio de docentes. <a href="https://academica.dlimon.net/docs/coordinaciones/gestion-de-docentes/" target="_blank">📚 Ver tutorial</a></p>
 <button id="openPopupBtn">Agregar docente</button>
 
 

@@ -27,7 +27,7 @@ if(isset($_GET['tipo'])){
     <h1 class="title">Evaluaciones</h1>
 </div>
 
-<p>Gestión de grupos para evaluaciones globales y de recuperación en el trimestre actual.</p>
+<p>Gestión de grupos para evaluaciones globales y de recuperación en el trimestre actual. <a href="https://academica.dlimon.net/docs/coordinaciones/alta-de-evaluacion/" target="_blank">📚 Ver tutorial</a></p>
 <div id="trimestreActual"></div>
 <!-- Pantalla de carga -->
 <div id="loading-screen" style="display:block">
