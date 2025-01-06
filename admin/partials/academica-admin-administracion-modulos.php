@@ -35,7 +35,7 @@ if ($modulos_json->status == 200) {
     <h1 class="title">Módulos</h1>
 </div>
 
-<p>Configuración del plan de estudios: mapeo de módulos y componentes.</p>
+<p>Configuración del plan de estudios: mapeo de módulos y componentes. <a href="https://academica.dlimon.net/docs/coordinaciones/plan-de-estudios/" target="_blank">📚 Ver tutorial</a></p>
 
 <!-- Popup Mapeo Componentes-->
 <div id="popupForm" class="popup" style="display:none;">

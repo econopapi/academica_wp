@@ -46,7 +46,7 @@ if (is_wp_error($response)) {
 
 
 <p>Sistema Académico para el Sistema Modular de la UAM Xochimilco.</p>
-<p>Consulte la <a href="#">Documentación del proyecto</a> para aprender su correcto uso.</p>
+<p>Consulte la <a href="https://academica.dlimon.net" target="_blank">📚Documentación del proyecto</a> para aprender su correcto uso.</p>
 
 
 <?php if (is_null($payload)) : ?>

@@ -17,7 +17,7 @@
     <h1 class="title">Grupos Recuperación</h1>
 </div>
 
-<p>Alta y gestión de grupos para la evaluación de recuperación en el trimestre actual.</p>
+<p>Alta y gestión de grupos para la evaluación de recuperación en el trimestre actual. <a href="" target="_blank">📚 Ver tutorial</a></p>
 
 <div id="trimestreActual"></div>
 <!-- Pantalla de carga -->

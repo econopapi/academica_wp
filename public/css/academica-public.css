@@ -271,7 +271,7 @@ button:hover {
 
 .notification-red {
     text-align: center;
-    background-color: #ffa9a9;
+    background-color: #f6d784;
     color: #000000;
     font-weight: bold;
     padding: 4px;
@@ -280,7 +280,7 @@ button:hover {
 
 .notification-orange {
     text-align: center;
-    background-color: #f6d784;
+    background-color: #9feea2;
     color: #000000;
     font-weight: bold;
     padding: 4px;
@@ -290,7 +290,7 @@ button:hover {
 
 .notification-green {
     text-align: center;
-    background-color: #9feea2;
+    background-color: #5abdfa;
     color: #000000;
     font-weight: bold;
     padding: 4px;
