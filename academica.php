@@ -33,6 +33,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Rename this for your plugin and update it as you release new versions.
  */
 define( 'ACADEMICA_VERSION', '2.0.1' );
+define( 'ACADEMICA_PLUGIN_FILE', __FILE__ );
 
 /**
  * The code that runs during plugin activation.
@@ -81,7 +82,7 @@ function run_academica() {
 	add_action('admin_bar_menu', array($plugin, 'academica_topbar_btn'), 1);
 	add_filter('wp_nav_menu_items', array($plugin, 'academica_login_menu'), 10, 2);
 
-	$academica_public = new Academica_Public('academica', '0.1');
+	$academica_public = new Academica_Public('academica', ACADEMICA_VERSION);
 	add_shortcode( 'portada', array( $academica_public, 'portada'));
 	add_shortcode( 'evaluacion_grupo', array( $academica_public, 'evaluacion_grupo' ) );
 	add_shortcode( 'seguimiento_recuperacion_grupo', array( $academica_public, 'seguimiento_recuperacion_grupo' ) );
@@ -92,7 +93,7 @@ function run_academica() {
 	add_shortcode( 'coord_alta_grupos_global', array( $academica_public, 'coord_alta_grupos_global' ));
 
 
-	$academica_admin = new Academica_Admin('academica', '0.1');
+	$academica_admin = new Academica_Admin('academica', ACADEMICA_VERSION);
 	add_action('admin_menu', array($academica_admin, 'admin_menu'));
 	add_action('admin_menu', array($academica_admin, 'hide_dashboard_menus'), 999);
 }
