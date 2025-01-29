@@ -54,7 +54,7 @@ $docente_request = $api_url . '/docentes?email=' . $user_email;
 $docente_response = wp_remote_get($docente_request, $args);
 
 $trimestre_request = $api_url . '/trimestres/actual';
-$trimestre_response = wp_remote_get($trimestre_request);
+$trimestre_response = wp_remote_get($trimestre_request, $args);
 
 if (is_wp_error($docente_response) || is_wp_error($trimestre_response)) {
     return false;
@@ -96,7 +96,7 @@ if (!(($docente == $numero_economico) || $user_email === $academica_coordinador)
 //$lista_request = $api_url . '/historial_academico/lista_alumnos_componente_recuperacion?trimestre='.$trimestre.'&grupo='.$grupo.'&componente='.$componente . '&modulo=' . $modulo;
 
 $lista_request = $api_url . '/evaluaciones/'.$id_evaluacion.'?detalle=true';
-$lista_response = wp_remote_get($lista_request);
+$lista_response = wp_remote_get($lista_request, $args);
 // check for error
 if (is_wp_error($lista_response)) {
     return false;
