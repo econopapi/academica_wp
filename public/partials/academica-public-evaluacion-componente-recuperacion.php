@@ -51,7 +51,7 @@ $trimestre = $_GET['trimestre'];
 $docente = $_GET['docente'];
 
 $docente_request = $api_url . '/docentes?email=' . $user_email;
-$docente_response = wp_remote_get($docente_request);
+$docente_response = wp_remote_get($docente_request, $args);
 
 $trimestre_request = $api_url . '/trimestres/actual';
 $trimestre_response = wp_remote_get($trimestre_request);
