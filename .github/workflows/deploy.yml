@@ -53,14 +53,18 @@ jobs:
 
       - name: Compresión a archivo ZIP
         run: |
-          zip -r academica.zip . -x ".git/*" ".github/*" "academica.zip" "info.json"
+          zip -r academica.zip . -x ".git/*" ".github/*" "academica.zip" "info.json" "version.json"
 
       - name: Despliegue por FTP
-        uses: sebastianpopp/ftp-action@v1.3.0
+        uses: SamKirkland/FTP-Deploy-Action@4.3.3
         with:
-          host: ${{ secrets.FTP_HOST }}
+          server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASS }}
-          localDir: ./
-          remoteDir: /wp-updates/
-          delete: false
+          local-dir: ./
+          server-dir: ${{ secrets.FTP_DIR }}
+          exclude: |
+          **/*
+          !academica.zip
+          !info.json
+          !version.json
