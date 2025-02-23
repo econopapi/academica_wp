@@ -64,7 +64,7 @@ jobs:
           local-dir: ./
           server-dir: ${{ secrets.FTP_DIR }}
           exclude: |
-          **/*
-          !academica.zip
-          !info.json
-          !version.json
+            **/*
+            !academica.zip
+            !info.json
+            !version.json
