@@ -1,0 +1,66 @@
+name: Académica Plugin Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Académica Plugin Build & Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Obtener versión del plugin
+        id: get_version
+        run: |
+          VERSION=$(grep -Po '(?<=\* Version: )[\d.]+' academica.php)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Plugin version: $VERSION"
+
+      - name: Crear info.json
+        run: |
+          cat <<EOF > info.json
+          {
+              "name": "Académica",
+              "version": "${{ env.VERSION }}",
+              "requires": "5.0",
+              "tested": "6.4",
+              "last_updated": "$(date +'%Y-%m-%d')",
+              "homepage": "https://academica.dlimon.net",
+              "download_url": "https://academica.dlimon.net/wp-updates/academica.zip",
+              "build_source": "GitHub Actions",
+              "sections": {
+                  "description": "Integración de sistema Académica con Wordpress",
+                  "changelog": "- ${{ env.VERSION }}: Actualización automática"
+              }
+          }
+          EOF
+          cat info.json
+
+      - name: Crear version.json
+        run: |
+          cat <<EOF > version.json
+          {
+              "version": "${{ env.VERSION }}",
+              "build_source": "GitHub Actions"
+          }
+          EOF
+          cat version.json
+
+      - name: Compresión a archivo ZIP
+        run: |
+          zip -r academica.zip . -x ".git/*" ".github/*" "academica.zip" "info.json"
+
+      - name: Despliegue por FTP
+        uses: sebastianpopp/ftp-action@v1.3.0
+        with:
+          host: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          localDir: ./
+          remoteDir: /wp-updates/
+          delete: false
