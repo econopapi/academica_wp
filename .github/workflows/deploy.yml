@@ -17,7 +17,7 @@ jobs:
       - name: Obtener versión del plugin
         id: get_version
         run: |
-          VERSION=$(grep -Po '(?<=\* Version: )[\d.]+' academica.php)
+          VERSION=$(grep -Po '(?<=\* Version:\s*)[\d.]+' academica.php)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "Plugin version: $VERSION"
 
