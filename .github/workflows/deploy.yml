@@ -31,7 +31,7 @@ jobs:
               "tested": "6.4",
               "last_updated": "$(date +'%Y-%m-%d')",
               "homepage": "https://academica.dlimon.net",
-              "download_url": "https://academica.dlimon.net/wp-updates/academica.zip",
+              "download_url": "https://academica.dlimon.net/plugin/academica.zip",
               "build_source": "GitHub Actions",
               "sections": {
                   "description": "Integración de sistema Académica con Wordpress",
