@@ -1,5 +1,13 @@
 <?php
 
+// Verificar si el usuario está logueado y tiene el dominio correcto
+$current_user = wp_get_current_user();
+if ($current_user->ID == 0 || !str_ends_with($current_user->user_email, '@correo.xoc.uam.mx')) {
+    // Redirigir al home usando JavaScript
+    echo '<script>window.location.href = "' . home_url() . '";</script>';
+    exit;
+}
+
 // Obtener la URL de la API desde la configuración
 $api_url = get_option('academica_api_url');
 $api_key = get_option('academica_api_key');
