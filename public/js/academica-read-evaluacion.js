@@ -340,8 +340,9 @@ document.addEventListener('DOMContentLoaded', function() {
         var claveUea = generalInfo.uea.clave_uea || "No especificado";        
 
         // Obtener los coordinadores únicos
-        const programacionKey = grupo.startsWith('sr') ? 'programacion_docente_recuperacion' : 'programacion_docente_global';
-        var coordinadores = generalInfo[programacionKey]
+        const programacionKey = resolveProgramacionKeyByGrupo(generalInfo);
+        var programacionDocente = Array.isArray(generalInfo[programacionKey]) ? generalInfo[programacionKey] : [];
+        var coordinadores = programacionDocente
             .filter(docente => docente.coordinacion)
             .reduce((unique, docente) => {
                 if (!unique.some(d => d.nombre === docente.docente.nombre)) {
@@ -450,6 +451,38 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('info_general').innerHTML = '';
         document.getElementById('estatus_firma').innerHTML = '';
         document.getElementById('notification').innerHTML = '';
+    }
+
+    function resolveProgramacionKeyByGrupo(generalInfo) {
+        const grupoValue = ((generalInfo && generalInfo.grupo && generalInfo.grupo.grupo) || '').toLowerCase();
+
+        if (grupoValue.startsWith('sr') && Array.isArray(generalInfo.programacion_docente_recuperacion)) {
+            return 'programacion_docente_recuperacion';
+        }
+
+        if (Array.isArray(generalInfo.programacion_docente_global)) {
+            return 'programacion_docente_global';
+        }
+
+        if (Array.isArray(generalInfo.programacion_docente_recuperacion)) {
+            return 'programacion_docente_recuperacion';
+        }
+
+        return 'programacion_docente_global';
+    }
+
+    function resolveProgramacionKey(generalInfo, idEvaluacion) {
+        const normalizedId = (idEvaluacion || '').toLowerCase();
+
+        if (normalizedId.startsWith('g') && Array.isArray(generalInfo.programacion_docente_global)) {
+            return 'programacion_docente_global';
+        }
+
+        if (normalizedId.startsWith('r') && Array.isArray(generalInfo.programacion_docente_recuperacion)) {
+            return 'programacion_docente_recuperacion';
+        }
+
+        return resolveProgramacionKeyByGrupo(generalInfo);
     }
     
     // event listener for "trimestre" select element
@@ -615,9 +648,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     document.getElementById('loading-screen').style.display = 'block';
                     clearTables();
+                    var generalInfo = data.payload.informacion_general[0] || {};
                     // Crear tabla de calificaciones
-                    const programacionKey = id_evaluacion.startsWith('g') ? 'programacion_docente_global' : 'programacion_docente_recuperacion';
-                    var table = createTable(data.payload.lista_alumnos, data.payload.informacion_general[0][programacionKey]);
+                    const programacionKey = resolveProgramacionKey(generalInfo, id_evaluacion);
+                    var programacionDocente = Array.isArray(generalInfo[programacionKey]) ? generalInfo[programacionKey] : [];
+                    var table = createTable(data.payload.lista_alumnos, programacionDocente);
                     document.getElementById('seguimiento_global_grupo_table').appendChild(table);
 
                     // Crear tabla de información general
@@ -625,7 +660,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('info_general').appendChild(infoTable);
 
                     // Crear tabla de asignación docente
-                    var docentesTable = createDocentesTable(data.payload.informacion_general[0][programacionKey]);
+                    var docentesTable = createDocentesTable(programacionDocente);
                     document.getElementById('asignacion_docente').appendChild(docentesTable);
                     // Crear tabla de notificaciones:
                     if (data.payload.informacion_general[0].evaluacion_completada === false) {
